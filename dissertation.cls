@@ -18,6 +18,9 @@
 %     degree = [BSc|MEng|MSci|MSc|PhD]
       degree/.store in = \dissertation@degree,
       degree           = {MEng},
+%     unit = [COMS30044|COMS30045|COMSM0052|COMSM0142]
+      unit/.store in = \dissertation@unit,
+      unit           = {COMS30045},
 %      title = string
        title/.store in = \dissertation@title@major,
        title           = {},
@@ -163,7 +166,13 @@
                       {MSci}{Master   of     Science}
                       {MSc} {Master   of     Science}
                       {PhD} {Doctor   of Philosophy}
-                    }~in the Faculty of Engineering.                                
+                    }~in the Faculty of Engineering \textbf{worth
+                    \IfEqCase*{\dissertation@unit}{
+                      {COMS30044}{20CP}
+                      {COMS30045}{40CP}
+                      {COMSM0052}{40CP}
+                      {COMSM0142}{40CP}
+                    }}.                                
 
                               \vspace*{1.0cm}
                           \rule{0.5\textwidth}{0.5pt}
