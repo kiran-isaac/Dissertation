@@ -39,23 +39,25 @@
 % own dissertation: everything following it is in the correct order to use 
 % as is.
 
-\section*{Prelude}
+\section*{Instructions for Using this Template}
 \thispagestyle{empty}
 
-A typical dissertation will be structured according to (somewhat) standard 
-sections, described in what follows.  However, it is hard and perhaps even 
-counter-productive to generalise: the goal is {\em not} to be prescriptive, 
-but simply to act as a guideline.  In particular, each page count given is
-important but {\em not} absolute: their aim is simply to highlight that a 
-clear, concise description is better than a rambling alternative that makes
-it hard to separate important content and facts from trivia.
+Before writing, please look at the .tex file and change the following (on lines
+$22$--$31$ of DissertationTemplate.tex):
+\begin{itemize}
+    \item author---I am not writing all these dissertations!
+    \item degree---Whether you are BSc, MEng, etc.
+    \item title---To whatever you want to use (this doesn't need to match the
+original spec!).
+    \item unit---What unit you are on (check BB if you're not sure!) This is
+especially important for 3rd Year Maths and CS so that it displays that your
+project is worth only 20CP!
+\end{itemize}
 
-You can use this document as a \LaTeX-based~\cite{latexbook1,latexbook2} 
-template for your own dissertation by simply deleting extraneous sections
-and content; keep in mind that the associated {\tt Makefile} could be of
-use. %, in particular because it automatically executes \mbox{\BibTeX} to 
-deal with the associated bibliography. 
-Alternatively, upload this template, dissertation.bib, dissertation.cls, 
+All sections below marked as compulsory \textbf{MUST} be kept, feel free to
+change the structure otherwise to best match your project.
+
+If you wish to use Overleaf, upload this template, dissertation.bib, dissertation.cls, 
 dtklogos.sty and the ``logo'' folder to Overleaf (an online \LaTeX editor and
 compiler) and work on your thesis there.
 
@@ -89,11 +91,10 @@ compiler) and work on your thesis there.
 \vspace{1cm} 
 
 \noindent
-This section should pr\'{e}cis the project context, aims and objectives,
-and main contributions (e.g., deliverables) and achievements; the same 
-section may be called an abstract elsewhere.  The goal is to ensure the 
-reader is clear about what the topic is, what you have done within this 
-topic, {\em and} what your view of the outcome is.
+This section should give an overview of the project context, aims and
+objectives, and main contributions (e.g., deliverables) and achievements.  The
+goal is to ensure the reader is clear about what the topic is, what you have
+done within this topic, {\em and} what your view of the outcome is.
 
 The former aspects should be guided by your specification: essentially 
 this section is a (very) short version of what is typically the first 
@@ -154,6 +155,14 @@ advice or time), and so on.
 \makedecl
 
 
+% -----------------------------------------------------------------------------
+
+% This macro creates the AI declaration; on the printed hard-copy,
+% this must be physically signed by the author in the space indicated.
+
+\makeaidecl
+
+
 
 % -----------------------------------------------------------------------------
 
@@ -187,7 +196,7 @@ See the unit Handbook for more information. If something went wrong and none of 
 
 \chapter*{Summary of Changes}
 
-{\bf A conditional section} 
+{\bf Compulsory only if the dissertation is a resubmission, otherwise delete} 
 \vspace{1cm} 
 
 If and only if the dissertation represents a resubmission (e.g., as the result of
