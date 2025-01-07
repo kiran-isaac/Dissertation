@@ -65,7 +65,7 @@
 % http://www.ctan.org/tex-archive/macros/latex/contrib/url
 \RequirePackage{url}
 % http://www.ctan.org/tex-archive/macros/latex/contrib/hyperref
-\RequirePackage{hyperref}
+\RequirePackage{hyperref}[colorlinks=true,citecolor=blue]
 % http://www.ctan.org/tex-archive/macros/latex/contrib/lipsum
 \RequirePackage{lipsum}
 % http://www.ctan.org/tex-archive/usergrps/dante/dtk
@@ -217,9 +217,8 @@ I declare that the work in this dissertation was carried out in accordance with 
   
 I declare that any and all AI usage within the project has been recorded and
 noted within Appendix A or within the main body of the text itself. This
-includes (but is not limited to) usage of translators (even google
-translators), text generation methods, text summarisation methods, or image
-generation methods. \
+includes (but is not limited to) usage of text generation methods incl. LLMs,
+text summarisation methods, or image generation methods. \
 
 I understand that failing to divulge use of AI within my
 work counts as contract cheating and can result in a zero mark for the
