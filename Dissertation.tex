@@ -25,6 +25,26 @@ degree={BSc},
 title={Implementing a Step by Step Evaluator for a Simple Functional Programming language},
 unit={COMS30045},]{dissertation}
 
+\usepackage[utf8]{inputenc}
+\usepackage{amsthm}
+
+\newtheoremstyle{break}% name
+  {}%         Space above, empty = `usual value'
+  {}%         Space below
+  {\itshape}% Body font
+  {}%         Indent amount (empty = no indent, \parindent = para indent)
+  {\bfseries}% Thm head font
+  {.}%        Punctuation after thm head
+  {\newline}% Space after thm head: \newline = linebreak
+  {}%         Thm head spec
+
+\theoremstyle{definition}
+\theoremstyle{break}
+\newtheorem{syntax}{Definition}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
 \begin{document}
 
 % =============================================================================
@@ -130,7 +150,7 @@ dissertation''); an example is as follows:
 \chapter{Introduction}
 \label{chap:context}
 
-In this dissertation, I present redexplorer, a tool to demonstrate how a functional programming language is evaluated.
+In this dissertation, I present SFL-explorer, a tool to demonstrate how a functional programming language is evaluated.
 
 SFL-explorer takes the form of a functional language (SFL), packaged with some interfaces that allows users to observe the process of evaluation of a term as a series of step by step or multi-step reductions, and control the order that sub-terms are evaluated. Two interfaces are provided, a command line interface and a web application. The ultimate goal of this project was to make a tool that makes learning and teaching the basics of functional programming easier. There are two groups of people the project is designed to be of interest to:
 \begin{itemize}
@@ -152,6 +172,55 @@ The language itself is not meant to be the main interest for the users of this s
 \label{chap:execution}
 
 \section{Language Design}
+SFL, as mentioned in the introduction, is designed to be simple and similar to other functional languages. These requirements can be distilled into the following design goals:
+\begin{enumerate}
+    \item SFL should be similar to existing functional languages
+    \item SFL should be simple and easy to understand. 
+\end{enumerate}
+Most design decisions described will reference these goals.
+
+Since the lambda calculus is the foundation of functional languages, the language being fairly close to lambda calculus should help with design goal 1. Below we describe the process of building some of the syntax for SFL on top of simply typed lambda calculus.
+
+\subsection{Basic Syntax from Untyped Lambda Calculus}
+As discussed in the background, Lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
+
+\begin{lstlisting}[]
+f = (\x.x)
+main = f y
+\end{lstlisting}
+
+Is identical to
+
+\begin{lstlisting}[]
+main = (\x.x) y
+\end{lstlisting}
+
+Note that we used \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards.
+
+We then define a program, in our superset of \(\lambda\)-calculus, as a set of assignments, and we pick one specific label name to mark the "entry-point" expression in the program: "main". 
+
+We must also add a way to represent values, such as integers and booleans, to our language. This is in accordance with all the design goals respectively for the following reasons
+\begin{enumerate}
+    \item Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison
+    \item Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making it more complicated to understand.
+\end{enumerate}
+
+\begin{syntax}[The syntax of the described superset of untyped lambda calculus, with c-style identifiers that require a leading lowercase letter]
+(Lowercase Identifier): \(id ::= [a..z][a..zA..Z0..9\_]\)
+\newline
+(Expression) \(E ::= id \mid \setminus id. E \mid E\:F\)
+\newline
+(Assignment) \(A ::= id = E\)
+\newline
+(Module) \(M ::= A\: M \mid End\)
+\end{syntax}
+
+\subsection{Type System}
+
+
+\subsection{Case}
+
+\subsection{Syntax Sugar}
 
 \section{Parsing}
 Parsing is necessary to take the users program and convert it into a format that represents the structure of the program. 
@@ -172,7 +241,7 @@ Initially, the approach taken when implementing this tree structure was to have 
 
 Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as AST and ASTNode, where AST was an array of ASTNodes, and each ASTNode stored their children's indices in this array. 
 
-\begin{lstlisting}[float={t},caption={The Rust structures representing the tree (ignoring access modifiers, lifetime specifiers and details only relevant to formatting)},label={code:AST},language=Rust]
+\begin{lstlisting}[language=Rust]
 struct AST {
     vec: Vec<ASTNode>,
     root: usize,
@@ -198,16 +267,21 @@ struct ASTNode {
 }
 \end{lstlisting}
 
-\ref{code:AST} Shows the implementation of the structure of the structure of the AST and its nodes in Rust. More information about this is defined below. 
-
 \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The AST stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. The AST also implements methods to create new ASTNodes of various types and add them to the vector, returning their index.
 
-\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. \verb|Identifier| nodes used as abstraction arguments, as well as \verb|Assignment| nodes, can also store their types. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
+\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. \verb|Identifier| nodes used as abstraction arguments. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
 
 In order to effectively explain the structure of a parsed program going forwards, the following structure will be used to give a written representation of an AST:
-	- Nodes are represented as one line each, where, with the name of the node type, followed by its value for \verb|Literal|s and \verb|Identifier|s.
-	- The children of a node are all of the nodes with an indentation level one deeper than the node in question listed directly below it, until a shallower or equal depth node is listed. 
-For instance, \verb|main = (\x.1) 2| would be represented as:
+\begin{itemize}
+    \item Nodes are represented as one line each, where, with the name of the node type, followed by its value for \verb|Literal|s and \verb|Identifier|s.
+    \item The children of a node are all of the nodes with an indentation level one deeper than the node in question listed directly below it, until a shallower or equal depth node is listed. 
+\end{itemize}
+\filbreak\noindent
+For instance, 
+\begin{lstlisting}
+main = (\x.1) 2
+\end{lstlisting}
+would be represented as:
 \begin{lstlisting}
 Module:
   Assignment:
@@ -226,6 +300,41 @@ The parser needs to consume a program, and return the following things:
     \item All labels with known types, including both those defined explicitly (assignments) or implicitly (constructors for data types)
     \item All types defined
 \end{itemize}
+For instance, from the program:
+\begin{lstlisting}[]
+data List a = Cons a (List a) | Nil
+double x = x * 2	
+main :: List Int
+main = Cons (double 1) (Cons (double 2) Nil)
+\end{lstlisting}
+We should extract the following data:
+\begin{itemize}
+    \item The AST: {\filbreak
+    \begin{lstlisting}[]
+Module:
+  Assignent
+    Identifier: double
+    Abstraction
+      Identifer: x
+      App
+        App
+          Identifier: +
+          Identifier: x
+        Literal: 2
+    \end{lstlisting}}
+    \item All the known type assignments (excluding inbuilts)
+        \begin{itemize}
+            \item Cons: \(\forall a. a \Rightarrow List\;a\Rightarrow List\;a\)
+            \item Nil: \(\forall a. List\;a\)
+            \item main: \(\forall a. List\;a\)
+        \end{itemize}
+    \item The names of all known types (excluding inbuilts) 
+        \begin{itemize}
+            \item List: \(List\;a\)
+        \end{itemize}
+\end{itemize}
+
+
 % -----------------------------------------------------------------------------
 
 \chapter{Critical Evaluation}
