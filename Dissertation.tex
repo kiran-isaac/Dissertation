@@ -20,10 +20,11 @@
 %   (so 2014 rather than the academic year, say 2013/14 say).
 
 \documentclass[
-author=Kiran Sturt,
+author={Kiran Sturt},
 degree=BSc,
-title=Implementing a Step by Step Evaluator for a Simple Functional Programming language,
-unit=COMS30045,twoside]{dissertation}
+title={Implementing a Step by Step Evaluator for a Simple Functional Programming language},
+unit={COMS30045},
+oneside]{dissertation}
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsthm}
@@ -164,6 +165,24 @@ The language itself is not meant to be the main interest for the users of this s
 
 \chapter{Background}
 \label{chap:technical}
+
+\section{Rust}
+This project is written in rust. Some of the decisions made, particularly in the implementation of the AST, require an understanding of Rust, especially the memory management model.
+
+"Ownership" is an important concept. The rules of ownership \cite{rust_book}:
+\begin{itemize}
+    \item Each value in Rust has an owner.
+    \item There can only be one owner at a time.
+    \item When the owner goes out of scope, the value will be dropped.
+\end{itemize}   
+
+If a value is owned in one scope, but another scope needs to read/write it, we may use a reference to the value. The rules of references \cite{rust_book}:
+\begin{itemize}
+    \item At any given time, you can have either one mutable reference or any number of immutable references. 
+    \item References must always be valid.
+\end{itemize}
+
+These rules ensure that immutable references are to things that don't change, and references are always to things that exist.
 
 % -----------------------------------------------------------------------------
 
