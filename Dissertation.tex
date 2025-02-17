@@ -20,10 +20,10 @@
 %   (so 2014 rather than the academic year, say 2013/14 say).
 
 \documentclass[
-author={Kiran Sturt},
-degree={BSc},
-title={Implementing a Step by Step Evaluator for a Simple Functional Programming language},
-unit={COMS30045},]{dissertation}
+author=Kiran Sturt,
+degree=BSc,
+title=Implementing a Step by Step Evaluator for a Simple Functional Programming language,
+unit=COMS30045,twoside]{dissertation}
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsthm}
@@ -246,7 +246,7 @@ The tree structure of SFL requires the following different types of tree nodes:
 \end{itemize}
 Initially, the approach taken when implementing this tree structure was to have each node "owning" its child nodes (see ownership). However, it will be necessary frequently to be able to find nodes based on certain conditions (for example, the condition that this node is a valid redex) and then provide a value that represents the location of this node within the tree. Even if each of the tree nodes had a unique ID, locating a node from this value representing its location will require some sort of tree search.
 
-Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as AST and ASTNode, where AST was an array of ASTNodes, and each ASTNode stored their children's indices in this array.
+Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as AST and ASTNode, where AST was an array of ASTNodes, and each ASTNode stored their children's indices in this array. The position in the array of an ASTNode will be referred to as its index.
 
 \begin{figure}[t]
     \centering
@@ -280,13 +280,13 @@ struct ASTNode {
 }
     \end{lstlisting}
     \end{tabular}
-    \caption{The Rust code listing for the definition of the AST}
+    \caption{The Rust code listing for the definition of the AST, with lifetime specifiers, accessibility modifiers, and the syntax information (see \ref{paragraph:to_string}) removed for conciseness.}
     \label{fig:ast_lst}
 \end{figure}
 
-See \ref{fig:ast_lst} for the code listing for the AST definition. \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The AST stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. The AST also implements methods to create new ASTNodes of various types and add them to the vector, returning their index.
+See \ref{fig:ast_lst} for the code listing for the AST definition. In this implementation, \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The AST stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. 
 
-The node indexes in the \verb|children| vector represent different things depending on what kind of node this is. 
+The node indices in the \verb|children| vector represent different things depending on what kind of node this is. 
 \begin{itemize}
     \item If this is an abstraction, the first node represents the variable (or pair of variables) abstracted over, and the second node represents the expression.
     \item If this is an application, the first node is the function, and the second is the argument.
@@ -320,21 +320,33 @@ Module:
       Literal: 2
 \end{lstlisting}
 
+
 \subsection{Methods on the AST}
-Below are a few of the more interesting methods implemented on the AST.
+Below are a selection of the more important or interesting methods implemented on the AST and its nodes.
 
 \paragraph{Adding new nodes} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so the tree will add them to the end, and return their index. These methods are needed extensively for the parser.
 
 \paragraph{Getting children of nodes} As the interpretation of the \verb|children| array for each node changes depending on what type of node it is, a series of getters are implemented, such as "\verb|get_func|" to get the function of an application. These methods are needed extensively for the type checker, and the redex finding system. 
 
-\paragraph{To String} Programs can also be effectively transformed back into strings. This requires a few other pieces of information to be associated with some tree nodes, to make the output program as similar to the input program as possible. The more similar the output is to the input, the easier it is to understand. Some examples include:
+\paragraph{Substitute variable} Substitutes all instances of a variable in an expression with a given expression. This is needed for applying abstractions. For instance, the process of reducing \verb|(\x.x) 1|, is:
+\begin{itemize}
+    \item Get the name of the variable abstracted over: \verb|x|.
+    \item Replace all instances of x in the abstraction expression with the left hand side of the application: \verb|1|.
+    \item Replace all references to the abstraction with references to the abstractions expression. 
+\end{itemize}
+Note that this orphans the node for the abstraction, and the node for the abstraction variable \verb|x|. This is hard to rectify as deleting these nodes will shift the rest of the list after it left, which will break many of the references. This is rectified by cloning the AST, as described below.
+
+\paragraph{Clone} The AST, or just a subsection of the AST from a given node, can be cloned by starting from the desired new root, and cloning each nodes children recursively. The new indices of each node may not be the same, as they may be moved in the list, but they will all be in the same place relative to each other. This also removes orphaned nodes, as they will never be cloned as they have no parents. 
+
+\paragraph{To String} \label{paragraph:to_string} Programs can also be effectively transformed back into strings. This requires a few other pieces of information to be associated with some tree nodes, to make the output program as similar to the input program as possible. The more similar the output is to the input, the easier it is to understand. Some examples include:
 \begin{itemize}
     \item Whether the application was generated by using the right associative \verb|$| operator in order to avoid parenthesis, for instance \verb|id $ 1 + 1|.
-    \item Whether the assignment, where the expression is an abstraction, was generated using the syntax \verb|x = \a.e| or the syntax \verb|x a = e|. These are functionally equivalent
+    \item Whether the assignment, where the expression is an abstraction, was generated using the syntax \verb|x = \a.e| or the syntax \verb|x a = e|. These are functionally equivalent, but it is a useful distiction to maintain clarity
 \end{itemize}
+This is needed for the visualisation of the program state as it changes. 
 
 \section{Types}
-Rust allows us to represent our types, as defined in [REFHERE: Type system], quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size. We also define Existential, as an implementation detail needed for the type checker. 
+Rust allows us to represent our types, as defined in [REFHERE: Type system], quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
 
 \begin{figure}[t]
     \centering
@@ -353,12 +365,15 @@ pub enum Type {
     Product(Box<Type>, Box<Type>),
     Union(String, Vec<Type>),
     Alias(String, Box<Type>),
+
     Existential(usize),
 }
     \end{lstlisting}
     \caption{The Rust code listing for the definition of types}
     \label{fig:type_lst}
 \end{figure}
+
+We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size, which is the size of a pointer on system in question. We also define Existential, as an implementation detail needed for the type checker. 
 
 \section{The Parser}
 The parser needs to consume a program, and return the following things:
@@ -401,11 +416,25 @@ Module:
         \end{itemize}
 \end{itemize}
 
-\subsubsection{Type Parsing}
-\paragraph{Parsing Type Expressions}
+The parser will also store a set of all bound variables at each location. This will allow us to disqualify some invalid programs. For instance, we must disqualify:
+\begin{itemize}
+    \item \verb|x = (\x. e)| where e is any expression, as x is ambiguous during the expression e.
+    \item \verb|main = x| as x is undefined.
+\end{itemize}
 
+\subsection{Lexical Analysis}
+Lexical analysis is the process splitting a program into its constituent tokens. For instance, the program \verb|main = (\x.x) 1| is the following stream of tokens: \[[Id: main, Assignment, LeftParen, Backslash, Id: x, Dot, Id: x, RightParen, Literal: 1]\]
+See \ref{appx:tokens} for the code listing of the definition of the tokens output by the lexical analysis.
 
-\paragraph{Parsing Data Declaration} 
+\subsection{Expression Parsing}
+Expressions are parsed using recursive descent parsing. Some of the techniques used for this part of the parser were inspired by the discussion of top down parsing in \cite{dragon_book}. 
+
+\subsection{Type Assignment and Definition Parsing}
+We must also be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a |. Type assignments consist of the label being assigned, followed by the type expression. 
+
+\subsubsection{Parsing Type Expressions}
+
+\subsubsection{Parsing Data Declaration} 
 As discussed in [REFHERE: Language Design], we want to be able to define and parse \verb|data| declarations. A \verb|data| deceleration consists of: 
 \begin{itemize}
     \item The \verb|data| keyword
@@ -417,10 +446,6 @@ As discussed in [REFHERE: Language Design], we want to be able to define and par
             \item The type expression, representing what type the constructor can be applied to 
         \end{itemize}
 \end{itemize}
-
-
-
-\subsubsection{Expression Parsing}
 
 \subsection{Module Parsing}
 % -----------------------------------------------------------------------------
@@ -473,5 +498,55 @@ As discussed in [REFHERE: Language Design], we want to be able to define and par
 I did not directly prompt any Large Language Models, or any other AI model, to assist with the writing of my dissertation or implementation. However, as listed in the Supporting Technologies list, I used GitHub Copilot to help with writing some tests for the parser and type checker. I used it via the VS Code extension, which uses the context of your file, to provide advanced AI autocompletion.
 
 % =============================================================================
+
+\chapter{Appendix B: Tokens for Lexical Analysis}
+\label{appx:tokens}
+Below is the code for how tokens outputted by lexical analysis are defined. 
+\begin{lstlisting}
+enum TokenType {
+    EOF,
+    Newline,
+
+    Id,
+    UppercaseId,
+
+    If,
+    Then,
+    Else,
+
+    Match,
+    LBrace,
+    RBrace,
+
+    IntLit,
+    FloatLit,
+    StringLit,
+    CharLit,
+    BoolLit,
+
+    DoubleColon,
+    RArrow,
+    Forall,
+    KWType,
+    KWData,
+
+    LParen,
+    RParen,
+
+    Lambda,
+
+    Dollar,
+    Dot,
+    Comma,
+    Bar,
+
+    Assignment,
+}
+
+struct Token {
+    tt: TokenType,
+    value: String,
+}
+\end{lstlisting}
 
 \end{document}
