@@ -142,7 +142,7 @@
 
   
   \begin{center}
-                \includegraphics[scale=0.3]{logo/UoB_CMYK_24}                \\
+                \includegraphics[scale=0.3]{logo_2024/PDF/UoB_CMYK_24}                \\
                               \vspace*{1.0cm}
                           SCHOOL OF COMPUTER SCIENCE                        \\
                               \vspace*{2.0cm}
