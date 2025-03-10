@@ -11,19 +11,19 @@
 \pgfkeys{/dissertation/.cd,
 %     author = string
       author/.store in = \dissertation@author,
-      author           = {},
+      author           = {Kiran Sturt},
 % supervisor = string
   supervisor/.store in = \dissertation@supervisor, 
   supervisor           = {},
 %     degree = [BSc|MEng|MSci|MSc|PhD]
       degree/.store in = \dissertation@degree,
-      degree           = {MEng},
+      degree           = {BSc},
 %     unit = [COMS30044|COMS30045|COMSM0052|COMSM0142]
       unit/.store in = \dissertation@unit,
       unit           = {COMS30045},
 %      title = string
        title/.store in = \dissertation@title@major,
-       title           = {},
+       title           = {Implementing a Step by Step Evaluator for a Simple Functional Programming language},
 %   subtitle = string
     subtitle/.store in = \dissertation@title@minor,
     subtitle           = {},
