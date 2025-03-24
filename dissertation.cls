@@ -39,7 +39,7 @@
 
 % load base class, then general-purpose packages
 
-\LoadClass[10pt,a4paper,oneside]{book}
+\LoadClass[10pt, a4paper,oneside]{book}
 
 % http://www.ctan.org/tex-archive/macros/latex/required/graphics
 \RequirePackage{graphicx}
@@ -56,6 +56,8 @@
 \RequirePackage{geometry}
 % http://www.ctan.org/tex-archive/macros/latex/contrib/datetime
 \RequirePackage{datetime}
+% https://ctan.org/pkg/mathpartir?lang=en
+\RequirePackage{mathpartir}
 % http://www.ctan.org/tex-archive/macros/latex/contrib/algorithm2e
 \RequirePackage[algochapter]{algorithm2e}
 % http://www.ctan.org/tex-archive/macros/latex/contrib/listings
@@ -72,6 +74,8 @@
 % http://www.ctan.org/tex-archive/usergrps/dante/dtk
 \RequirePackage{dtklogos}
 
+\RequirePackage{acronym}
+
 % =============================================================================
 
 \makeatletter
@@ -80,7 +84,7 @@
 
 % configure hyperref
 
-\hypersetup{colorlinks=true,bookmarks=false,urlcolor=red}
+\hypersetup{colorlinks=true,urlcolor=red}
 
 % configure algorithm2e
 

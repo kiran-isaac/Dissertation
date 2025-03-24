@@ -1,0 +1,97 @@
+\chapter{Design}
+\label{chap:design}
+
+\section{Language Design}
+\subsection{Goals}
+\label{design:goals}
+SFL is designed with the following goals in mind:
+\begin{enumerate}
+    \item SFL should be similar to existing functional languages.
+    \item SFL should be simple and easy to understand. 
+    \item SFL should be powerful.
+\end{enumerate}
+The features that should be selected for SFL are the features that maximise these goals for the minimum implementation complexity. The language's syntax and type system should also work towards these goals. 
+
+Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. 
+
+When adding features for the language, we must prioritise the "core" features of functional languages, and de-prioritise features that are not so "core" to the understanding of functional languages. 
+
+yadadada we should implement features that allow us to implement
+\begin{itemize}
+    \item Complex data structures, lists and trees
+    \item Fold
+    \item IO???
+\end{itemize}
+
+\subsection{Definitions}
+
+\begin{syntax}[Lowercase and Uppercase ID syntax as regular expressions]
+\label{def:identifier_syntax}
+(Lowercase Identifier): \(id ::= [a..z][a..zA..Z0..9\_]*\)\newline
+(Uppercase Identifier): \(Id ::= [A..Z][a..zA..Z0..9\_]*\)
+\end{syntax}
+
+\subsection{Basic Syntax}
+Lambda calculus is the basis of modern functional programming languages. As discussed in the background, Lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
+\begin{lstlisting}[]
+f = (\x.x)
+main = f y
+\end{lstlisting}
+Is identical to
+\begin{lstlisting}[]
+main = (\x.x) y
+\end{lstlisting}
+Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the "entry-point" expression in the program. Haskell, as well as many other languages, use "main" to represent a programs entry point, so we may use main. 
+
+We must also add a way to represent values, such as integers and booleans, to our language. Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated. 
+
+These two features massively shorten and simplify programming in this language.
+
+\begin{syntax}[The basic syntax of SFL]
+(Expression) \(E ::= [-][0, 1, ..] \mid true \mid false \mid id \mid \setminus id. E \mid E\:F\)\newline
+(Assignment) \(A ::= id = E\)\newline
+(Module) \(M ::= A\: M \mid End\)
+\end{syntax}
+
+\subsection{Type System}
+We must have types representing integers and booleans in our language, if we are to effectively check the validity of expression containing their respective literals. 
+
+Many languages, including Haskell, also have Algebraic Data Types allowing us to "Compose" other data types. Algebraic data types are isomorphic to an algebraic expression consisting of sums and products of their constituent types. An example of a product type is the tuple \((Int,Bool)\) which is isomorphic to \(Int \times Bool\). Most languages have product types, which often take the form of structs or tuples. 
+An example of a sum type is the Haskell syntax tagged union:
+
+\noindent\verb!"data Shape = Circle Int | Rectangle Int Int"!, which is isomorphic to the type \(Int + (Int \times Int)\). 
+
+We will now consider generic data structures, such as a lists that can hold any value of type $a$, written as \(List\;a\)". Here, \(List\) is not a type in itself, but it represents a constructor that takes a type, and returns a concrete type. We could write this as "$Type \rightarrow Type$", indicating that it behaves like a function, but at the type level rather than the value level. If we were to apply the constructor \(List\) to the concrete type \(Int\), the resulting type would be \(List \;Int\). 
+
+Polymorphism as described here is first order polymorphism, as opposed to higher-order polymorphism (also known as higher-kinded polymorphism) where a type can abstract over a type that abstracts over a type \cite{pierce2002types}. An example of a function that is higher-order polymorphic is a function that takes a function, and then applies it to two differently typed values:
+\begin{lstlisting}
+applyToBoth f x y = (f x, f y)
+\end{lstlisting}
+If \verb|f| is to be applied to any type, it must have a type \(\forall a. a\rightarrow a\). This means the type of the function \verb|applyToBoth| must be \(\forall a \;b.(\forall c \rightarrow c) \rightarrow a \rightarrow b \rightarrow (a, b)\)
+
+This requires the ability to parse expressions with nested \verb|foralls|, as well as support during type inference for higher-kinded types. We do not think that this is a priority for the system, as 
+These first-order polymorphic type constructors would be useful to have in SFL, with one example of their utility being defining the polymorphic function "\verb|length :: List a -> Int|" which should work regardless of what type the list is over. Higher order polymorphism is less important
+The "Type of a Type" is known as its \emph{kind} \cite{pierce2002types}. Another example is the type representing "Either left or right: \(Either \;a\;b\)", that can be defined with its constructors as \verb!data Either a b = Left a | Right b!. "Either" is a type constructor with the kind "Type -> Type -> Type", meaning it takes two concrete types and returns a concrete type. 
+Higher-kinded types are types where there are parenthesis in a kind expression, not including the implicit ones implying right associativity: 
+"\verb|Type -> Type -> Type|" is implicitly "\verb|Type -> (Type -> Type)|"
+We can avoid thinking about kinds by enforcing that a type constructor is always given the correct number of arguments
+
+Supporting tagged unions and tuples in the SFL type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
+Type names, as well as constructor names, start with uppercase letters in Haskell. This allows them to be easily differentiated from type variables, as well as regular variables. 
+In the below definition of the SFL type system, we define \(\Alpha\) as the set of valid type names starting with uppercase letters defined by \(Id\), and \(\alpha\) as the set of valid type variable names defined by \(id\). 
+
+\begin{syntax}[Types in SFL]
+(Inbuilts): \(B::=Int\mid Bool\)\newline
+(Monotype): \(\tau, \sigma ::= \alpha \mid B \mid \tau \rightarrow \sigma \mid (\tau, \sigma) \mid \Alpha \;T, U,...\)\newline
+(Alias): \(A ::= Id = T\)\newline
+(Type): \(T, U ::= \alpha \mid B \mid T \rightarrow U \mid (T, U) \mid \forall a. T \mid \Alpha \;T, U,...\)
+\end{syntax}
+Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type. It can then be double checked for debugging purposes via an assertion in the type checker. 
+
+\subsection{Values}
+
+
+\subsection{Match}
+To support different execution based on a condition, we must have some structure that can differentiate between values. 
+
+\subsection{Syntax Sugar}

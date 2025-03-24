@@ -1,0 +1,40 @@
+\chapter{Background}
+\label{chap:technical}
+
+\section{Rust}
+\label{bg:rust}
+This project is written in rust. Some of the decisions made, particularly in the implementation of the AST, require an understanding of Rust, especially the memory management model.
+
+"Ownership" is an important concept. The rules of ownership \cite{rust_book}:
+\begin{itemize}
+    \item Each value in Rust has an owner.
+    \item There can only be one owner at a time.
+    \item When the owner goes out of scope, the value will be dropped.
+\end{itemize}   
+
+If a value is owned in one scope, but another scope needs to read/write it, we may use a reference to the value. The rules of references \cite{rust_book}:
+\begin{itemize}
+    \item At any given time, you can have either one mutable reference or any number of immutable references. 
+    \item References must always be valid.
+\end{itemize}
+
+These rules ensure that immutable references are to things that don't change, and all references are always to things that exist.
+
+\section{Frontend Technologies}
+\begin{itemize}
+    \item Vite
+    \item React
+    \item NPM
+\end{itemize}
+
+\section{Web Assembly} \label{bg:wasm}
+This project runs entirely within the browser, despite being written in Rust. This is due to the fact that it compiles to web assembly. Automated tools exist for the generation of JavaScript bindings around Rust functions/types, but this process places certain restrictions around their arguments and return type, or attributes. We will discuss this here to allow us to refer to these restrictions, and also to explain the process of compiling and using Rust code in a modern web browser. 
+
+Web Assembly 2.0 is a 32 bit target \cite{WebAssemblyCoreSpecification2}. This means we only have 4GB of addressable memory. The Rust compiler is based on LLVM, which provides a web-assembly compilation target. The Rust compiler has a toolchain around this compilation target [REFHERE: rust wasm toolchain], that allows for easy compilation to web-assembly. However, this only creates a binary blob, which requires more work to make interoperable with our JavaScript build system (Vite). We must do two things to achieve interoperability:
+\begin{itemize}
+    \item Incorporate it into our build so it can be served with it.
+    \item Load the wasm package in a way that allows for us to call the functions.
+\end{itemize}
+Producing an NPM package with some JavaScript functions that call the webasembly functions would achieve both of these goals. However, if we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the wasm functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 
+
+Fortunately, the rust crate \verb|wasm-bindgen| provides macros that generate a whole NPM package, including TS bindings, automatically. This package can then be added as a dependency to an NPM app that provides a website, and the functions within it can [TODO: wasm bindgen vs wasm pack?]

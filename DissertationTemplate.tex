@@ -32,6 +32,16 @@
 
 \begin{document}
 
+\newtheoremstyle{break}% name
+  {}%         Space above, empty = `usual value'
+  {}%         Space below
+  {\itshape}% Body font
+  {}%         Indent amount (empty = no indent, \parindent = para indent)
+  {\bfseries}% Thm head font
+  {.}%        Punctuation after thm head
+  {\newline}% Space after thm head: \newline = linebreak
+  {}%         Thm head spec
+
 % =============================================================================
 
 % This section simply introduces the structural guidelines.  It can clearly
@@ -264,7 +274,17 @@ dissertation''); an example is as follows:
 % -----------------------------------------------------------------------------
 
 \chapter*{Notation and Acronyms}
-
+\begin{quote}
+\noindent
+\begin{tabular}{lcl}
+AES                 &:     & Advanced Encryption Standard                                         \\
+DES                 &:     & Data Encryption Standard                                             \\
+                    &\vdots&                                                                      \\
+${\mathcal H}( x )$ &:     & the Hamming weight of $x$                                            \\
+${\mathbb  F}_q$    &:     & a finite field with $q$ elements                                     \\
+$x_i$               &:     & the $i$-th bit of some binary sequence $x$, st. $x_i \in \{ 0, 1 \}$ \\
+\end{tabular}
+\end{quote}
 
 \noindent
 Any well written document will introduce notation and acronyms before

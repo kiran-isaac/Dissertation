@@ -1,0 +1,509 @@
+\chapter{Implementation}
+\label{chap:execution}
+
+\section{The Abstract Syntax Tree}
+The tree structure of \ac{SFL} requires the following different types of tree nodes:
+\begin{itemize}
+    \item Identifier
+    \item Literal
+    \item Pair
+    \item Application
+    \item Abstraction
+    \item Match
+    \item Assignment
+    \item Module
+\end{itemize}
+Initially, the approach taken when implementing this tree structure was to have each node `owning' its child nodes (see \ref{bg:rust}). However, it will be necessary frequently to be able to find nodes based on certain conditions (for example, the condition that this node is a valid redex) and then provide a value that represents the location of this node within the tree. Even if each of the tree nodes had a unique ID, locating a node from this value representing its location will require some sort of tree search.
+
+Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as AST and ASTNode, where AST was an array of ASTNodes, and each ASTNode stored their children's indices in this array. The position in the array of an ASTNode will be referred to as its index.
+
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{c}
+    \begin{lstlisting}[language=Rust]
+struct AST {
+    vec: Vec<ASTNode>,
+    root: usize,
+}
+
+enum ASTNodeType {
+    Identifier,
+    Literal,
+    Pair,
+    Application,
+    Assignment,
+    Abstraction,
+    Module,
+} 
+
+struct ASTNodeSyntaxInfo {...}
+
+struct ASTNode {
+    t: ASTNodeType,
+    token: Option<Token>,
+    children: Vec<usize>,
+    line: usize,
+    col: usize,
+    type_assignment: Option<Type>,
+    additional_syntax_information: ASTNodeSyntaxInfo
+}
+    \end{lstlisting}
+    \end{tabular}
+    \caption{The Rust code listing for the definition of the AST, with lifetime specifiers, accessibility modifiers, and the syntax information (see \ref{paragraph:to_string}) removed for conciseness.}
+    \label{fig:ast_lst}
+\end{figure}
+
+See \ref{fig:ast_lst} for the code listing for the AST definition. In this implementation, \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The AST stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. 
+
+The node indices in the \verb|children| vector represent different things depending on what kind of node it is. 
+\begin{itemize}
+    \item If it is an abstraction, the first node represents the variable (or pair of variables) abstracted over, and the second node represents the expression.
+    \item If it is an application, the first node is the function, and the second is the argument.
+    \item If it is a pair, the first node is the first in the pair, and the second is the second in the pair.
+    \item If it is a match expression, the first node represents the matched value, then after this it consists of the case followed by the resulting expression. Match expressions will always therefore have an odd number of children.
+    \item If it is a module, then each of the children is an assignment
+    \item If it is an assignment, then the first child is the variable being assigned to, and the second is the expression.
+\end{itemize}
+
+\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. \verb|Identifier| nodes used as abstraction arguments. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
+
+In order to effectively explain the structure of a parsed program going forwards, the following structure will be used to give a written representation of an AST:
+\begin{itemize}
+    \item Nodes are represented as one line each, where, with the name of the node type, followed by its value for \verb|Literal|s and \verb|Identifier|s.
+    \item The children of a node are all of the nodes with an indentation level one deeper than the node in question listed directly below it, until a shallower or equal depth node is listed. 
+\end{itemize}
+\filbreak\noindent
+For instance, 
+\begin{lstlisting}
+main = (\x.1) 2
+\end{lstlisting}
+would be represented as:
+\begin{lstlisting}
+Module:
+  Assignment:
+    Identifier: main
+    Application:
+      Abstraction:
+        Identifier: x
+        Literal: 1
+      Literal: 2
+\end{lstlisting}
+
+\subsection{With the Benefit of Hindsight}
+This project was my first major project using Rust. Below is a discussion of some Rust features which were not fully taken advantage of in this definition of syntax trees, followed by a discussion of the combination of these features that would have been more optimal. 
+
+\paragraph{Tagged Unions}
+An alternative implementation could have involved \verb|ASTNodeType| being a tagged union, with different node types being associated with different children and data items. For instance, application could be represented by \verb|Application(f: usize, x: usize)|, and identifiers could be 
+
+\noindent\verb|Identifier(String)|. This would be more space efficient, as each node requires different data. It would also more elegantly represent the fact that each type of node is a different thing, and de-obfuscate the meaning of each of the different fields of a node. 
+
+\paragraph{References}
+This definition of the AST and the nodes has a parent object owning all of the nodes. As previously discussed, this was done to enable constant-time lookup of nodes from their indices. However, all things in a program already have such a reference enabling constant time lookup: a pointer, represented in rust by a reference. This was not used, as there were concerns about ensuring validity of each reference, and avoiding use-after-free bugs. These concerns were unfounded, as one of Rust's major features is that it provides safety guarantees ensuring that these problems are never encountered \cite{rust_book}. An object can only store a reference to another object if it can be guaranteed that it exists, and it will continue to exist for at least as long as the object storing the reference will. This is achieved via lifetime checking, using either inferred or explicitly stated specifiers of how long the two objects will exist relative to each other. 
+
+\paragraph{A Better Implementation}
+\ref{fig:ast_lst_2} shows an implementation that uses tagged unions to store information that is different for different node types, and pointers to the nodes directly rather than list indices. This avoids the possibility of referencing nodes that don't exist. It is also easier to understand what is common between nodes (syntax info) and what is uncommon. It is also more space efficient as it only stores the information that each type requires. The size of the improved implementation is 88 bytes, and the size of the original implementation is 128 bytes. The improved implementation is subjectively more elegant and readable. Objectively, it also takes up less space. It also forces memory safety, without the need for carefully implemented getter and setter functions. 
+
+Despite this, the decision was made not to update the implementation for several reasons. The AST is so central to the implementation, that it would take a long time to switch properly. Memory and speed are not major constraints for this project, but implementation time is. Furthermore, as long as all indices used are either produced by a helper function, or the AST root, there should not be a problem with memory safety. 
+
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{c}
+    \begin{lstlisting}[language=Rust]
+struct AST<'a> {
+    vec: Vec<ASTNode<'a>>,
+    root: &'a ASTNode<'a>,
+}
+
+enum ASTNodeType<'a> {
+    Identifier{name: String},
+    Literal{value: String, _type: PrimitiveType},
+    Pair{first: &'a ASTNode<'a>, second: &'a ASTNode<'a>},
+    Assignment{to: String, expr: &'a ASTNode<'a>, type_assign: Type},
+    Abstraction{var: String, expr: &'a ASTNode<'a>, type_assign: Type},
+    Module{assigns: Vec<&'a ASTNode<'a>>},
+    Match{expr: &'a ASTNode<'a>, cases: Vec<&'a ASTNode<'a>>}
+} 
+
+struct ASTNodeSyntaxInfo { ... }
+
+struct ASTNode<'a> {
+    t: ASTNodeType<'a>,
+    info: ASTNodeSyntaxInfo
+}
+    \end{lstlisting}
+    \end{tabular}
+    \caption{An alternative implementation with a few advantages over the actual implementation. }
+    \label{fig:ast_lst_2}
+\end{figure}
+
+\subsection{Methods on the AST}
+Below are a selection of the more important or interesting methods implemented on the AST and its nodes.
+
+\paragraph{Adding new nodes} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so the tree will add them to the end, and return their index. These methods are needed extensively for the parser.
+
+\paragraph{Getting children of nodes} As the interpretation of the \verb|children| array for each node changes depending on what type of node it is, a series of getters are implemented, such as `\verb|get_func|' to get the function of an application. These methods are needed extensively for the type checker, and the redex finding system. 
+
+\paragraph{Substitute variable} Substitutes all instances of a variable in an expression with a given expression. This is needed for applying abstractions. For instance, the process of reducing \verb|(\x.x) 1|, is:
+\begin{itemize}
+    \item Get the name of the variable abstracted over: \verb|x|.
+    \item Replace all instances of x in the abstraction expression with the right hand side of the application: \verb|1|.
+    \item Replace all references to the abstraction with references to the abstractions expression. 
+\end{itemize}
+Note that this orphans the node for the abstraction, and the node for the abstraction variable \verb|x|. This is hard to rectify as deleting any nodes will shift the whole list, which would invalidate indies of nodes, which will break many of the references. This is rectified by cloning the AST, as described below.
+
+\paragraph{Clone} The AST, or just a subsection of the AST from a given node, can be cloned by starting from the desired new root, and cloning each nodes children recursively. The new indices of each node may not be the same, as they may be moved in the list, but they will all be in the same place relative to each other. This also removes orphaned nodes, as they will never be cloned as they have no parents. 
+
+\paragraph{To String} \label{paragraph:to_string} Programs can also be effectively transformed back into strings. This requires a few other pieces of information to be associated with some tree nodes, to make the output program as similar to the input program as possible. The more similar the output is to the input, the easier it is to understand. Some examples include:
+\begin{itemize}
+    \item Whether the application was generated by using the right associative \verb|$| operator in order to avoid parenthesis, for instance \verb|id $ 1 + 1|. [TODO: fix the way that the dollar sign operator works. It can be redefined as an inbuilt as its just an infix op]
+    \item Whether the assignment, where the expression is an abstraction, was generated using the syntax \verb|x = \a.e| or the syntax \verb|x a = e|. 
+\end{itemize}
+We must also take into account whether a binary infix operator was used to generate a function call, and if so we must place it in the middle of its arguments. 
+
+There is also other syntax sugar, such as turning a List from `Cons' syntax into more familiar braced syntax, with comma separation.   For instance: \verb|Cons 1 (Cons 2 (Cons 3 Nil))| should be displayed as \verb|[1,2,3]|. [TODO: Consider whether to have only literals in this syntax or everything. Maybe toggleable syntax sugar?]
+
+\paragraph{Diff} \label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. The algorithm is as follows:
+\begin{verbatim}
+function diff(ast1, ast2, expr1, expr2) -> Diff {
+    node1, node2 = ast1.get(expr1), ast2.get(expr2)
+    diff = new Diff;
+    match (node1, node2) {
+        case (ID, ID)
+        case (Lit, Lit) {
+            if node1.value == node2.value {
+                diff += Similarity(node1.value)
+            } else {
+                diff += Difference(node1.value, node2.value)
+            }
+        }
+
+        case (Pair {first1, second1}, Pair {first2, second2}) {
+            diff += Similarity("(")
+            diff += diff(ast1, ast2, first1, first2)
+            diff += Similarity(",")
+            diff += diff(ast1, ast2, second1, second2)
+            diff ++ Similarity(")")
+        }
+
+        case (App {func1, arg1}, App {func2, arg2}) {
+            diff += diff(ast1, ast2, func1, func2)
+            diff += Similarity(" ")
+            // Lots of genetation of applications with syntax sugar ommitted
+            diff += diff(ast1, ast2, arg1, arg2)
+        }
+
+        case (
+            Match {matched1, cases1, patterns1}, 
+            Match {matched2, cases2, patterns2}
+        ) {
+            // If the cases are different, this is an entirely different 
+            // match expression, so just declare the whole thing a Difference. 
+            // This also checks that the lengths are the same
+            if cases1 != cases2 {
+                return [Difference(ast1.to_string(expr1), ast2.to_string(expr2))]
+            }
+
+            diff += Similarity("match (")
+            diff += diff(ast1, ast2, matched1, matched2)
+            diff += Similarity(") {\n")
+            
+            for i in 0..length(cases1) {
+                diff += Similarity("  | ")
+                diff += Similarity(ast1.to_string(cases1[i]))
+                diff += Similarity(" => ")
+                diff += diff(ast1, ast2, patterns1[i], patterns2[i])
+                diff += Similarity("\n")
+             }
+
+             diff += Similarity("}")
+        }
+
+        case (Abstraction {var1, abst_expr1}, Abstraction {var2, abst_expr2}) {
+            diff += Similarity("\")
+            diff += diff(ast1, ast2, var1, var2)
+            diff += Similarity(". ")
+            diff += diff(abst_expr1, abst_expr2)
+        }
+
+        // Diff should not be used outside of expressions
+        case (Assignment, Assignment)
+        case (Module, Module) {Error}
+
+        // If we have two different tree node structures, the whole thing 
+        // should be a change
+        case (_, _) {
+            diff += Difference(ast1.to_string(expr1), ast2.to_string(expr2))
+        }
+    }
+    
+    return diff;
+}
+\end{verbatim}
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{c}
+    \begin{lstlisting}[language=Rust]
+enum DiffElem {
+    Similarity(String),
+    Difference(String, String)
+}
+
+type Diff = Vec<DiffElem>
+    \end{lstlisting}
+    \end{tabular}
+    \caption{The Rust code listing for the type of the output of the AST::diff function. In actuality, there is a wrapper around the Diff type, to allow for conversion into JavaScript (see \ref{bg:wasm}), as well as some functions that provide shortcuts for common operations.}
+    \label{fig:diff_list}
+\end{figure}
+
+\section{Types}
+Rust allows us to represent our types, as defined in [REFHERE: Type system], quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
+
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{c}
+    \begin{lstlisting}[language=Rust]
+pub enum Primitive {
+    Int64,
+    Bool,
+}
+
+pub enum Type {
+    Unit,
+    Primitive(Primitive),
+    Function(Box<Type>, Box<Type>),
+    TypeVariable(String),
+    Forall(String, Box<Type>),
+    Product(Box<Type>, Box<Type>),
+    Union(String, Vec<Type>),
+    Alias(String, Box<Type>),
+
+    Existential(usize),
+}
+    \end{lstlisting}
+    \end{tabular}
+    \caption{The Rust code listing for the definition of types. Existential is separated as it is more of an implementation detail than a part of the type system}
+    \label{fig:type_lst}
+\end{figure}
+
+We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size: the size of a pointer in the target architecture. We also define Existential, as an implementation detail needed for the type checker. 
+
+\subsection{Methods on Types}
+Below are a selection of the more important or interesting methods implemented on Types.
+
+\paragraph{Substitution of type variables} We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
+
+\paragraph{To String} We will frequently wish to display types as strings for debugging purposes. 
+
+\section{The Parser}
+The parser needs to consume a program, and return the following things:
+\begin{itemize}
+    \item The AST
+    \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as a struct `\verb|LabelTable|' which is a wrapper around a \verb|HashMap<String, Type>| with some useful methods. 
+    \item The `Type Table': All type constructors and concrete types defined, stored with their arities. This is implemented as: \verb|HashMap<String, usize>|.
+\end{itemize}
+For instance, from the program:
+\begin{lstlisting}[]
+data List a = Cons a (List a) | Nil
+double x = x * 2	
+main :: List Int
+main = Cons (double 1) (Cons (double 2) Nil)
+\end{lstlisting}
+We should extract the following data:
+\begin{itemize}
+    \item The AST: 
+    \begin{lstlisting}[]
+Module:
+  Assignent
+    Identifier: double
+    Abstraction
+      Identifer: x
+      App
+        App
+          Identifier: +
+          Identifier: x
+        Literal: 2
+    \end{lstlisting}
+    \item All the known type assignments (excluding inbuilts)
+        \begin{itemize}
+            \item Cons: \(\forall a. a \Rightarrow List\;a\Rightarrow List\;a\)
+            \item Nil: \(\forall a. List\;a\)
+            \item main: \(\forall a. List\;a\)
+        \end{itemize}
+    \item The names of all known types (excluding inbuilts) 
+        \begin{itemize}
+            \item List, with an arity of 1
+        \end{itemize}
+\end{itemize}
+
+The parser will also store a set of all bound variables at each location. This will allow us to disqualify some invalid programs while generating the tree, rather than having to traverse it after generation to catch these issues. For instance, we must the following assignments:
+\begin{itemize}
+    \item \verb|x = (\x. e)| where e is a valid expression, as x is ambiguous during the expression e. This would be disqualified when attempting to parse the abstraction as x is already bound.  
+    \item \verb|x = y| where y is undefined.
+\end{itemize}
+
+\subsection{Lexical Analysis}
+Lexical analysis is the process splitting a program into its constituent tokens (Lexemes). For instance, the program \verb|main = (\x.x) 1| is the following stream of tokens: \[[Id: main, Assignment, LeftParen, Backslash, Id: x, Dot, Id: x, RightParen, Literal: 1]\]
+See \ref{appx:tokens} for the code listing of the definition of the tokens output by the lexical analysis.
+
+The lexer loads the entire string into memory at once. This is not typical, as this can lead to problems with large files. The approach discussed in \cite{dragon_book} relies on a system of two buffers only holding individual pages of the file from disk. However, this system will not be loading files from disk; the program string is already in memory as it comes from the UI. Therefore, there would be no benefit to a more traditional lexer optimised to reduce memory usage. 
+
+The lexer provides a \verb|next_token| function that returns the next token, and advances the pointer to the start of the token after. The lexer keeps track of line and column information, which is stored in the token to then be stored in the AST. 
+
+\subsection{Expression Parsing}
+Expressions are parsed using recursive descent parsing. Some of the techniques used for this part of the parser were inspired by the discussion of top down parsing in \cite{dragon_book}. 
+
+At the top level, the expression parsing method is \verb|parse_expression|. A variable \verb|left| stores what is currently the index of the expression. It is called left as if we encounter a token that denotes that \verb|left| is applied to whatever comes next, it becomes the left hand side of the application. \verb|left| is originally set to be the output of parsing a primary (see \ref{impl:parsing_primary}), and then progresses differently based on the next token.  Below are some of the ways that \verb|parse_expression| could proceed.
+\begin{itemize}
+    \item If the next token is an open bracket, we consume the token and then parse an expression. We then expect a closing bracket. We set \verb|left| to the application of \verb|left| to the expression
+    \item If the next token is a dollar sign, we consume the token and then parse an expression. We do not expect a closing bracket, and we error if we receive one. We set \verb|left| to the application of \verb|left| to the expression.    
+    \item If the next token is:
+    \begin{itemize}
+        \item A backslash, indicating the start of a lambda
+        \item An identifier, indicating a variable.
+        \item A literal
+        \item The match keyword
+    \end{itemize}
+    We parse a primary, and set left to the application of \verb|left| to our primary.
+    \item If the next token is:
+    \begin{itemize}
+        \item A closing bracket
+        \item EOF
+        \item A newline
+        \item An opening brace (indicating the end of parsing the matched expression of a match statement)
+        \item A double colon, indicating a type assignment follows
+    \end{itemize}
+    We return left. 
+\end{itemize}
+
+\subsubsection{Primary Parsing}
+\label{impl:parsing_primary}
+A primary is a less complex structure than an expression. In this system, a primary is most types of expression, without the various types of applications. The primaries are:
+\begin{itemize}
+    \item Literals
+    \item Identifiers
+    \item Lambdas
+    \item Match Statements
+    \item Expressions in brackets
+\end{itemize}
+Each of these have their own specific parsing algorithms, which may include calling \verb|parse_expression|. 
+
+\paragraph{Literal and Identifier Parsing}
+Literals and identifiers are turned trivially into their respective AST Nodes. For instance, the token:
+\begin{verbatim}
+Token {
+    line: 0,
+    col: 0,
+    tt: TokenType::IntLiteral
+    value: "2"
+}
+\end{verbatim}
+Is turned into this ASTNode:
+\begin{verbatim}
+ASTNode {
+    t: ASTNodeType::Literal,
+    token: Some({the token}),
+    children: [],
+    line: 0,
+    col: 0,
+    type_assignment: Option<Primitve::Int>,
+    additional_syntax_information: ...
+}
+\end{verbatim}
+\subsubsection{Parsing Match Statements}
+\subsubsection{Parsing Abstractions}
+Abstractions (in the simple case) are parsed by:
+\begin{itemize}
+    \item Consuming a lambda (represented by `\verb|\|' for ease of typing on standard keyboards)
+    \item Parsing a variable
+    \item Consuming the dot separator`\verb|.|'
+    \item Parsing an expression
+    \item Constructing an abstraction node from the variable and the expression
+However, the definition of abstractions have a few complicating elements of syntax sugar.
+\end{itemize}
+
+\paragraph{Abstractions May be Assignments}
+The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. 
+
+\paragraph{Abstractions May Have Multiple Variables}
+The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|'. 
+
+\subsection{Type Assignment and Definition Parsing}
+We must also be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a|, or \verb|data a|). Parsing both of these things require the ability to parse type expressions. 
+
+\subsubsection{Parsing Type Expressions}
+Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. The algorithm for parsing a primary is as follows:
+
+\paragraph{Parsing Type Expression Primaries}
+\begin{verbatim}
+function parse_type_expression_primary(bound_type_variables, type_table) {
+    next_token = consume()
+    match (next_token) {
+        case lowercase_id {
+            name = next_token.value
+            if bound_type_variables exists {
+                if !bound_type_variables.contains(name) {Error}
+            }
+            return TypeVariable(name)
+        }
+        case uppercase_id {
+            name = next_token.value
+            if type_table.contains(name) {
+                return type_table.get(name)
+            } else {Error}
+        }
+        case left_paren {
+            return parse_type_expression(bound_type_variables, type_table)
+        }
+        otherwise Error
+    }
+}
+\end{verbatim}
+\paragraph{Parsing Type Expressions}
+
+\subsubsection{Parsing Type Alias Definitions} 
+We may wish to add another name that a type can be known by. For instance, we may wish to define `\verb|String|' as a list of characters, so that we may reference it easier. A type alias declaration consists of:
+\begin{itemize}
+    \item The `\verb|type|' keyword
+    \item The name of the alias
+    \item The assignment operator ($=$)
+    \item The type expression
+\end{itemize}
+The function that produces type aliases returns a `\verb|Type::Alias(String, Box<Type>)|'. The reason we do not want to simply rename all references to the alias name to the type in question is that this would make type errors more obscure, and harder for users to understand the error with reference to the original program.
+
+\subsubsection{Parsing Data Declaration} 
+As discussed in [REFHERE: Language Design], we want to be able to define and parse \verb|data| declarations. A \verb|data| deceleration consists of: 
+\begin{itemize}
+    \item The `\verb|data|' keyword
+    \item The name of the type (uppercase ID)
+    \item The assignment operator (=)
+    \item A set of constructors separated by \(\mid\). Constructor definitions consist of the following. 
+        \begin{itemize}
+            \item The name of the constructor
+            \item Zero or more type expressions, representing what types the constructor can be applied to.
+        \end{itemize}
+\end{itemize}
+
+An example definition is: `\verb!data Either a b = Left a | Right b!'. The information that should be extracted from here is:
+\begin{itemize}
+    \item `\verb|Either|' is a type constructor with a kind of \(*\rightarrow* \rightarrow *\). As we have no higher kinded types, this can simply be stored as a number representing the arity of the type constructor. In this case, the arity is 2.
+    \item The constructors and their types are:
+    \begin{itemize}
+        \item `\verb|Left|': \(\forall a\;b.a\rightarrow Either\;a\;b\)
+        \item `\verb|Nil|': \(\forall a\;b.b\rightarrow Either\;a\;b\)
+    \end{itemize}
+\end{itemize}
+We must store the type name and its arity in the `Type Table', and all constructors in the `Label Table'. 
+
+In order to parse the type constructor definition, we continually expect a lowercase identifier token until we reach the assignment operator `\verb|=|'. The lowercase identifiers declared are passed to the functions that parse constructors so that we can enforce that all of the type variables used in the constructor parsing are `in scope'. We also do this to make sure that the variables are correct, and in the correct order in the constructor definitions. 
+
+Parsing constructors is not complex, as we have already implemented the mechanism for parsing type expressions. We simply keep parsing expressions until either the constructor separator ($\mid$) or a newline is reached. When parsing the type expression, we expect only valid concrete types in the Type Table, or valid in scope type variables from the type constructor definition. We then produce a type from the types of the arguments in order, so `\verb|ConstructorName expr1 expr2 expr3|' results in the type `\(expr1  \rightarrow expr2 \rightarrow expr3 \rightarrow  TypeName\)', with all of the free type variables lifted to the start of the type into a series of nested `\verb|Type::Forall|'s.
+
+\subsection{Module Parsing}
+
+\section{Type Checking}
+
+\section{Identifying Redexes}
+
+
+\section{The CLI}
+
