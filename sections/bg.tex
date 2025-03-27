@@ -1,6 +1,34 @@
 \chapter{Background}
 \label{chap:technical}
 
+\section{The Lambda Calculus}
+The lambda calculus was described by Alonzo Church in 1936 \cite{church1936unsolvable}. It forms the core of functional programming. Below is the definition of lambda calculus \cite{barendregt2013lambda}
+\begin{definition}[The Lambda Calculus]
+    The set of $\lambda$-terms, notation $\Lambda$, is built up from an infinite set of variables $V={v,v',v'',...}$ using application and (function) abstraction:
+    \begin{alignat*}{3}
+    &x \in V                 \quad && \implies \quad && x \in \Lambda\\
+    &M,N \in \Lambda         \quad && \implies \quad && (M N) \in \Lambda\\
+    &M \in \Lambda, x\in V   \quad && \implies \quad && (\lambda x M) \in \Lambda 
+    \end{alignat*}
+    Using abstract syntax one may write the following:
+    
+    \begin{alignat*}{3}
+    &V       && ::= \; && v \mid V'\\
+    &\Lambda && ::= \; && V \mid (\Lambda\Lambda) \mid (\lambda V\Lambda)
+    \end{alignat*}
+\end{definition}
+
+We shall also use some conventions used by Church \cite{church1941calculi}:
+
+[TODO: finish conventions]
+\begin{convention}[The Lambda Calculus Conventions]
+\begin{enumerate}
+    \item \(x, y, z,...\) denote arbitrary
+\end{enumerate}
+\end{convention}
+
+
+
 \section{Rust}
 \label{bg:rust}
 This project is written in rust. Some of the decisions made, particularly in the implementation of the AST, require an understanding of Rust, especially the memory management model.

@@ -88,10 +88,12 @@ In the below definition of the SFL type system, we define \(\Alpha\) as the set 
 \end{syntax}
 Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type. It can then be double checked for debugging purposes via an assertion in the type checker. 
 
-\subsection{Values}
-
-
 \subsection{Match}
-To support different execution based on a condition, we must have some structure that can differentiate between values. 
+To support different execution based on a condition, we must have some structure that can differentiate between values \ref{design:values}. 
 
 \subsection{Syntax Sugar}
+
+\subsection{Reduction}
+Functional programs progress via reduction. 
+\paragraph{Values}
+\label{design:values}

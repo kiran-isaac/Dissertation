@@ -75,6 +75,7 @@
 \RequirePackage{dtklogos}
 
 \RequirePackage{acronym}
+\setmathfont{Asana-Math.otf} 
 
 % =============================================================================
 

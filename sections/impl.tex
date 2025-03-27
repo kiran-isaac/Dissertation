@@ -352,18 +352,18 @@ The lexer provides a \verb|next_token| function that returns the next token, and
 \subsection{Expression Parsing}
 Expressions are parsed using recursive descent parsing. Some of the techniques used for this part of the parser were inspired by the discussion of top down parsing in \cite{dragon_book}. 
 
-At the top level, the expression parsing method is \verb|parse_expression|. A variable \verb|left| stores what is currently the index of the expression. It is called left as if we encounter a token that denotes that \verb|left| is applied to whatever comes next, it becomes the left hand side of the application. \verb|left| is originally set to be the output of parsing a primary (see \ref{impl:parsing_primary}), and then progresses differently based on the next token.  Below are some of the ways that \verb|parse_expression| could proceed.
+At the top level, the expression parsing method is \verb|parse_expression|. A variable \verb|left| stores what is currently the index of the expression. It is called \verb|left| as if we encounter a token that denotes that \verb|left| is applied to whatever comes next, it becomes the left hand side of the application. \verb|left| is originally set to be the output of parsing a primary (see \ref{impl:parsing_primary}), and then progresses differently based on the next token.  Below are some of the ways that \verb|parse_expression| could proceed.
 \begin{itemize}
     \item If the next token is an open bracket, we consume the token and then parse an expression. We then expect a closing bracket. We set \verb|left| to the application of \verb|left| to the expression
     \item If the next token is a dollar sign, we consume the token and then parse an expression. We do not expect a closing bracket, and we error if we receive one. We set \verb|left| to the application of \verb|left| to the expression.    
-    \item If the next token is:
+    \item If the next token is a token denoting the start of a primary expression structure:
     \begin{itemize}
         \item A backslash, indicating the start of a lambda
         \item An identifier, indicating a variable.
         \item A literal
-        \item The match keyword
+        \item The match keyword, indicating a match expression
     \end{itemize}
-    We parse a primary, and set left to the application of \verb|left| to our primary.
+    We parse a primary, and set \verb|left| to the application of \verb|left| to our primary.
     \item If the next token is:
     \begin{itemize}
         \item A closing bracket
@@ -372,12 +372,12 @@ At the top level, the expression parsing method is \verb|parse_expression|. A va
         \item An opening brace (indicating the end of parsing the matched expression of a match statement)
         \item A double colon, indicating a type assignment follows
     \end{itemize}
-    We return left. 
+    We return \verb|left|. 
 \end{itemize}
 
 \subsubsection{Primary Parsing}
 \label{impl:parsing_primary}
-A primary is a less complex structure than an expression. In this system, a primary is most types of expression, without the various types of applications. The primaries are:
+A primary is a less complex structure than an expression. In this system, a primary is any expression structure other than applications. The primaries are:
 \begin{itemize}
     \item Literals
     \item Identifiers
@@ -387,7 +387,7 @@ A primary is a less complex structure than an expression. In this system, a prim
 \end{itemize}
 Each of these have their own specific parsing algorithms, which may include calling \verb|parse_expression|. 
 
-\paragraph{Literal and Identifier Parsing}
+\subsubsection{}{Literal and Identifier Parsing}
 Literals and identifiers are turned trivially into their respective AST Nodes. For instance, the token:
 \begin{verbatim}
 Token {
@@ -409,23 +409,63 @@ ASTNode {
     additional_syntax_information: ...
 }
 \end{verbatim}
+
+Identifiers require the check that the identifier is bound at this location. 
 \subsubsection{Parsing Match Statements}
+An example of using a match statement follows:
+\begin{verbatim}
+lengthIsAtLeast2 list = match list {
+  | Cons x (Cons y xs) -> true
+  | _ => false
+}
+\end{verbatim}
+
+The algorithm used for parsing match statements is:
+\begin{itemize}
+    \item Consume the "match" keyword.
+    \item Parse the expression matched over
+    \item Consume an open brace
+    \item While the next token isn't a close brace: \begin{itemize}
+        \item Parse a pattern (\ref{impl:parsing_patterns}).
+        \item Consume a right arrow
+        \item Parse an expression
+    \end{itemize}
+    \item Consume a close brace
+\end{itemize}
+Following this, a match node is created, where the \verb|children| vector is set appropriately with the pattern and expressions.
+
+\paragraph{Patterns}
+\label{impl:parsing_patterns}
+A pattern must be a value \ref{design:values}; a pattern must not contain anything that can be reduced. It would be nonsensical to have a situation where we had a pattern not in normal form such as \verb|1 + 1| and the expression to be matched was \verb|2|. 
+
+To parse a pattern, we may use the same techniques as parsing an expression, with a few differences:
+\begin{itemize}
+    \item Disallowing abstractions
+    \item Identifiers must be either:
+    \begin{itemize}
+        \item Unbound lowercase variables
+        \item Underscore (\verb|_|) representing a wildcard pattern
+        \item A bound uppercase variable (a constructor)
+    \end{itemize}
+\end{itemize}
+
 \subsubsection{Parsing Abstractions}
 Abstractions (in the simple case) are parsed by:
 \begin{itemize}
     \item Consuming a lambda (represented by `\verb|\|' for ease of typing on standard keyboards)
-    \item Parsing a variable
+    \item Parsing a variable. This variable must be added to our set of "bound" variables.
     \item Consuming the dot separator`\verb|.|'
     \item Parsing an expression
     \item Constructing an abstraction node from the variable and the expression
-However, the definition of abstractions have a few complicating elements of syntax sugar.
 \end{itemize}
 
+However, the definition of abstractions have a few complicating elements of syntax sugar.
+
 \paragraph{Abstractions May be Assignments}
-The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. 
+The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. As previously mentioned in \ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
 
 \paragraph{Abstractions May Have Multiple Variables}
-The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|'. 
+The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|', and then producing a series of abstractions over these variables in order. 
 
 \subsection{Type Assignment and Definition Parsing}
 We must also be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a|, or \verb|data a|). Parsing both of these things require the ability to parse type expressions. 
