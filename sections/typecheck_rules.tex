@@ -1,8 +1,220 @@
 \def\OPTIONConf{1}
+\linespread{1}
+
+\renewcommand{\mathstrut}{\rule[-1pt]{0pt}{2pt}}
 
 \input{sections/Krishnaswami_Dunfield_macros}
 
-\newgeometry{lmargin=1cm,rmargin=1cm,tmargin=2.5cm,bmargin=2.5cm}
+\newcommand{\Uniontype}{$\bigcup$}
+\newcommand{\Unionname}{\text{UnionName}}
+\newcommand{\Producttype}{$\times$}
+
+
+\newcommand{\Aliasrulename}{\Tyrulename{\ensuremath{}Alias}}
+\newcommand{\Pairsynthrulename}{\Tyrulename{Pair$\syn$}}
+\newcommand{\Intsynthrulename}{\Tyrulename{IntLit$\syn$}}
+\newcommand{\Boolsynthrulename}{\Tyrulename{BoolLit$\syn$}}
+
+\newcommand{\Intsubrulename}{\Subrulename{\Inttype}}
+\newcommand{\Boolsubrulename}{\Subrulename{\Booltype}}
+\newcommand{\Pairsubrulename}{\Subrulename{\Producttype}}
+\newcommand{\Unionsubrulename}{\Subrulename{$\bigcup$}}
+
+\newcommand{\Inttype}{\text{Int}}
+\newcommand{\Booltype}{\text{Bool}}
+
+
+\begin{figure}[h]
+  \centering
+%
+  \[
+      \begin{array}{llcl}
+      \text{Types} & A, B, C & \bnfas &
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt \alltype{\alpha}{A} \bnfalt A \arr B \bnfalt (A, B) \bnfalt [A : B] \bnfalt 
+            \\[1pt] &&&\!\!\!
+            \Unionname[A_1, A_2, \dots, A_n]
+      \\[2pt]
+      \text{Monotypes} & \tau,\sigma & \bnfas &
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt A \arr B \bnfalt (A, B) \bnfalt [A : B]       
+        \\[4pt]
+      \text{Contexts} & \Gamma, \Delta, \Theta & \bnfas &
+                  \cdot
+                  \bnfalt \Gamma, \alpha 
+                  \bnfalt \Gamma, x:A
+                  \bnfalt \Gamma, \ahat
+                  \bnfalt \Gamma, \hypeq{\ahat}{\tau}
+                  \bnfalt \Gamma, \MonnierComma{\ahat}
+      \\[2pt]
+      \text{Complete Contexts}     & \Omega & \bnfas &
+                  \cdot
+                  \bnfalt    \Omega, \alpha
+                  \bnfalt    \Omega, x:A
+                  \bnfalt    \Omega, \hypeq{\ahat}{\tau} 
+                  \bnfalt    \Omega, \MonnierComma{\ahat}
+      \end{array}
+  \]
+  
+  \caption{Syntax of types, monotypes, and contexts in the algorithmic system}
+  \FLabel{fig:alg-syntax}
+\end{figure}
+\begin{figure*}[htbp]
+  \judgbox{\subjudg{\Gamma}{A}{B}{\Delta}}%
+     {Under input context $\Gamma$,
+       type $A$ is a subtype of $B$, with output context $\Delta$}
+  \begin{mathpar}
+  \Infer{\SubVar}
+              { }
+              {\subjudg{\Gamma[\alpha]}{\alpha}{\alpha}{\Gamma[\alpha]}}
+  \and
+  \Infer{\Intsubrulename}
+            { }
+            {\subjudg{\Gamma}{\Inttype}{\Inttype}{\Gamma}}
+              \and
+  \Infer{\Boolsubrulename}
+            { }
+            {\subjudg{\Gamma}{\Booltype}{\Booltype}{\Gamma}}
+  \\
+  \Infer{\SubExvar}
+            { }
+            {\subjudg{\Gamma[\ahat]}{\ahat}{\ahat}{\Gamma[\ahat]}}
+  \and
+  \Infer{\SubArr}
+            {\subjudg{\Gamma}{B_1}{A_1}{\Theta} \\
+              \subjudg{\Theta}{[\Theta]A_2}{[\Theta]B_2}{\Delta}}
+            {\subjudg{\Gamma}{A_1 \arr A_2}{B_1 \arr B_2}{\Delta}}
+  \\
+  \Infer{\SubAllL}
+            {\subjudg{\Gamma, \MonnierComma{\ahat}, \ahat}
+                     {[\ahat/\alpha]A}
+                     {B}
+                     {\Delta, \MonnierComma{\ahat}, \Theta}}
+            {\subjudg{\Gamma}{\alltype{\alpha}{A}}{B}{\Delta}}
+  \and
+  \Infer{\SubAllR}
+            {\subjudg{\Gamma, \alpha}{A}{B}{\Delta, \alpha, \Theta}}
+            {\subjudg{\Gamma}{A}{\alltype{\alpha}{B}}{\Delta}}
+  \\
+  \Infer{\SubInstL}
+            {
+              \ahat \notin \FV{%
+                A}
+              \\
+              \instjudg{\Gamma[\ahat]}{\ahat}{%
+                   A}{\Delta}
+            }
+            {\subjudg{\Gamma[\ahat]}{\ahat}{A}{\Delta}}
+  \and
+  \Infer{\SubInstR}
+            {
+              \ahat \notin \FV{%
+                A}
+              \\
+              \instjudgr{\Gamma[\ahat]}{\ahat}{%
+                A}{\Delta}
+            }
+            {\subjudg{\Gamma[\ahat]}{A}{\ahat}{\Delta}}
+  \\
+  \Infer{\Pairsubrulename}
+    {\subjudg{\Gamma}{A_1}{A_2}{\Theta} \\
+              \subjudg{\Theta}{B_1}{B_2}{\Delta}}
+    { \subjudg{\Gamma}{(A_1, B_1)}{(A_2, B_2)}{\Delta} }
+      \\
+  \Infer{\Unionsubrulename}
+    {(\subjudg{\Gamma_i}{A_i}{B_i}{\Gamma_{i+1}}) \forall i \in [1, 2, \dots, n]}
+    {\subjudg{\Gamma_1}{\Unionname[A_1, A_2, \dots, A_n]}{\Unionname[B_1, B_2, \dots, B_n]}{\Gamma_{n+1}}}
+  \end{mathpar}  
+  \caption{Algorithmic subtyping}
+  \FLabel{fig:alg-subtyping}
+\end{figure*}
+
+\begin{figure*}[htbp]
+      \judgbox{\instjudg{\Gamma}{\ahat}{A}{\Delta}}%
+         {Under input context $\Gamma$,
+           instantiate $\ahat$ such that $\ahat \subtype A$, 
+           with output context $\Delta$}
+      \begin{mathpar}
+        \Infer{\InstLSolve}
+                { \Gamma \entails \tau} %
+                { \instjudg{\Gamma, \ahat, \Gamma'}
+                            {\ahat}
+                            {\tau}
+                            {\Gamma, \hypeq{\ahat}{\tau}, \Gamma'}
+                 }
+        \and
+        \Infer{\InstLReach}
+                { }
+                {\instjudg{\Gamma[\ahat][\bhat]}
+                            {\ahat}
+                            {\bhat}
+                            {\Gamma[\ahat][\hypeq{\bhat}{\ahat}]}}
+        \and
+        \Infer{\InstLArr}
+                {\instjudgr{\Gamma[\ahat_2, \ahat_1, \hypeq{\ahat}{\ahat_1 \arr \ahat_2}]}
+                            {\ahat_1}
+                            {A_1}
+                            {\Theta} \\
+                 \instjudg{\Theta}
+                            {\ahat_2}
+                            {[\Theta]A_2}
+                            {\Delta}}
+                {\instjudg{\Gamma[\ahat]}
+                            {\ahat}
+                            {A_1 \arr A_2}
+                            {\Delta}}
+        \and
+        \Infer{\InstLAllR}
+              {\instjudg{\Gamma[\ahat], \beta}{\ahat}{B}{\Delta, \beta, \Delta'}}
+              {\instjudg{\Gamma[\ahat]}{\ahat}{\alltype{\beta}{B}}{\Delta}}
+      \end{mathpar}    
+    %
+    \\[-1.5ex]
+    %
+      \judgbox{\instjudgr{\Gamma}{\ahat}{A}{\Delta}}
+         {Under input context $\Gamma$,
+           instantiate $\ahat$ such that $A \subtype \ahat$,
+           with output context $\Delta$}
+      \begin{mathpar}
+        \Infer{\InstRSolve}
+                { \Gamma \entails \tau}
+                { \instjudgr{\Gamma, \ahat, \Gamma'}
+                            {\ahat}
+                            {\tau}
+                            {\Gamma, \hypeq{\ahat}{\tau}, \Gamma'}
+                 }
+        \and
+        \Infer{\InstRReach}
+                { }
+                {\instjudgr{\Gamma[\ahat][\bhat]}
+                           {\ahat}
+                           {\bhat}
+                           {\Gamma[\ahat][\hypeq{\bhat}{\ahat}]}}
+        \and
+        \Infer{\InstRArr}
+              {\instjudg{\Gamma[\ahat_2, \ahat_1, \hypeq{\ahat}{\ahat_1 \arr \ahat_2}]}
+                        {\ahat_1}
+                        {A_1}
+                        {\Theta} \\
+                 \instjudgr{\Theta}
+                           {\ahat_2}
+                           {[\Theta]A_2}
+                           {\Delta}}
+              {\instjudgr{\Gamma[\ahat]}
+                         {\ahat}
+                         {A_1 \arr A_2}
+                         {\Delta}}
+        \and 
+        \Infer{\InstRAllL}
+              {\instjudgr{\Gamma[\ahat], \MonnierComma{\bhat}, \bhat}{\ahat}{[\bhat/\beta]B}{\Delta, \MonnierComma{\bhat}, \Delta'}}
+              {\instjudgr{\Gamma[\ahat]}{\ahat}{\alltype{\beta}{B}}{\Delta}}
+      \end{mathpar}
+
+\caption{Instantiation}
+\FLabel{fig:instantiation}
+\end{figure*}
+
+%
+%
+%
 
 \begin{figure*}[htbp]
   \judgbox{\chkjudg{\Gamma}{e}{A}{\Delta}}%
@@ -12,12 +224,24 @@
      {Under input context $\Gamma$, $e$ synthesizes output type $A$,
        with output context $\Delta$} \\[1ex]
   \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
-     {Under input context $\Gamma$, applying a function of type $A$ to $e$ synthesizes type $C$, with output context $\Delta$} \\
-  \small\begin{mathpar}
+     {Under input context $\Gamma$, applying a function of type $A$ to $e$ \\synthesizes type $C$, with output context $\Delta$} \\
+  \begin{mathpar}
+    \Infer{\Intsynthrulename}
+        { }
+        {\synjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma}}
+    \and
+    \Infer{\Boolsynthrulename}
+        { }
+        {\synjudg{\Gamma}{Bool Literal}{\Booltype}{\Gamma}}
+    \and
      \Infer{\Var}
           {(x : A) \in \Gamma}
           {\synjudg{\Gamma}{x}{A}{\Gamma}}
-     \and
+     \\
+     \Infer{\Aliasrulename}
+        {\chkjudg{\Gamma}{e}{B}{\Delta}}
+        {\chkjudg{\Gamma}{e}{[A : B]}{\Delta}}
+    \and
      \Infer{\Sub}
           {\synjudg{\Gamma}{e}{A}{\Theta}
             \\
@@ -25,8 +249,8 @@
             \subjudg{\Theta}{[\Theta]A}{[\Theta]B}{\Delta}
           }
           {\chkjudg{\Gamma}{e}{B}{\Delta}}
-     \and
      \\
+     \def\CompactJudgments{1}   %
      \Infer{\AllIntro}
            {\chkjudg{\Gamma, \alpha}{e}{A}{\Delta, \alpha, \Theta}
            }
@@ -35,13 +259,13 @@
      \Infer{\AllApp}
             {\appjudg{\Gamma,\ahat}{e}{[\ahat/\alpha]A}{C}{\Delta}}
             {\appjudg{\Gamma}{e}{\alltype{\alpha}{A}}{C}{\Delta}}
-     \\
-\def\CompactJudgments{1}   %
+    \and
      \Infer{\!\ArrIntro}
           {\chkjudg{\Gamma, x : A}{e}{B}{\Delta, x : A, \Theta}
           }
           {\chkjudg{\Gamma}{\lam{x} e}{A \arr B}{\Delta}}
-     \hspace{3ex}
+     \\
+\def\CompactJudgments{1}   %
      \Infer{%
         {\!\ArrIntroSyn}
          }
@@ -65,10 +289,12 @@
       \Infer{\ArrApp}
             {\chkjudg{\Gamma}{e}{A}{\Delta}}
             {\appjudg{\Gamma}{e}{A \arr C}{C}{\Delta}}
+    \\
+    \Infer{\Pairsynthrulename}
+        {\synjudg{\Gamma}{e_1}{A}{\Theta} \\ \synjudg{\Theta}{e_2}{B}{\Delta}}
+        {\synjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
+    
   \end{mathpar}
   \caption{Algorithmic typing}
   \FLabel{fig:alg-typing}
 \end{figure*}
-
-
-\restoregeometry
