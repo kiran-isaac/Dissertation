@@ -76,6 +76,8 @@
 
 \RequirePackage{acronym}
 \setmathfont{Asana-Math.otf} 
+\RequirePackage{xcolor}
+\RequirePackage{}
 
 % =============================================================================
 

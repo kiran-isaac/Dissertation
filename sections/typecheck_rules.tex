@@ -1,0 +1,74 @@
+\def\OPTIONConf{1}
+
+\input{sections/Krishnaswami_Dunfield_macros}
+
+\newgeometry{lmargin=1cm,rmargin=1cm,tmargin=2.5cm,bmargin=2.5cm}
+
+\begin{figure*}[htbp]
+  \judgbox{\chkjudg{\Gamma}{e}{A}{\Delta}}%
+     {Under input context $\Gamma$, $e$ checks against input type $A$, 
+     with output context $\Delta$} \\[1ex]
+  \judgbox{\synjudg{\Gamma}{e}{A}{\Delta}}%
+     {Under input context $\Gamma$, $e$ synthesizes output type $A$,
+       with output context $\Delta$} \\[1ex]
+  \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
+     {Under input context $\Gamma$, applying a function of type $A$ to $e$ synthesizes type $C$, with output context $\Delta$} \\
+  \small\begin{mathpar}
+     \Infer{\Var}
+          {(x : A) \in \Gamma}
+          {\synjudg{\Gamma}{x}{A}{\Gamma}}
+     \and
+     \Infer{\Sub}
+          {\synjudg{\Gamma}{e}{A}{\Theta}
+            \\
+%
+            \subjudg{\Theta}{[\Theta]A}{[\Theta]B}{\Delta}
+          }
+          {\chkjudg{\Gamma}{e}{B}{\Delta}}
+     \and
+     \\
+     \Infer{\AllIntro}
+           {\chkjudg{\Gamma, \alpha}{e}{A}{\Delta, \alpha, \Theta}
+           }
+           {\chkjudg{\Gamma}{e}{\alltype{\alpha}{A}}{\Delta}}
+     \and
+     \Infer{\AllApp}
+            {\appjudg{\Gamma,\ahat}{e}{[\ahat/\alpha]A}{C}{\Delta}}
+            {\appjudg{\Gamma}{e}{\alltype{\alpha}{A}}{C}{\Delta}}
+     \\
+\def\CompactJudgments{1}   %
+     \Infer{\!\ArrIntro}
+          {\chkjudg{\Gamma, x : A}{e}{B}{\Delta, x : A, \Theta}
+          }
+          {\chkjudg{\Gamma}{\lam{x} e}{A \arr B}{\Delta}}
+     \hspace{3ex}
+     \Infer{%
+        {\!\ArrIntroSyn}
+         }
+           { \chkjudg{\Gamma, \ahat, \bhat, x : \ahat}{e}{\bhat}{\Delta, x : \ahat, \Theta}
+           }
+           {{\synjudg{\Gamma}{\lam{x} e}{\ahat \arr \bhat}{\Delta}}}
+     \hspace{3ex}
+     \Infer{\!\ArrElim}
+           {\synjudg{\Gamma}{e_1}{A}{\Theta}
+             \\
+             \appjudg{\Theta}{e_2}{[\Theta]A}{C}{\Delta}
+           }
+           {\synjudg{\Gamma}{e_1\,e_2}{C}{\Delta}}
+      \\
+\def\CompactJudgments{0}
+      %
+      \Infer{\SolveApp}
+            {\chkjudg{\Gamma[\ahat_2, \ahat_1, \hypeq{\ahat}{\ahat_1 \arr \ahat_2}]}{e}{\ahat_1}{\Delta}}
+            {\appjudg{\Gamma[\ahat]}{e}{\ahat}{\ahat_2}{\Delta}}
+      \and
+      \Infer{\ArrApp}
+            {\chkjudg{\Gamma}{e}{A}{\Delta}}
+            {\appjudg{\Gamma}{e}{A \arr C}{C}{\Delta}}
+  \end{mathpar}
+  \caption{Algorithmic typing}
+  \FLabel{fig:alg-typing}
+\end{figure*}
+
+
+\restoregeometry
