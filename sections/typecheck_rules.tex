@@ -16,7 +16,7 @@
 \newcommand{\Intsynthrulename}{\Tyrulename{IntLit$\syn$}}
 \newcommand{\Boolsynthrulename}{\Tyrulename{BoolLit$\syn$}}
 
-\definecolor{myTcRuleColour}{rgb}{0.95, 0.95, 0.95}
+\definecolor{myTcRuleColour}{rgb}{0.8, 0.8, 0.8}
 \newcommand{\MyTCRule}[1]{\colorbox{myTcRuleColour}{{#1}}}
 
 \newcommand{\Intsubrulename}{\Subrulename{\Inttype}}
@@ -28,42 +28,77 @@
 
 \newcommand{\Inttype}{\text{Int}}
 \newcommand{\Booltype}{\text{Bool}}
-
-
 \begin{figure}[h]
   \centering
-%
+  \begin{minipage}{0.6\textwidth}
   \[
       \begin{array}{llcl}
       \text{Types} & A, B, C & \bnfas &
-            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt \alltype{\alpha}{A} \bnfalt A \arr B \bnfalt (A, B) \bnfalt 
-            \\[1pt] &&&\!\!\!
-            \TypeAlias{A}{B} \bnfalt \Unionname[A_1, A_2, \dots, A_n]
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt 
+            \\[1pt] &&&\!\!\!\;\;\;
+            \alltype{\alpha}{A} \bnfalt A \arr B 
+            \\[1pt] &&&\!\!\!\;\;
+            \bnfalt (A, B) \bnfalt \TypeAlias{A}{B} \bnfalt  
+            \\[1pt] &&&\!\!\!\;\;
+            \Unionname[A_1, A_2, \dots, A_n]
       \\[2pt]
       \text{Monotypes} & \tau,\sigma & \bnfas &
-            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt A \arr B \bnfalt (A, B) \bnfalt \TypeAlias{A}{B}
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt A \arr B \bnfalt
+            \\[1pt] &&&\!\!\!\;\;
+            (A, B) \bnfalt \TypeAlias{A}{B}
         \\[4pt]
       \text{Contexts} & \Gamma, \Delta, \Theta & \bnfas &
                   \cdot
                   \bnfalt \Gamma, \alpha 
                   \bnfalt \Gamma, x:A
                   \bnfalt \Gamma, \ahat
+                  \\[1pt] &&&\!\!\!\;\;
                   \bnfalt \Gamma, \hypeq{\ahat}{\tau}
                   \bnfalt \Gamma, \MonnierComma{\ahat}
-      % \\[2pt] No need as I am not proving completeness
+      % \\[2pt] % No need as I am not proving completeness
       % \text{Complete Contexts}     & \Omega & \bnfas &
       %             \cdot
       %             \bnfalt    \Omega, \alpha
       %             \bnfalt    \Omega, x:A
+      %             \\[1pt] &&&\!\!\!
       %             \bnfalt    \Omega, \hypeq{\ahat}{\tau} 
       %             \bnfalt    \Omega, \MonnierComma{\ahat}
       \end{array}
   \]
   
-  \caption{Syntax of types, monotypes, and contexts in the algorithmic system}
+  \captionsetup{justification=centering}\caption{Syntax of types, monotypes, and contexts}
   \FLabel{fig:alg-syntax}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.35\textwidth}
+    \centering
+      \[
+  \begin{array}[t]{l@{~~~}c@{~~~}ll}
+      %
+      [\Gamma]\alpha   & = &   \alpha &
+      \\{}
+      [\Gamma]\unitty   & = &   \unitty &
+      \\[1pt]
+      \big[\Gamma[\hypeq{\ahat}{\tau}]\big] \ahat
+               & = &   \big[\Gamma[\hypeq{\ahat}{\tau}]\big]\tau &
+      \\[2pt]
+      \big[\Gamma[\ahat]\big]\ahat   & = &   \ahat &
+      \\[2pt]
+      [\Gamma](A \arr B)   & = &
+          ([\Gamma]A) \arr ([\Gamma]B) &
+      \\{}
+      [\Gamma](\alltype{\alpha} A)
+         & = & 
+         \alltype{\alpha} [\Gamma]A & 
+  \end{array}
+  \]
+  \captionsetup{justification=centering}\caption{Applying a context, as a substitution, to a type}
+  \FLabel{fig:substitution}
+  \end{minipage}
 \end{figure}
-\begin{figure*}[htbp]
+
+
+\begin{figure*}[h]
   \judgbox{\subjudg{\Gamma}{A}{B}{\Delta}}%
      {Under input context $\Gamma$,
        type $A$ is a subtype of $B$, with output context $\Delta$}
@@ -141,7 +176,7 @@
   \FLabel{fig:alg-subtyping}
 \end{figure*}
 
-\begin{figure*}[htbp]
+\begin{figure*}[h]
       \judgbox{\instjudg{\Gamma}{\ahat}{A}{\Delta}}%
          {Under input context $\Gamma$,
            instantiate $\ahat$ such that $\ahat \subtype A$, 
