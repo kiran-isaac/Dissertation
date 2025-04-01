@@ -9,13 +9,19 @@
 \newcommand{\Unionname}{\text{UnionName}}
 \newcommand{\Producttype}{$\times$}
 
+\newcommand{\TypeAlias}[2]{[#1 : #2]}
 
 \newcommand{\Aliasrulename}{\Tyrulename{\ensuremath{}Alias}}
-\newcommand{\Pairsynthrulename}{\Tyrulename{Pair$\syn$}}
+\newcommand{\Pairsynthrulename}{\Tyrulename{\Producttype$\syn$}}
 \newcommand{\Intsynthrulename}{\Tyrulename{IntLit$\syn$}}
 \newcommand{\Boolsynthrulename}{\Tyrulename{BoolLit$\syn$}}
 
+\definecolor{myTcRuleColour}{rgb}{0.95, 0.95, 0.95}
+\newcommand{\MyTCRule}[1]{\colorbox{myTcRuleColour}{{#1}}}
+
 \newcommand{\Intsubrulename}{\Subrulename{\Inttype}}
+\newcommand{\LAliassubrulename}{\Subrulename{\text{LAlias}}}
+\newcommand{\RAliassubrulename}{\Subrulename{\text{RAlias}}}
 \newcommand{\Boolsubrulename}{\Subrulename{\Booltype}}
 \newcommand{\Pairsubrulename}{\Subrulename{\Producttype}}
 \newcommand{\Unionsubrulename}{\Subrulename{$\bigcup$}}
@@ -30,12 +36,12 @@
   \[
       \begin{array}{llcl}
       \text{Types} & A, B, C & \bnfas &
-            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt \alltype{\alpha}{A} \bnfalt A \arr B \bnfalt (A, B) \bnfalt [A : B] \bnfalt 
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt \alltype{\alpha}{A} \bnfalt A \arr B \bnfalt (A, B) \bnfalt 
             \\[1pt] &&&\!\!\!
-            \Unionname[A_1, A_2, \dots, A_n]
+            \TypeAlias{A}{B} \bnfalt \Unionname[A_1, A_2, \dots, A_n]
       \\[2pt]
       \text{Monotypes} & \tau,\sigma & \bnfas &
-            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt A \arr B \bnfalt (A, B) \bnfalt [A : B]       
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt A \arr B \bnfalt (A, B) \bnfalt \TypeAlias{A}{B}
         \\[4pt]
       \text{Contexts} & \Gamma, \Delta, \Theta & \bnfas &
                   \cdot
@@ -44,13 +50,13 @@
                   \bnfalt \Gamma, \ahat
                   \bnfalt \Gamma, \hypeq{\ahat}{\tau}
                   \bnfalt \Gamma, \MonnierComma{\ahat}
-      \\[2pt]
-      \text{Complete Contexts}     & \Omega & \bnfas &
-                  \cdot
-                  \bnfalt    \Omega, \alpha
-                  \bnfalt    \Omega, x:A
-                  \bnfalt    \Omega, \hypeq{\ahat}{\tau} 
-                  \bnfalt    \Omega, \MonnierComma{\ahat}
+      % \\[2pt] No need as I am not proving completeness
+      % \text{Complete Contexts}     & \Omega & \bnfas &
+      %             \cdot
+      %             \bnfalt    \Omega, \alpha
+      %             \bnfalt    \Omega, x:A
+      %             \bnfalt    \Omega, \hypeq{\ahat}{\tau} 
+      %             \bnfalt    \Omega, \MonnierComma{\ahat}
       \end{array}
   \]
   
@@ -66,13 +72,21 @@
               { }
               {\subjudg{\Gamma[\alpha]}{\alpha}{\alpha}{\Gamma[\alpha]}}
   \and
-  \Infer{\Intsubrulename}
+  \Infer{\MyTCRule{\Intsubrulename}}
             { }
             {\subjudg{\Gamma}{\Inttype}{\Inttype}{\Gamma}}
               \and
-  \Infer{\Boolsubrulename}
+  \Infer{\MyTCRule{\Boolsubrulename}}
             { }
             {\subjudg{\Gamma}{\Booltype}{\Booltype}{\Gamma}}
+  \\
+  \Infer{\MyTCRule{\LAliassubrulename}}
+            { \subjudg{\Gamma}{C}{B}{\Delta}  }
+            { \subjudg{\Gamma}{\TypeAlias{A}{C}}{B}{\Delta} }
+  \and
+    \Infer{\MyTCRule{\RAliassubrulename}}
+            { \subjudg{\Gamma}{A}{C}{\Delta}  }
+            { \subjudg{\Gamma}{A}{\TypeAlias{B}{C}}{\Delta} }
   \\
   \Infer{\SubExvar}
             { }
@@ -114,12 +128,12 @@
             }
             {\subjudg{\Gamma[\ahat]}{A}{\ahat}{\Delta}}
   \\
-  \Infer{\Pairsubrulename}
+  \Infer{\MyTCRule{\Pairsubrulename}}
     {\subjudg{\Gamma}{A_1}{A_2}{\Theta} \\
               \subjudg{\Theta}{B_1}{B_2}{\Delta}}
     { \subjudg{\Gamma}{(A_1, B_1)}{(A_2, B_2)}{\Delta} }
       \\
-  \Infer{\Unionsubrulename}
+  \Infer{\MyTCRule{\Unionsubrulename}}
     {(\subjudg{\Gamma_i}{A_i}{B_i}{\Gamma_{i+1}}) \forall i \in [1, 2, \dots, n]}
     {\subjudg{\Gamma_1}{\Unionname[A_1, A_2, \dots, A_n]}{\Unionname[B_1, B_2, \dots, B_n]}{\Gamma_{n+1}}}
   \end{mathpar}  
@@ -226,11 +240,11 @@
   \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
      {Under input context $\Gamma$, applying a function of type $A$ to $e$ \\synthesizes type $C$, with output context $\Delta$} \\
   \begin{mathpar}
-    \Infer{\Intsynthrulename}
+    \Infer{\MyTCRule{\Intsynthrulename}}
         { }
         {\synjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma}}
     \and
-    \Infer{\Boolsynthrulename}
+    \Infer{\MyTCRule{\Boolsynthrulename}}
         { }
         {\synjudg{\Gamma}{Bool Literal}{\Booltype}{\Gamma}}
     \and
@@ -238,7 +252,7 @@
           {(x : A) \in \Gamma}
           {\synjudg{\Gamma}{x}{A}{\Gamma}}
      \\
-     \Infer{\Aliasrulename}
+     \Infer{\MyTCRule{\Aliasrulename}}
         {\chkjudg{\Gamma}{e}{B}{\Delta}}
         {\chkjudg{\Gamma}{e}{[A : B]}{\Delta}}
     \and
@@ -289,10 +303,10 @@
       \Infer{\ArrApp}
             {\chkjudg{\Gamma}{e}{A}{\Delta}}
             {\appjudg{\Gamma}{e}{A \arr C}{C}{\Delta}}
-    \\
-    \Infer{\Pairsynthrulename}
-        {\synjudg{\Gamma}{e_1}{A}{\Theta} \\ \synjudg{\Theta}{e_2}{B}{\Delta}}
-        {\synjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
+    % \\
+    % \Infer{\MyTCRule{\Pairsynthrulename}}
+    %     {\synjudg{\Gamma}{e_1}{A}{\Theta} \\ \synjudg{\Theta}{e_2}{B}{\Delta}}
+    %     {\synjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
     
   \end{mathpar}
   \caption{Algorithmic typing}
