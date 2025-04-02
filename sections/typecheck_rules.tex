@@ -31,7 +31,7 @@
 \newcommand{\Booltype}{\text{Bool}}
 \begin{figure}[h]
   \centering
-  \begin{minipage}{0.465\textwidth}
+  \begin{minipage}{0.5\textwidth}
   \[
       \begin{array}{llcl}
       \text{Types} & A, B, C & \bnfas &
@@ -57,7 +57,7 @@
                   \\[1pt] &&&\!\!\!\;\;
                   \bnfalt \Gamma, \ahat
                   \bnfalt \Gamma, \hypeq{\ahat}{\tau}
-                  \\[1pt] &&&\!\!\!\;\;
+                  % \\[1pt] &&&\!\!\!\;\;
                   \bnfalt \Gamma, \MonnierComma{\ahat}
       % \\[2pt] % No need as I am not proving completeness
       % \text{Complete Contexts}     & \Omega & \bnfas &
@@ -74,7 +74,7 @@
   \FLabel{fig:alg-syntax}
   \end{minipage}
   \hfill
-  \begin{minipage}{0.5\textwidth}
+  \begin{minipage}{0.475\textwidth}
     \centering
       \[
   \begin{array}[t]{l@{~}c@{~}ll}
@@ -234,7 +234,7 @@
          {Under input context $\Gamma$,
            instantiate $\ahat$ such that $A \subtype \ahat$,
            with output context $\Delta$}
-      \begin{mathpar}
+      \small\begin{mathpar}
         \Infer{\InstRSolve}
                 { \Gamma \entails \tau}
                 { \instjudgr{\Gamma, \ahat, \Gamma'}
@@ -299,10 +299,10 @@
           {(x : A) \in \Gamma}
           {\synjudg{\Gamma}{x}{A}{\Gamma}}
      \\
-     \Infer{\MyTCRule{\Aliasrulename}}
-        {\chkjudg{\Gamma}{e}{B}{\Delta}}
-        {\chkjudg{\Gamma}{e}{[A : B]}{\Delta}}
-    \and
+    %  \Infer{\MyTCRule{\Aliasrulename}}
+    %     {\chkjudg{\Gamma}{e}{B}{\Delta}}
+    %     {\chkjudg{\Gamma}{e}{[A : B]}{\Delta}}
+    % \and
      \Infer{\Sub}
           {\synjudg{\Gamma}{e}{A}{\Theta}
             \\
@@ -326,14 +326,14 @@
           }
           {\chkjudg{\Gamma}{\lam{x} e}{A \arr B}{\Delta}}
      \\
-\def\CompactJudgments{1}   %
+\def\CompactJudgments{0}   %
      \Infer{%
         {\!\ArrIntroSyn}
          }
            { \chkjudg{\Gamma, \ahat, \bhat, x : \ahat}{e}{\bhat}{\Delta, x : \ahat, \Theta}
            }
            {{\synjudg{\Gamma}{\lam{x} e}{\ahat \arr \bhat}{\Delta}}}
-     \hspace{3ex}
+     \and
      \Infer{\!\ArrElim}
            {\synjudg{\Gamma}{e_1}{A}{\Theta}
              \\
@@ -351,13 +351,15 @@
             {\chkjudg{\Gamma}{e}{A}{\Delta}}
             {\appjudg{\Gamma}{e}{A \arr C}{C}{\Delta}}
       \\
-      \Infer{\Matchsynthrulename}
+      \Infer{\MyTCRule{\Matchsynthrulename}}
             {
+            n \ge 1\\
             \synjudg{\Gamma}{e}{A}{\Theta_1} \\ 
             (\chkjudg{\Theta_i}{c_i}{A}{\Theta_{i+1}}) \forall i \in [1, 2, \dots, n] \\
-            (\chkjudg{\Theta_{n+1}}{c_i}{A}{\Theta_{i+1}}) \forall i \in [1, 2, \dots, n]
+            \Delta_1 = \Theta_{n+1}, \ahat \\
+            (\chkjudg{\Delta_{i}}{c_i}{\ahat}{\Delta_{i+1}}) \forall i \in [1, 2, \dots, n]
             }
-            {\synjudg{\Gamma}{\text{match e \{} c_1 \rightarrow e_1 \mid c_2 \rightarrow e_2 \mid \dots \mid c_n \rightarrow e_n \}}{B}{\Delta}}
+            {\synjudg{\Gamma}{\text{match e \{} c_1 \rightarrow e_1 \mid c_2 \rightarrow e_2 \mid \dots \mid c_n \rightarrow e_n \}}{\ahat}{\Delta_{n+1}}}
     % \\
     % \Infer{\MyTCRule{\Pairsynthrulename}}
     %     {\synjudg{\Gamma}{e_1}{A}{\Theta} \\ \synjudg{\Theta}{e_2}{B}{\Delta}}
