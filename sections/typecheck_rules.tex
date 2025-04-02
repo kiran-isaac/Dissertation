@@ -6,7 +6,7 @@
 \input{sections/Krishnaswami_Dunfield_macros}
 
 \newcommand{\Uniontype}{$\bigcup$}
-\newcommand{\Unionname}{\text{UnionName}}
+\newcommand{\Unionname}{\text{Name}}
 \newcommand{\Producttype}{$\times$}
 
 \newcommand{\TypeAlias}[2]{[#1 : #2]}
@@ -15,6 +15,7 @@
 \newcommand{\Pairsynthrulename}{\Tyrulename{\Producttype$\syn$}}
 \newcommand{\Intsynthrulename}{\Tyrulename{IntLit$\syn$}}
 \newcommand{\Boolsynthrulename}{\Tyrulename{BoolLit$\syn$}}
+\newcommand{\Matchsynthrulename}{\Tyrulename{Match$\syn$}}
 
 \definecolor{myTcRuleColour}{rgb}{0.8, 0.8, 0.8}
 \newcommand{\MyTCRule}[1]{\colorbox{myTcRuleColour}{{#1}}}
@@ -30,30 +31,33 @@
 \newcommand{\Booltype}{\text{Bool}}
 \begin{figure}[h]
   \centering
-  \begin{minipage}{0.55\textwidth}
+  \begin{minipage}{0.465\textwidth}
   \[
       \begin{array}{llcl}
       \text{Types} & A, B, C & \bnfas &
             \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt 
             \\[1pt] &&&\!\!\!\;\;\;
-            \alltype{\alpha}{A} \bnfalt A \arr B 
+            \alltype{\alpha}{A} \bnfalt A \arr B \bnfalt
+            % \\[1pt] &&&\!\!\!\;\; \TypeAlias{A}{B} \bnfalt  
             \\[1pt] &&&\!\!\!\;\;
-            \bnfalt (A, B) \bnfalt \TypeAlias{A}{B} \bnfalt  
+            (A, B) \bnfalt
             \\[1pt] &&&\!\!\!\;\;
-            \Unionname[A_1, A_2, \dots, A_n]
+            \Unionname[A_1, \dots, A_n]
       \\[2pt]
       \text{Monotypes} & \tau,\sigma & \bnfas &
-            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt A \arr B \bnfalt
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt 
             \\[1pt] &&&\!\!\!\;\;
-            (A, B) \bnfalt \TypeAlias{A}{B}
-        \\[4pt]
+            A \arr B \bnfalt (A, B)
+            % (A, B) \bnfalt \TypeAlias{A}{B}
+        \\[2pt]
       \text{Contexts} & \Gamma, \Delta, \Theta & \bnfas &
                   \cdot
                   \bnfalt \Gamma, \alpha 
                   \bnfalt \Gamma, x:A
-                  \bnfalt \Gamma, \ahat
                   \\[1pt] &&&\!\!\!\;\;
+                  \bnfalt \Gamma, \ahat
                   \bnfalt \Gamma, \hypeq{\ahat}{\tau}
+                  \\[1pt] &&&\!\!\!\;\;
                   \bnfalt \Gamma, \MonnierComma{\ahat}
       % \\[2pt] % No need as I am not proving completeness
       % \text{Complete Contexts}     & \Omega & \bnfas &
@@ -70,10 +74,10 @@
   \FLabel{fig:alg-syntax}
   \end{minipage}
   \hfill
-  \begin{minipage}{0.4\textwidth}
+  \begin{minipage}{0.5\textwidth}
     \centering
       \[
-  \begin{array}[t]{l@{~~~}c@{~~~}ll}
+  \begin{array}[t]{l@{~}c@{~}ll}
       %
       [\Gamma]\alpha   & = &   \alpha &
       \\{}
@@ -89,7 +93,15 @@
       \\{}
       [\Gamma](\alltype{\alpha} A)
          & = & 
-         \alltype{\alpha} [\Gamma]A & 
+         \alltype{\alpha} [\Gamma]A &
+      \\[2pt]
+      [\Gamma](A, B) 
+         & = &
+         ([\Gamma]A, [\Gamma]B)
+      \\[2pt]
+      [\Gamma]\Unionname[A_1,\dots, A_n]
+         & = &
+         \Unionname[[\Gamma]A_1,\dots, [\Gamma]A_n]
   \end{array}
   \]
   \captionsetup{justification=centering}\caption{Applying a context, as a substitution, to a type}
@@ -115,14 +127,14 @@
             { }
             {\subjudg{\Gamma}{\Booltype}{\Booltype}{\Gamma}}
   \\
-  \Infer{\MyTCRule{\LAliassubrulename}}
-            { \subjudg{\Gamma}{C}{B}{\Delta}  }
-            { \subjudg{\Gamma}{\TypeAlias{A}{C}}{B}{\Delta} }
-  \and
-    \Infer{\MyTCRule{\RAliassubrulename}}
-            { \subjudg{\Gamma}{A}{C}{\Delta}  }
-            { \subjudg{\Gamma}{A}{\TypeAlias{B}{C}}{\Delta} }
-  \\
+  % \Infer{\MyTCRule{\LAliassubrulename}}
+  %           { \subjudg{\Gamma}{C}{B}{\Delta}  }
+  %           { \subjudg{\Gamma}{\TypeAlias{A}{C}}{B}{\Delta} }
+  % \and
+  %   \Infer{\MyTCRule{\RAliassubrulename}}
+  %           { \subjudg{\Gamma}{A}{C}{\Delta}  }
+  %           { \subjudg{\Gamma}{A}{\TypeAlias{B}{C}}{\Delta} }
+  % \\
   \Infer{\SubExvar}
             { }
             {\subjudg{\Gamma[\ahat]}{\ahat}{\ahat}{\Gamma[\ahat]}}
@@ -338,6 +350,14 @@
       \Infer{\ArrApp}
             {\chkjudg{\Gamma}{e}{A}{\Delta}}
             {\appjudg{\Gamma}{e}{A \arr C}{C}{\Delta}}
+      \\
+      \Infer{\Matchsynthrulename}
+            {
+            \synjudg{\Gamma}{e}{A}{\Theta_1} \\ 
+            (\chkjudg{\Theta_i}{c_i}{A}{\Theta_{i+1}}) \forall i \in [1, 2, \dots, n] \\
+            (\chkjudg{\Theta_{n+1}}{c_i}{A}{\Theta_{i+1}}) \forall i \in [1, 2, \dots, n]
+            }
+            {\synjudg{\Gamma}{\text{match e \{} c_1 \rightarrow e_1 \mid c_2 \rightarrow e_2 \mid \dots \mid c_n \rightarrow e_n \}}{B}{\Delta}}
     % \\
     % \Infer{\MyTCRule{\Pairsynthrulename}}
     %     {\synjudg{\Gamma}{e_1}{A}{\Theta} \\ \synjudg{\Theta}{e_2}{B}{\Delta}}
