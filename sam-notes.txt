@@ -1,0 +1,23 @@
+Multi steps is important
+Diffrently indented matches
+Match hell!
+Infix Operators
+Lazy Many
+Forwards and backwards kb controls
+
+Reverse 
+
+Y combinator is cool to demo
+
+Example with infinite lists
+Really shows how lazy works
+
+Could do worksheets
+  - If i add a strict mode
+  - They will change the course based on it
+
+UI looks nice, practical
+
+Auto bracket around expressions
+
+Auto unindents things
