@@ -1,57 +1,7 @@
 \chapter{Design}
 \label{chap:design}
 
-\section{Language Design}
-\subsection{Goals}
-\label{design:goals}
-SFL is designed with the following goals in mind:
-\begin{enumerate}
-    \item SFL should be similar to existing functional languages.
-    \item SFL should be simple and easy to understand. 
-    \item SFL should be powerful.
-\end{enumerate}
-The features that should be selected for SFL are the features that maximise these goals for the minimum implementation complexity. The language's syntax and type system should also work towards these goals. 
 
-Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. 
-
-When adding features for the language, we must prioritise the "core" features of functional languages, and de-prioritise features that are not so "core" to the understanding of functional languages. 
-
-yadadada we should implement features that allow us to implement
-\begin{itemize}
-    \item Complex data structures, lists and trees
-    \item Fold
-    \item IO???
-\end{itemize}
-
-\subsection{Definitions}
-
-\begin{syntax}[Lowercase and Uppercase ID syntax as regular expressions]
-\label{def:identifier_syntax}
-(Lowercase Identifier): \(id ::= [a..z][a..zA..Z0..9\_]*\)\newline
-(Uppercase Identifier): \(Id ::= [A..Z][a..zA..Z0..9\_]*\)
-\end{syntax}
-
-\subsection{Basic Syntax}
-Lambda calculus is the basis of modern functional programming languages. As discussed in the background, Lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
-\begin{lstlisting}[]
-f = (\x.x)
-main = f y
-\end{lstlisting}
-Is identical to
-\begin{lstlisting}[]
-main = (\x.x) y
-\end{lstlisting}
-Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the "entry-point" expression in the program. Haskell, as well as many other languages, use "main" to represent a programs entry point, so we may use main. 
-
-We must also add a way to represent values, such as integers and booleans, to our language. Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated. 
-
-These two features massively shorten and simplify programming in this language.
-
-\begin{syntax}[The basic syntax of SFL]
-(Expression) \(E ::= [-][0, 1, ..] \mid true \mid false \mid id \mid \setminus id. E \mid E\:F\)\newline
-(Assignment) \(A ::= id = E\)\newline
-(Module) \(M ::= A\: M \mid End\)
-\end{syntax}
 
 \subsection{Type System}
 We must have types representing integers and booleans in our language, if we are to effectively check the validity of expression containing their respective literals. 

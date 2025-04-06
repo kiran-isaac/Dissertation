@@ -1,0 +1,313 @@
+\chapter{Cycle 1 - Proof of Concept}
+The goal of Cycle 1, which spanned approximately the first 3 weeks of the project, was to arrive at a proof of concept for the ideas t
+
+
+
+\sections{Designing SFL Explorer}
+The initial brief from my supervisor 
+
+\section{Language Design}
+\subsection{Goals}
+\label{design:goals}
+SFL is designed with the following goals in mind:
+\begin{enumerate}
+    \item SFL should be similar to existing functional languages.
+    \item SFL should be simple and easy to understand. 
+    \item SFL should be powerful.
+\end{enumerate}
+The features that should be selected for SFL are the features that maximise these goals for the minimum implementation complexity. The language's syntax and type system should also work towards these goals. 
+
+Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. 
+
+When adding features for the language, we must prioritise the "core" features of functional languages, and de-prioritise features that are not so "core" to the understanding of functional languages. 
+
+yadadada we should implement features that allow us to implement
+\begin{itemize}
+    \item Complex data structures, lists and trees
+    \item Fold
+    \item IO???
+\end{itemize}
+
+\subsection{Definitions}
+
+\begin{syntax}[Lowercase and Uppercase ID syntax as regular expressions]
+\label{def:identifier_syntax}
+(Lowercase Identifier): \(id ::= [a..z][a..zA..Z0..9\_]*\)\newline
+(Uppercase Identifier): \(Id ::= [A..Z][a..zA..Z0..9\_]*\)
+\end{syntax}
+
+\subsection{Basic Syntax}
+Lambda calculus is the basis of modern functional programming languages. As discussed in the background, Lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
+\begin{lstlisting}[]
+f = (\x.x)
+main = f y
+\end{lstlisting}
+Is identical to
+\begin{lstlisting}[]
+main = (\x.x) y
+\end{lstlisting}
+Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the "entry-point" expression in the program. Haskell, as well as many other languages, use "main" to represent a programs entry point, so we may use main. 
+
+We must also add a way to represent values, such as integers and booleans, to our language. Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated. 
+
+These two features massively shorten and simplify programming in this language.
+
+\begin{syntax}[The basic syntax of SFL]
+(Expression) \(E ::= [-][0, 1, ..] \mid true \mid false \mid id \mid \setminus id. E \mid E\:F\)\newline
+(Assignment) \(A ::= id = E\)\newline
+(Module) \(M ::= A\: M \mid End\)
+\end{syntax}
+
+\section{The Abstract Syntax Tree}
+The tree structure of \ac{SFL} requires the following different types of tree nodes:
+\begin{itemize}
+    \item Identifier
+    \item Literal
+    \item Pair
+    \item Application
+    \item Abstraction
+    \item Match
+    \item Assignment
+    \item Module
+\end{itemize}
+Initially, the approach taken when implementing this tree structure was to have each node `owning' its child nodes (see \ref{bg:rust}). However, it will be necessary frequently to be able to find nodes based on certain conditions (for example, the condition that this node is a valid redex) and then provide a value that represents the location of this node within the tree. Even if each of the tree nodes had a unique ID, locating a node from this value representing its location will require some sort of tree search.
+
+Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as AST and ASTNode, where AST was an array of ASTNodes, and each ASTNode stored their children's indices in this array. The position in the array of an ASTNode will be referred to as its index.
+
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{c}
+    \begin{lstlisting}[language=Rust]
+struct AST {
+    vec: Vec<ASTNode>,
+    root: usize,
+}
+
+enum ASTNodeType {
+    Identifier,
+    Literal,
+    Pair,
+    Application,
+    Assignment,
+    Abstraction,
+    Module,
+} 
+
+struct ASTNodeSyntaxInfo {...}
+
+struct ASTNode {
+    t: ASTNodeType,
+    token: Option<Token>,
+    children: Vec<usize>,
+    line: usize,
+    col: usize,
+    type_assignment: Option<Type>,
+    additional_syntax_information: ASTNodeSyntaxInfo
+}
+    \end{lstlisting}
+    \end{tabular}
+    \caption{The Rust code listing for the definition of the AST, with lifetime specifiers, accessibility modifiers, and the syntax information (see \ref{paragraph:to_string}) removed for conciseness.}
+    \label{fig:ast_lst}
+\end{figure}
+
+See \ref{fig:ast_lst} for the code listing for the AST definition. In this implementation, \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The AST stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. 
+
+The node indices in the \verb|children| vector represent different things depending on what kind of node it is. 
+\begin{itemize}
+    \item If it is an abstraction, the first node represents the variable (or pair of variables) abstracted over, and the second node represents the expression.
+    \item If it is an application, the first node is the function, and the second is the argument.
+    \item If it is a pair, the first node is the first in the pair, and the second is the second in the pair.
+    \item If it is a match expression, the first node represents the matched value, then after this it consists of the case followed by the resulting expression. Match expressions will always therefore have an odd number of children.
+    \item If it is a module, then each of the children is an assignment
+    \item If it is an assignment, then the first child is the variable being assigned to, and the second is the expression.
+\end{itemize}
+
+\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. \verb|Identifier| nodes used as abstraction arguments. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
+
+In order to effectively explain the structure of a parsed program going forwards, the following structure will be used to give a written representation of an AST:
+\begin{itemize}
+    \item Nodes are represented as one line each, where, with the name of the node type, followed by its value for \verb|Literal|s and \verb|Identifier|s.
+    \item The children of a node are all of the nodes with an indentation level one deeper than the node in question listed directly below it, until a shallower or equal depth node is listed. 
+\end{itemize}
+\filbreak\noindent
+For instance, 
+\begin{lstlisting}
+main = (\x.1) 2
+\end{lstlisting}
+would be represented as:
+\begin{lstlisting}
+Module:
+  Assignment:
+    Identifier: main
+    Application:
+      Abstraction:
+        Identifier: x
+        Literal: 1
+      Literal: 2
+\end{lstlisting}
+
+\subsection{With the Benefit of Hindsight}
+This project was my first major project using Rust. Below is a discussion of some Rust features which were not fully taken advantage of in this definition of syntax trees, followed by a discussion of the combination of these features that would have been more optimal. 
+
+\paragraph{Tagged Unions}
+An alternative implementation could have involved \verb|ASTNodeType| being a tagged union, with different node types being associated with different children and data items. For instance, application could be represented by \verb|Application(f: usize, x: usize)|, and identifiers could be 
+
+\noindent\verb|Identifier(String)|. This would be more space efficient, as each node requires different data. It would also more elegantly represent the fact that each type of node is a different thing, and de-obfuscate the meaning of each of the different fields of a node. 
+
+\paragraph{References}
+This definition of the AST and the nodes has a parent object owning all of the nodes. As previously discussed, this was done to enable constant-time lookup of nodes from their indices. However, all things in a program already have such a reference enabling constant time lookup: a pointer, represented in rust by a reference. This was not used, as there were concerns about ensuring validity of each reference, and avoiding use-after-free bugs. These concerns were unfounded, as one of Rust's major features is that it provides safety guarantees ensuring that these problems are never encountered \cite{rust_book}. An object can only store a reference to another object if it can be guaranteed that it exists, and it will continue to exist for at least as long as the object storing the reference will. This is achieved via lifetime checking, using either inferred or explicitly stated specifiers of how long the two objects will exist relative to each other. 
+
+\paragraph{A Better Implementation}
+\ref{fig:ast_lst_2} shows an implementation that uses tagged unions to store information that is different for different node types, and pointers to the nodes directly rather than list indices. This avoids the possibility of referencing nodes that don't exist. It is also easier to understand what is common between nodes (syntax info) and what is uncommon. It is also more space efficient as it only stores the information that each type requires. The size of the improved implementation is 88 bytes, and the size of the original implementation is 128 bytes. The improved implementation is subjectively more elegant and readable. Objectively, it also takes up less space. It also forces memory safety, without the need for carefully implemented getter and setter functions. 
+
+Despite this, the decision was made not to update the implementation for several reasons. The AST is so central to the implementation, that it would take a long time to switch properly. Memory and speed are not major constraints for this project, but implementation time is. Furthermore, as long as all indices used are either produced by a helper function, or the AST root, there should not be a problem with memory safety. 
+
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{c}
+    \begin{lstlisting}[language=Rust]
+struct AST<'a> {
+    vec: Vec<ASTNode<'a>>,
+    root: &'a ASTNode<'a>,
+}
+
+enum ASTNodeType<'a> {
+    Identifier{name: String},
+    Literal{value: String, _type: PrimitiveType},
+    Pair{first: &'a ASTNode<'a>, second: &'a ASTNode<'a>},
+    Assignment{to: String, expr: &'a ASTNode<'a>, type_assign: Type},
+    Abstraction{var: String, expr: &'a ASTNode<'a>, type_assign: Type},
+    Module{assigns: Vec<&'a ASTNode<'a>>},
+    Match{expr: &'a ASTNode<'a>, cases: Vec<&'a ASTNode<'a>>}
+} 
+
+struct ASTNodeSyntaxInfo { ... }
+
+struct ASTNode<'a> {
+    t: ASTNodeType<'a>,
+    info: ASTNodeSyntaxInfo
+}
+    \end{lstlisting}
+    \end{tabular}
+    \caption{An alternative implementation with a few advantages over the actual implementation. }
+    \label{fig:ast_lst_2}
+\end{figure}
+
+\subsection{Methods on the AST}
+Below are a selection of the more important or interesting methods implemented on the AST and its nodes.
+
+\paragraph{Adding new nodes} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so the tree will add them to the end, and return their index. These methods are needed extensively for the parser.
+
+\paragraph{Getting children of nodes} As the interpretation of the \verb|children| array for each node changes depending on what type of node it is, a series of getters are implemented, such as `\verb|get_func|' to get the function of an application. These methods are needed extensively for the type checker, and the redex finding system. 
+
+\paragraph{Substitute variable} Substitutes all instances of a variable in an expression with a given expression. This is needed for applying abstractions. For instance, the process of reducing \verb|(\x.x) 1|, is:
+\begin{itemize}
+    \item Get the name of the variable abstracted over: \verb|x|.
+    \item Replace all instances of x in the abstraction expression with the right hand side of the application: \verb|1|.
+    \item Replace all references to the abstraction with references to the abstractions expression. 
+\end{itemize}
+Note that this orphans the node for the abstraction, and the node for the abstraction variable \verb|x|. This is hard to rectify as deleting any nodes will shift the whole list, which would invalidate indies of nodes, which will break many of the references. This is rectified by cloning the AST, as described below.
+
+\paragraph{Clone} The AST, or just a subsection of the AST from a given node, can be cloned by starting from the desired new root, and cloning each nodes children recursively. The new indices of each node may not be the same, as they may be moved in the list, but they will all be in the same place relative to each other. This also removes orphaned nodes, as they will never be cloned as they have no parents. 
+
+\paragraph{To String} \label{paragraph:to_string} Programs can also be effectively transformed back into strings. This requires a few other pieces of information to be associated with some tree nodes, to make the output program as similar to the input program as possible. The more similar the output is to the input, the easier it is to understand. Some examples include:
+\begin{itemize}
+    \item Whether the application was generated by using the right associative \verb|$| operator in order to avoid parenthesis, for instance \verb|id $ 1 + 1|. [TODO: fix the way that the dollar sign operator works. It can be redefined as an inbuilt as its just an infix op]
+    \item Whether the assignment, where the expression is an abstraction, was generated using the syntax \verb|x = \a.e| or the syntax \verb|x a = e|. 
+\end{itemize}
+We must also take into account whether a binary infix operator was used to generate a function call, and if so we must place it in the middle of its arguments. 
+
+There is also other syntax sugar, such as turning a List from `Cons' syntax into more familiar braced syntax, with comma separation.   For instance: \verb|Cons 1 (Cons 2 (Cons 3 Nil))| should be displayed as \verb|[1,2,3]|. [TODO: Consider whether to have only literals in this syntax or everything. Maybe toggleable syntax sugar?]
+
+\paragraph{Diff} \label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. The algorithm is as follows:
+\begin{verbatim}
+function diff(ast1, ast2, expr1, expr2) -> Diff {
+    node1, node2 = ast1.get(expr1), ast2.get(expr2)
+    diff = new Diff;
+    match (node1, node2) {
+        case (ID, ID)
+        case (Lit, Lit) {
+            if node1.value == node2.value {
+                diff += Similarity(node1.value)
+            } else {
+                diff += Difference(node1.value, node2.value)
+            }
+        }
+
+        case (Pair {first1, second1}, Pair {first2, second2}) {
+            diff += Similarity("(")
+            diff += diff(ast1, ast2, first1, first2)
+            diff += Similarity(",")
+            diff += diff(ast1, ast2, second1, second2)
+            diff ++ Similarity(")")
+        }
+
+        case (App {func1, arg1}, App {func2, arg2}) {
+            diff += diff(ast1, ast2, func1, func2)
+            diff += Similarity(" ")
+            // Lots of genetation of applications with syntax sugar ommitted
+            diff += diff(ast1, ast2, arg1, arg2)
+        }
+
+        case (
+            Match {matched1, cases1, patterns1}, 
+            Match {matched2, cases2, patterns2}
+        ) {
+            // If the cases are different, this is an entirely different 
+            // match expression, so just declare the whole thing a Difference. 
+            // This also checks that the lengths are the same
+            if cases1 != cases2 {
+                return [Difference(ast1.to_string(expr1), ast2.to_string(expr2))]
+            }
+
+            diff += Similarity("match (")
+            diff += diff(ast1, ast2, matched1, matched2)
+            diff += Similarity(") {\n")
+            
+            for i in 0..length(cases1) {
+                diff += Similarity("  | ")
+                diff += Similarity(ast1.to_string(cases1[i]))
+                diff += Similarity(" => ")
+                diff += diff(ast1, ast2, patterns1[i], patterns2[i])
+                diff += Similarity("\n")
+             }
+
+             diff += Similarity("}")
+        }
+
+        case (Abstraction {var1, abst_expr1}, Abstraction {var2, abst_expr2}) {
+            diff += Similarity("\")
+            diff += diff(ast1, ast2, var1, var2)
+            diff += Similarity(". ")
+            diff += diff(abst_expr1, abst_expr2)
+        }
+
+        // Diff should not be used outside of expressions
+        case (Assignment, Assignment)
+        case (Module, Module) {Error}
+
+        // If we have two different tree node structures, the whole thing 
+        // should be a change
+        case (_, _) {
+            diff += Difference(ast1.to_string(expr1), ast2.to_string(expr2))
+        }
+    }
+    
+    return diff;
+}
+\end{verbatim}
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{c}
+    \begin{lstlisting}[language=Rust]
+enum DiffElem {
+    Similarity(String),
+    Difference(String, String)
+}
+
+type Diff = Vec<DiffElem>
+    \end{lstlisting}
+    \end{tabular}
+    \caption{The Rust code listing for the type of the output of the AST::diff function. In actuality, there is a wrapper around the Diff type, to allow for conversion into JavaScript (see \ref{bg:wasm}), as well as some functions that provide shortcuts for common operations.}
+    \label{fig:diff_list}
+\end{figure}
