@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.2 Chrome/134.0.6998.178 Electron/35.1.2 Safari/537.36" version="26.2.2">
   <diagram name="Page-1" id="naqO3UB14UELRaTEX7sg">
-    <mxGraphModel dx="2507" dy="1035" grid="0" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1643" dy="503" grid="0" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -149,7 +149,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="hM-hrojuRj3igWchaKqM-52" value="Advanced&lt;div&gt;focus group&lt;/div&gt;&lt;div&gt;and content&lt;/div&gt;&lt;div&gt;analysis on&amp;nbsp;&lt;/div&gt;&lt;div&gt;transcript&lt;sub&gt;2&lt;/sub&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="158" y="466" width="90" height="90" as="geometry" />
+          <mxGeometry x="-127.75999999999999" y="320" width="90" height="90" as="geometry" />
         </mxCell>
         <mxCell id="hM-hrojuRj3igWchaKqM-72" value="Intermediate&lt;div&gt;focus group&lt;/div&gt;&lt;div&gt;and content&lt;/div&gt;&lt;div&gt;analysis on&amp;nbsp;&lt;/div&gt;&lt;div&gt;transcript&lt;sub&gt;3&lt;/sub&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="76" y="466" width="90" height="90" as="geometry" />
@@ -176,6 +176,9 @@
             <mxPoint x="489" y="368" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="ysskoGdbqaUmGtHIPNJA-7" value="Discussion&amp;nbsp;&lt;div&gt;of&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;type system&lt;/span&gt;&lt;div&gt;&amp;nbsp;and&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;language&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="196" y="607" width="95" height="55" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
