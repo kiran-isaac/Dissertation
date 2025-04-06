@@ -394,7 +394,6 @@ At the top level, the expression parsing method is \verb|parse_expression|. A va
         \item A backslash, indicating the start of a lambda
         \item An identifier, indicating a variable.
         \item A literal
-        \item The match keyword, indicating a match expression
     \end{itemize}
     We parse a primary, and set \verb|left| to the application of \verb|left| to our primary.
     \item If the next token is:
@@ -442,7 +441,28 @@ ASTNode {
 }
 \end{verbatim}
 
-To parse an identifier, we must also check that the identifier is bound at this location.  
+\subsubsection{Parsing Abstractions}
+Abstractions (in the simple case) are parsed by:
+\begin{itemize}
+    \item Consuming a lambda (represented by `\verb|\|' for ease of typing on standard keyboards)
+    \item Parsing a variable. This variable must be added to our set of "bound" variables.
+    \item Consuming the dot separator`\verb|.|'
+    \item Parsing an expression
+    \item Constructing an abstraction node from the variable and the expression
+\end{itemize}
+
+However, the definition of abstractions have a few complicating elements of syntax sugar.
+
+\paragraph{Abstractions May be Assignments}
+The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. As previously mentioned in \ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
+
+\paragraph{Abstractions May Have Multiple Variables}
+The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|', and then producing a series of abstractions over these variables in order. 
+
+To parse an identifier, we must also check that the identifier is bound at this location.
+
+\subsection{Web UI MVP}
+I also developed as part of this cycle the Minimum Viable Project for the Web UI. 
 
 \section{Evaluation}
 This cycle was an effective starting point for the project. 
