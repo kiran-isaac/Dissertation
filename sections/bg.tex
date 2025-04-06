@@ -49,6 +49,7 @@ If a value is owned in one scope, but another scope needs to read/write it, we m
 These rules ensure that immutable references are to things that don't change, and all references are always to things that exist.
 
 \section{Frontend Technologies}
+\label{bg:frontend}
 \begin{itemize}
     \item Vite
     \item React
@@ -66,3 +67,6 @@ Web Assembly 2.0 is a 32 bit target \cite{WebAssemblyCoreSpecification2}. This m
 Producing an NPM package with some JavaScript functions that call the webasembly functions would achieve both of these goals. However, if we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the wasm functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 
 
 Fortunately, the rust crate \verb|wasm-bindgen| provides macros that generate a whole NPM package, including TS bindings, automatically. This package can then be added as a dependency to an NPM app that provides a website, and the functions within it can [TODO: wasm bindgen vs wasm pack?]
+
+\paragraph{wasm-pack}
+\label{bg:wasm-pack}
