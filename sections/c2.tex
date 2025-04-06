@@ -1,8 +1,10 @@
-\chapter{Design}
-\label{chap:design}
+\chapter{Cycle 2 - Types and Pattern Matching}
+This second cycle was about extending the language with more complicated features. 
 
+\section{Requirements Analysis}
+I presented the proof of concept project 
 
-
+\section{Design}
 \subsection{Type System}
 We must have types representing integers and booleans in our language, if we are to effectively check the validity of expression containing their respective literals. 
 
@@ -20,17 +22,17 @@ applyToBoth f x y = (f x, f y)
 If \verb|f| is to be applied to any type, it must have a type \(\forall a. a\rightarrow a\). This means the type of the function \verb|applyToBoth| must be \(\forall a \;b.(\forall c \rightarrow c) \rightarrow a \rightarrow b \rightarrow (a, b)\)
 
 This requires the ability to parse expressions with nested \verb|foralls|, as well as support during type inference for higher-kinded types. We do not think that this is a priority for the system, as 
-These first-order polymorphic type constructors would be useful to have in SFL, with one example of their utility being defining the polymorphic function "\verb|length :: List a -> Int|" which should work regardless of what type the list is over. Higher order polymorphism is less important
+These first-order polymorphic type constructors would be useful to have in \ac{SFL}, with one example of their utility being defining the polymorphic function "\verb|length :: List a -> Int|" which should work regardless of what type the list is over. Higher order polymorphism is less important
 The "Type of a Type" is known as its \emph{kind} \cite{pierce2002types}. Another example is the type representing "Either left or right: \(Either \;a\;b\)", that can be defined with its constructors as \verb!data Either a b = Left a | Right b!. "Either" is a type constructor with the kind "Type -> Type -> Type", meaning it takes two concrete types and returns a concrete type. 
 Higher-kinded types are types where there are parenthesis in a kind expression, not including the implicit ones implying right associativity: 
 "\verb|Type -> Type -> Type|" is implicitly "\verb|Type -> (Type -> Type)|"
 We can avoid thinking about kinds by enforcing that a type constructor is always given the correct number of arguments
 
-Supporting tagged unions and tuples in the SFL type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
+Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
 Type names, as well as constructor names, start with uppercase letters in Haskell. This allows them to be easily differentiated from type variables, as well as regular variables. 
-In the below definition of the SFL type system, we define \(\Alpha\) as the set of valid type names starting with uppercase letters defined by \(Id\), and \(\alpha\) as the set of valid type variable names defined by \(id\). 
+In the below definition of the \ac{SFL} type system, we define \(\Alpha\) as the set of valid type names starting with uppercase letters defined by \(Id\), and \(\alpha\) as the set of valid type variable names defined by \(id\). 
 
-\begin{syntax}[Types in SFL]
+\begin{syntax}[Types in \ac{SFL}]
 (Inbuilts): \(B::=Int\mid Bool\)\newline
 (Monotype): \(\tau, \sigma ::= \alpha \mid B \mid \tau \rightarrow \sigma \mid (\tau, \sigma) \mid \Alpha \;T, U,...\)\newline
 (Alias): \(A ::= Id = T\)\newline
@@ -42,8 +44,3 @@ Note that our type constructor application definition above is more permissive t
 To support different execution based on a condition, we must have some structure that can differentiate between values \ref{design:values}. 
 
 \subsection{Syntax Sugar}
-
-\subsection{Reduction}
-Functional programs progress via reduction. 
-\paragraph{Values}
-\label{design:values}
