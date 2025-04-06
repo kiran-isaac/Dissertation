@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.2 Chrome/134.0.6998.178 Electron/35.1.2 Safari/537.36" version="26.2.2">
   <diagram name="Page-1" id="naqO3UB14UELRaTEX7sg">
-    <mxGraphModel dx="2403" dy="825" grid="0" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1697" dy="455" grid="0" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -169,9 +169,9 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="dPtq7rBxvpi5ur3fX5a5-4" value="&lt;u&gt;AFG&lt;/u&gt;&lt;div&gt;Discussion&amp;nbsp;&lt;div&gt;of&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;type system&lt;/span&gt;&lt;div&gt;&amp;nbsp;and&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;language&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="274" y="668" width="95" height="70" as="geometry" />
+          <mxGeometry x="216" y="620" width="95" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="dPtq7rBxvpi5ur3fX5a5-5" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=none;startFill=0;strokeColor=light-dark(#C74440,#EDEDED);movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;exitX=0.737;exitY=0.114;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1">
+        <mxCell id="dPtq7rBxvpi5ur3fX5a5-5" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=none;startFill=0;strokeColor=light-dark(#C74440,#EDEDED);movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;exitX=0.905;exitY=0.371;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.853;entryY=0.443;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="dPtq7rBxvpi5ur3fX5a5-4" source="dPtq7rBxvpi5ur3fX5a5-4">
           <mxGeometry width="100" relative="1" as="geometry">
             <mxPoint x="347.0150000000001" y="678.98" as="sourcePoint" />
             <mxPoint x="344" y="685" as="targetPoint" />
@@ -461,6 +461,16 @@
           <mxGeometry width="100" relative="1" as="geometry">
             <mxPoint x="103" y="616" as="sourcePoint" />
             <mxPoint x="99" y="619" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dPtq7rBxvpi5ur3fX5a5-79" value="&lt;u&gt;Testathon&lt;/u&gt;&lt;br&gt;&lt;div&gt;Evaluation of&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;Web UI MVP&lt;/div&gt;&lt;div&gt;usability&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="341" y="700" width="91" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="dPtq7rBxvpi5ur3fX5a5-80" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=none;startFill=0;strokeColor=light-dark(#C74440,#EDEDED);movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;exitX=0.737;exitY=0.114;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="410.0150000000001" y="699.98" as="sourcePoint" />
+            <mxPoint x="408" y="707" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
