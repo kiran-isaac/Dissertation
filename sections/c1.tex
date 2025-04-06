@@ -1,25 +1,33 @@
 \chapter{Cycle 1 - Proof of Concept}
-The goal of Cycle 1, which spanned approximately the first 3 weeks of the project, was to arrive at a proof of concept for the ideas t
+The goal of Cycle 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This cycle started at the beginning of the project, with a discussion with Jess Foster, my supervisor, and the identification of my client, Samantha Frohlich. I proceeded by designing the system, designing \ac{SFL}, and then implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept by speaking to my client. 
 
+\section{Requirements Analysis}
+This project was proposed by my supervisor, Jess Foster. She is a lecturer at the University of Bristol, who lectures in the \ac{FP} unit in first year. In our meeting in November 2024, we discussed how she wanted a tool that demonstrates how functional languages are evaluated step by step, so she could demonstrate this in these lectures. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. 
 
+Jess helped me to identify an appropriate client: Samantha Frohlich, another lecturer in functional programming, who also wanted a tool that fit this brief. This was necessary, as Jess's existing role as my supervisor/primary marker could limit guidance she could give me as a client. 
 
-\sections{Designing SFL Explorer}
-The initial brief from my supervisor 
+\subsection{Initial Brief Breakdown}
+Following this meeting, I broke down this brief into smaller parts, and thought about what they entailed. 
+
+\paragraph{Demonstrating \ac{FP} language evaluation} The tool must contain, at its core, a functional programming language. The programming language should be designed with the following goals in mind:
+\begin{enumerate}
+    \item It should be similar to existing functional languages, to allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work in a similar way).
+    \item It should be simple and easy to understand. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand why they work. 
+    \item It should be powerful enough to explain key concepts.
+\end{enumerate}
+The features that should be selected for the language are the features that maximise these goals for the minimum implementation complexity. The language's syntax and type system should also work towards these goals. Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. When adding features for the language, we must prioritise the features that allow explanation of the `core' features of functional languages, and de-prioritise features that are not so `core' to the understanding of functional languages. 
+
+\paragraph{Step by Step} The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken.
+
+\paragraph{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. 
+
+\paragraph{Use as a Self Teaching Tool} The tool should be `self explanatory' enough for people to use it on their own without expert help. It should be fairly intuitive, and should have all of the information required to use it presented to users.
 
 \section{Language Design}
+In this section I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design, and it was the proof of concept.  
+
 \subsection{Goals}
 \label{design:goals}
-SFL is designed with the following goals in mind:
-\begin{enumerate}
-    \item SFL should be similar to existing functional languages.
-    \item SFL should be simple and easy to understand. 
-    \item SFL should be powerful.
-\end{enumerate}
-The features that should be selected for SFL are the features that maximise these goals for the minimum implementation complexity. The language's syntax and type system should also work towards these goals. 
-
-Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. 
-
-When adding features for the language, we must prioritise the "core" features of functional languages, and de-prioritise features that are not so "core" to the understanding of functional languages. 
 
 yadadada we should implement features that allow us to implement
 \begin{itemize}
@@ -33,6 +41,7 @@ yadadada we should implement features that allow us to implement
 \begin{syntax}[Lowercase and Uppercase ID syntax as regular expressions]
 \label{def:identifier_syntax}
 (Lowercase Identifier): \(id ::= [a..z][a..zA..Z0..9\_]*\)\newline
+(Operator): \(op ::= + \mid - \mid \times \mid / \mid > \mid \ge \mid < \mid \le \mid== \mid \mathrel{\mathtt{!=}} \)\newline
 (Uppercase Identifier): \(Id ::= [A..Z][a..zA..Z0..9\_]*\)
 \end{syntax}
 
@@ -52,13 +61,19 @@ We must also add a way to represent values, such as integers and booleans, to ou
 
 These two features massively shorten and simplify programming in this language.
 
-\begin{syntax}[The basic syntax of SFL]
+\begin{syntax}[The basic syntax of \ac{SFL}]
 (Expression) \(E ::= [-][0, 1, ..] \mid true \mid false \mid id \mid \setminus id. E \mid E\:F\)\newline
 (Assignment) \(A ::= id = E\)\newline
 (Module) \(M ::= A\: M \mid End\)
 \end{syntax}
 
-\section{The Abstract Syntax Tree}
+\subsection{Reduction}
+Functional programs progress via reduction. 
+\paragraph{Values}
+\label{design:values}
+
+\section{Implementation}
+\subsection{The Abstract Syntax Tree}
 The tree structure of \ac{SFL} requires the following different types of tree nodes:
 \begin{itemize}
     \item Identifier
@@ -146,7 +161,7 @@ Module:
       Literal: 2
 \end{lstlisting}
 
-\subsection{With the Benefit of Hindsight}
+\subsubsection{With the Benefit of Hindsight}
 This project was my first major project using Rust. Below is a discussion of some Rust features which were not fully taken advantage of in this definition of syntax trees, followed by a discussion of the combination of these features that would have been more optimal. 
 
 \paragraph{Tagged Unions}
@@ -193,7 +208,7 @@ struct ASTNode<'a> {
     \label{fig:ast_lst_2}
 \end{figure}
 
-\subsection{Methods on the AST}
+\subsubsection{Methods on the AST}
 Below are a selection of the more important or interesting methods implemented on the AST and its nodes.
 
 \paragraph{Adding new nodes} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so the tree will add them to the end, and return their index. These methods are needed extensively for the parser.
@@ -311,3 +326,123 @@ type Diff = Vec<DiffElem>
     \caption{The Rust code listing for the type of the output of the AST::diff function. In actuality, there is a wrapper around the Diff type, to allow for conversion into JavaScript (see \ref{bg:wasm}), as well as some functions that provide shortcuts for common operations.}
     \label{fig:diff_list}
 \end{figure}
+
+\section{The Parser}
+The parser needs to consume a program, and return the following things:
+\begin{itemize}
+    \item The AST
+    \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as a struct `\verb|LabelTable|' which is a wrapper around a \verb|HashMap<String, Type>| with some useful methods. 
+    \item The `Type Table': All type constructors and concrete types defined, stored with their arities. This is implemented as: \verb|HashMap<String, usize>|.
+\end{itemize}
+For instance, from the program:
+\begin{lstlisting}[]
+data List a = Cons a (List a) | Nil
+double x = x * 2	
+main :: List Int
+main = Cons (double 1) (Cons (double 2) Nil)
+\end{lstlisting}
+We should extract the following data:
+\begin{itemize}
+    \item The AST: 
+    \begin{lstlisting}[]
+Module:
+  Assignent
+    Identifier: double
+    Abstraction
+      Identifer: x
+      App
+        App
+          Identifier: +
+          Identifier: x
+        Literal: 2
+    \end{lstlisting}
+    \item All the known type assignments (excluding inbuilts)
+        \begin{itemize}
+            \item Cons: \(\forall a. a \Rightarrow List\;a\Rightarrow List\;a\)
+            \item Nil: \(\forall a. List\;a\)
+            \item main: \(\forall a. List\;a\)
+        \end{itemize}
+    \item The names of all known types (excluding inbuilts) 
+        \begin{itemize}
+            \item List, with an arity of 1
+        \end{itemize}
+\end{itemize}
+
+The parser will also store a set of all bound variables at each location. This will allow us to disqualify some invalid programs while generating the tree, rather than having to traverse it after generation to catch these issues. For instance, we must the following assignments:
+\begin{itemize}
+    \item \verb|x = (\x. e)| where e is a valid expression, as x is ambiguous during the expression e. This would be disqualified when attempting to parse the abstraction as x is already bound.  
+    \item \verb|x = y| where y is undefined.
+\end{itemize}
+
+\subsection{Lexical Analysis}
+Lexical analysis is the process splitting a program into its constituent tokens (Lexemes). For instance, the program \verb|main = (\x.x) 1| is the following stream of tokens: \[[Id: main, Assignment, LeftParen, Backslash, Id: x, Dot, Id: x, RightParen, Literal: 1]\]
+See \ref{appx:tokens} for the code listing of the definition of the tokens output by the lexical analysis.
+
+The lexer loads the entire string into memory at once. This is not typical, as this can lead to problems with large files. The approach discussed in \cite{dragon_book} relies on a system of two buffers only holding individual pages of the file from disk. However, this system will not be loading files from disk; the program string is already in memory as it comes from the UI. Therefore, there would be no benefit to a more traditional lexer optimised to reduce memory usage. 
+
+The lexer provides a \verb|next_token| function that returns the next token, and advances the pointer to the start of the token after. The lexer keeps track of line and column information, which is stored in the token to then be stored in the AST. 
+
+\subsection{Expression Parsing}
+Expressions are parsed using recursive descent parsing. Some of the techniques used for this part of the parser were inspired by the discussion of top down parsing in \cite{dragon_book}. 
+
+At the top level, the expression parsing method is \verb|parse_expression|. A variable \verb|left| stores what is currently the index of the expression. It is called \verb|left| as if we encounter a token that denotes that \verb|left| is applied to whatever comes next, it becomes the left hand side of the application. \verb|left| is originally set to be the output of parsing a primary (see \ref{impl:parsing_primary}), and then progresses differently based on the next token.  Below are some of the ways that \verb|parse_expression| could proceed.
+\begin{itemize}
+    \item If the next token is an open bracket, we consume the token and then parse an expression. We then expect a closing bracket. We set \verb|left| to the application of \verb|left| to the expression
+    \item If the next token is a dollar sign, we consume the token and then parse an expression. We do not expect a closing bracket, and we error if we receive one. We set \verb|left| to the application of \verb|left| to the expression.    
+    \item If the next token is a token denoting the start of a primary expression structure:
+    \begin{itemize}
+        \item A backslash, indicating the start of a lambda
+        \item An identifier, indicating a variable.
+        \item A literal
+        \item The match keyword, indicating a match expression
+    \end{itemize}
+    We parse a primary, and set \verb|left| to the application of \verb|left| to our primary.
+    \item If the next token is:
+    \begin{itemize}
+        \item A closing bracket
+        \item EOF
+        \item A newline
+        \item An opening brace (indicating the end of parsing the matched expression of a match statement)
+        \item A double colon, indicating a type assignment follows
+    \end{itemize}
+    We return \verb|left|. 
+\end{itemize}
+
+\subsubsection{Primary Parsing}
+\label{impl:parsing_primary}
+A primary is a less complex structure than an expression. In this system, a primary is any expression structure other than applications. The primaries are:
+\begin{itemize}
+    \item Literals
+    \item Identifiers
+    \item Lambdas
+    \item Expressions in brackets
+\end{itemize}
+Each of these have their own specific parsing algorithms, which may include calling \verb|parse_expression|. 
+
+\subsubsection{Literal and Identifier Parsing}
+Literals and identifiers are turned trivially into their respective AST Nodes. For instance, the token:
+\begin{verbatim}
+Token {
+    line: 0,
+    col: 0,
+    tt: TokenType::IntLiteral
+    value: "2"
+}
+\end{verbatim}
+Is turned into this ASTNode:
+\begin{verbatim}
+ASTNode {
+    t: ASTNodeType::Literal,
+    token: Some({the token}),
+    children: [],
+    line: 0,
+    col: 0,
+    type_assignment: Option<Primitve::Int>,
+    additional_syntax_information: ...
+}
+\end{verbatim}
+
+To parse an identifier, we must also check that the identifier is bound at this location.  
+
+\section{Evaluation}
+This cycle was an effective starting point for the project. 

@@ -1,19 +1,13 @@
 \chapter{Introduction}
 \label{chap:context}
 
-In this dissertation, I present SFL-explorer, a tool to demonstrate how a functional programming language is evaluated.
+In this dissertation I present SFL-explorer: a tool to demonstrate how functional programming languages are evaluated, allowing users to gain a valuable intuition of these languages.
 
-SFL-explorer takes the form of a functional language (SFL), packaged with some interfaces that allows users to observe the process of evaluation of a term as a series of step by step or multi-step reductions, and control the order that sub-terms are evaluated. Two interfaces are provided, a command line interface and a web application. The ultimate goal of this project was to make a tool that makes learning and teaching the basics of functional programming easier. There are two groups of people the project is designed to be of interest to:
+SFL-explorer takes the form of a functional language (\ac{SFL}), packaged with two interfaces that allows users to observe the process of evaluation of a term as a series of step by step or multi-step reductions, and control the order that sub-terms are evaluated. These interfaces are a \ac{CLI} and a web application. The ultimate goal of this project was to make a tool that makes learning and teaching the basics of functional programming easier. There are two groups of people the project is designed to be of interest to:
 \begin{itemize}
     \item Those involved in learning functional languages. These could be students of a university course, or anyone interested in the topic. 
-    \item Those involved in teaching functional languages, as part of a course or otherwise.
+    \item Those involved in teaching functional languages, as part of a university course or otherwise.
 \end{itemize}
 
 The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL-explorer and apply it to these languages. 
 
-\section{Motivation}
-This project was proposed by my supervisor, Jess Foster. She is a lecturer at the University of Bristol, who lectures in the functional programming unit in first year. She wanted a tool that demonstrates how functional languages are evaluated step by step, so she could demonstrate this in these lectures.
-
-The students of the FP unit are likely students who have programmed before, but not in any functional languages. 
-
-She wanted a system that showed the step by step evaluation of a functional programming language, and allowed one to pick the reduction order. 
