@@ -2,13 +2,17 @@
 \label{chap:technical}
 
 \section{The Lambda Calculus}
-The lambda calculus was described by Alonzo Church in 1936 \cite{church1936unsolvable}. It forms the core of functional programming. Below is the definition of lambda calculus \cite{barendregt2013lambda}
-\begin{definition}[The Lambda Calculus]
+\newcommand{\lcalc}{$\lambda$-calculus}
+\newcommand{\lCalc}{$\lambda$-Calculus}
+\newcommand{\fto}{\rightarrow}
+The lambda calculus (\lcalc) was described by Alonzo Church in 1936 \cite{church1936unsolvable}. Below is a definition of the \lcalc
+\cite{barendregt2013lambda}
+\begin{definition}[The \lcalc]
     The set of $\lambda$-terms, notation $\Lambda$, is built up from an infinite set of variables $V={v,v',v'',...}$ using application and (function) abstraction:
     \begin{alignat*}{3}
     &x \in V                 \quad && \implies \quad && x \in \Lambda\\
     &M,N \in \Lambda         \quad && \implies \quad && (M N) \in \Lambda\\
-    &M \in \Lambda, x\in V   \quad && \implies \quad && (\lambda x M) \in \Lambda 
+    &M \in \Lambda, x\in V   \quad && \implies \quad && (\lambda x. M) \in \Lambda 
     \end{alignat*}
     Using abstract syntax one may write the following:
     
@@ -18,16 +22,133 @@ The lambda calculus was described by Alonzo Church in 1936 \cite{church1936unsol
     \end{alignat*}
 \end{definition}
 
-We shall also use some conventions used by Church \cite{church1941calculi}:
+We shall also use the following conventions:
 
-[TODO: finish conventions]
-\begin{convention}[The Lambda Calculus Conventions]
-\begin{enumerate}
-    \item \(x, y, z,...\) denote arbitrary
-\end{enumerate}
-\end{convention}
+\begin{definition}[The \lCalc\ Conventions]$\ $\vspace{-0.5cm}
+    \begin{enumerate}
+        \item \(x, y, z,...\) denote arbitrary variables
+        \item We may omit outermost parenthesis
+        \item Nested abstractions can be grouped. For instance, if we were to write the term $\lambda x \;y. M$, we would mean $(\lambda x . (\lambda\;y. M))$
+        \item We assume that the body of an abstraction extends as far to the right as possible. For instance, the term $\lambda x. M\;N$ means $(\lambda x. (M\;N))$ and not $((\lambda x. M)\;N)$
+    \end{enumerate}
+\end{definition}
+
+\newcommand{\BetaReduce}{\rightarrow_\beta}
+\subsection{Reduction}
+The \lcalc\ is evaluated by $\beta$-reduction. This is where an abstraction is applied to a value. The result of applying an abstraction to a term is the body of the abstraction, with the all free instances of the abstracted variable are substituted with the term the abstraction was applied to. Below is the definition of how this substitution works, followed by the definition of $\beta$-reduction. 
+
+\begin{definition}[Substitution of free variables in terms of the \lcalc]$\ $\vspace{-0.5cm}
+\begin{alignat*}{3}
+&x[x::=N]                           \quad && \equiv \quad && N\\
+&y[x::=N] \text{ where } y \ne x    \quad && \equiv \quad && y\\
+&(M_1 M_2)[x::=N]                   \quad && \equiv \quad && (M_1[x::=N]) (M_2[x::=N])\\
+&(\lambda y.M)[x::=N]                \quad && \equiv \quad && \lambda y.(M[x::=N])
+\end{alignat*}  
+\end{definition}
+
+\begin{definition}[$\beta$-Reduction of the \lcalc]$\ $\vspace{-0.5cm}
+\begin{alignat*}{3}
+&x                 \quad && \BetaReduce \quad &&        x\\
+&\lambda x.M       \quad && \BetaReduce \quad &&        \lambda x.M\\
+&(\lambda x.M) N   \quad && \BetaReduce \quad &&        M[x::=N]
+\end{alignat*}    
+\end{definition}
+
+\begin{definition}[Normal Form]
+A term is said to be in normal form if it cannot be $\beta$-reduced
+\end{definition}
+
+\subsection{Types}
+The \lcalc\ that we have discussed so far is untyped. This means that any $\lambda$ term can be applied to any other term. When a term can no longer be $\beta$-reduced (i.e. no further reductions are possible), we say it is a value. This is why $\beta$-reduction is often referred to as \textit{evaluation} — it is the process by which terms are reduced to their final, fully evaluated form (i.e. values).
+
+If we were to extend our \lcalc\ with a new sort of term, an integer literal (something commonly done, especially when building up to discussing practical functional languages) \[\dots, -2, -1, 0, 1, 2, \dots\] we could say that these values are members of a set of values $Int$. It would be useful for us to be able to assert that a term eventually evaluates to one of these $Int$s. The \lcalc\ terms that evaluate to a value in the set of $Int$s can all be said to have `type' $Int$. More generally: 
+
+\begin{quote}
+`Saying that `a term $t$ has type $T$' (or `$t$ belongs to $T$,' or `$t$ is an element of $T$') means that $t$ `obviously' evaluates to a value of the appropriate form - where by `obviously' we mean that we can see this statically, without doing any evaluation of $t$' \cite{pierce2002types}
+\end{quote}
+
+\subsubsection{Functions}
+We want to be able to express the types of functions. The term \(\lambda x. x\) can be said to have type \(T \fto T\), as it takes in a term of type $T$ and returns the same term, which still has type $T$.
+
+A more complex term \(\lambda x\;y.x\) can be said to have type \(T \fto (U \fto T)\); If we give it a term $M$ of type $T$, it would return the function \(\lambda y.M\) which takes whatever is given to it (represented by $U$) and returns $M$ which has type $T$. 
+
+By convention, $\fto$ is right associative so way may omit the right most parenthesis. 
+
+\subsubsection{Typechecking: Well typed programs do not go wrong}
+In this extended value of the lambda calculus, the set of valid values $V$ is:
+\[
+V ::= \lambda x. M \mid \dots \mid -2\mid -1\mid 0\mid 1\mid 2\mid \dots 
+\]
+
+The evaluation of an \lcalc\ expression is said to have `gone wrong' if it gets to a normal form that is not a valid value.
+
+Let us consider the expression and its reduction
+\[
+(\lambda x. x\;x) \;1 \BetaReduce 1\;1
+\]
+\noindent The reduction is not a valid value.
+
+We will now attempt to derive the type of $x$, in order to show that it is untypable.
+As $x$ here is applied to itself, it must be some kind of function that takes a term $x$ of with type $T$ and then applies it to itself. This means that $T = T \fto U$ which is absurd. This means that this is `untypable'. Indeed, it is clearly never possible to type an expression where a term is applied to itself. If this was a real programming language, when it got to the normal form \(1\;1\), it would be some form of runtime error. We can see that only allowing typable terms would have prevented us from creating a term that does not evaluate in this case. 
+
+In general, \textbf{well typed programs do not go wrong} \cite{MILNER1978348}. Therefore, if we are able to exclude all terms in our functional language that are untypable, we will be able to guarantee that it does not go wrong, and thus prevent these runtime errors. 
+
+The system that looks at a program to decide whether it is well typed is called the \textbf{typechecker}. Types can often also be inferred without specific assignments, which is called \textbf{type inference}.
+
+\section{Haskell: A Functional Programming Language}
+Functional programming languages are programming languages where `computation is carried out entirely through the evaluation of expressions' \cite{hudak1989conceptionfunctionalprogranning}. Functional programming languages are based on the lambda calculus. In this section, we will only discuss one example: Haskell. 
+
+Haskell is a very prominent functional programming language that is widely taught. It is a programming language specifically designed to be suitable for teaching \cite{hudak2007history}. This dissertation involves the development of a programming language with some similar features to Haskell, so the corresponding Haskell features and ideas will be introduced here. 
+
+\subsection{Declarations}
+Haskell, along with most other languages, provides the facility to name functions and values for reference elsewhere in the program. These can be typed, but the types can almost always be inferred. 
+
+Some examples of these declarations, all typed for clarity, are below. For instance, the top level declaration
+\begin{verbatim}
+x :: Int
+x = 5
+\end{verbatim}
+means that $x$ is equal to $5$. We can also name lambda functions:
+\begin{verbatim}
+add :: Int -> Int -> Int
+add = \x y -> x + y
+\end{verbatim}
+This can be shortened to:
+\begin{verbatim}
+add :: Int -> Int -> Int
+add x y = x + y
+\end{verbatim}
+
+\subsection{Polymorphic fuctions}
+
+\subsection{User Defined Data Types}
+Haskell allows users to define their own types. For instance, booleans can be defined as
+\begin{verbatim}
+data Bool = True | False
+\end{verbatim}
+
+Many languages, including Haskell, also have Algebraic Data Types allowing us to "Compose" other data types. The set of all values of an algebraic data type is isomorphic to an expression involving the sets of values of their constituent types combined using `set algebra' operations. Haskell allows for `union' and `product' types.  
+
+An example of a product type is the tuple \((Int, Bool)\): the set of all possible values of this type is isomorphic to the Cartesian product of the set of all values of \(Int\) and the set of all values of $Bool$. Most languages have product types, which often take the form of structs or tuples. 
+
+An example of a union type in Haskell is the tagged union:
+
+\noindent\verb!"data Shape = Circle Int | Rectangle Int Int"!, which is isomorphic to the type \(Int \cup (Int \times Int)\). 
+
+\subsection{Polymorphic Types}
+Haskell includes polymorphic types. These are `types that are universally quantified in some way over all types' \cite{hudak1992gentle}. 
+
+One example is a list that can hold any value of type $a$, written as \(List\;a\)". Here, \(List\) is not a type in itself, but it represents a constructor that takes a type, and returns a concrete type. We could write this as "$Type \fto Type$", indicating that it behaves like a function, but at the type level rather than the value level. If we were to apply the constructor \(List\) to the concrete type \(Int\), the resulting type would be the concrete type \(List \;Int\). 
+
+This is first-order polymorphism (rank 1 polymorphism), as opposed to higher-order polymorphism (also known as higher-kinded polymorphism) where a type can "abstraction over type constructors" \cite{yallop2014lightweightpoly}. 
+
+The "Type of a Type" is its \emph{kind} \cite{pierce2002types}. For example, the type constructor $List$ has the kind $Type \fto Type$ 
+
+`Either' is a type constructor with the kind $Type \fto Type \fto Type$, meaning it takes two concrete types and returns a concrete type. 
+\subsection{Pattern Matching}
 
 
+Functional languages have a long history that we do not need to go into
 
 \section{Rust}
 \label{bg:rust}

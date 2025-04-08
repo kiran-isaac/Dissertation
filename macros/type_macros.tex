@@ -1,0 +1,29 @@
+\def\OPTIONConf{1}
+\linespread{1}
+
+\renewcommand{\mathstrut}{\rule[-1pt]{0pt}{2pt}}
+
+\newcommand{\Uniontype}{$\bigcup$}
+\newcommand{\Unionname}{\text{Name}}
+\newcommand{\Producttype}{$\times$}
+
+\newcommand{\TypeAlias}[2]{[#1 : #2]}
+
+\newcommand{\Aliasrulename}{\Tyrulename{\ensuremath{}Alias}}
+\newcommand{\Pairsynthrulename}{\Tyrulename{\Producttype$\syn$}}
+\newcommand{\Intsynthrulename}{\Tyrulename{IntLit$\syn$}}
+\newcommand{\Boolsynthrulename}{\Tyrulename{BoolLit$\syn$}}
+\newcommand{\Matchsynthrulename}{\Tyrulename{Match$\syn$}}
+
+\definecolor{myTcRuleColour}{rgb}{0.8, 0.8, 0.8}
+\newcommand{\MyTCRule}[1]{\colorbox{myTcRuleColour}{{#1}}}
+
+\newcommand{\Intsubrulename}{\Subrulename{\Inttype}}
+\newcommand{\LAliassubrulename}{\Subrulename{\text{LAlias}}}
+\newcommand{\RAliassubrulename}{\Subrulename{\text{RAlias}}}
+\newcommand{\Boolsubrulename}{\Subrulename{\Booltype}}
+\newcommand{\Pairsubrulename}{\Subrulename{\Producttype}}
+\newcommand{\Unionsubrulename}{\Subrulename{$\bigcup$}}
+
+\newcommand{\Inttype}{\text{Int}}
+\newcommand{\Booltype}{\text{Bool}}

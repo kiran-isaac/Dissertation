@@ -1,25 +1,20 @@
 \documentclass[oneside]{dissertation}
 \usepackage{amsthm}
-\usepackage{fontspec}
-\usepackage{multirow}
-\usepackage{stmaryrd}
-\usepackage{pifont}
-\usepackage{comment}
-\usepackage{framed}
-\usepackage{rotating}
-\usepackage[T1]{fontenc}
-\usepackage{srcltx}
-\usepackage{enumerate}
-\usepackage{relsize}
-\usepackage{booktabs}
 \usepackage{caption}  
-\usepackage{phaistos}
 
-\newtheoremstyle{break}{}{}{\itshape}{}{\bfseries}{.}{\newline}{}
+\input{macros/Krishnaswami_Dunfield_macros}
+\input{macros/type_macros}
+
+\newtheoremstyle{break}
+  {\topsep}{\topsep}%
+  {\itshape}{}%
+  {\bfseries}{}%
+  {\newline}{}%
 
 \theoremstyle{definition}
 \theoremstyle{break}
 \newtheorem{syntax}{Definition}
+\theoremstyle{break}
 \newtheorem{definition}{Definition}
 \theoremstyle{break}
 \newtheorem{convention}{Convention}

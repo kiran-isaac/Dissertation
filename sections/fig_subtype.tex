@@ -1,0 +1,77 @@
+\begin{figure*}[h]
+  \judgbox{\subjudg{\Gamma}{A}{B}{\Delta}}%
+     {Under input context $\Gamma$,
+       type $A$ is a subtype of $B$, with output context $\Delta$}
+  \begin{mathpar}
+  \Infer{\SubVar}
+              { }
+              {\subjudg{\Gamma[\alpha]}{\alpha}{\alpha}{\Gamma[\alpha]}}
+  \and
+  \Infer{\MyTCRule{\Intsubrulename}}
+            { }
+            {\subjudg{\Gamma}{\Inttype}{\Inttype}{\Gamma}}
+              \and
+  \Infer{\MyTCRule{\Boolsubrulename}}
+            { }
+            {\subjudg{\Gamma}{\Booltype}{\Booltype}{\Gamma}}
+  \\
+  % \Infer{\MyTCRule{\LAliassubrulename}}
+  %           { \subjudg{\Gamma}{C}{B}{\Delta}  }
+  %           { \subjudg{\Gamma}{\TypeAlias{A}{C}}{B}{\Delta} }
+  % \and
+  %   \Infer{\MyTCRule{\RAliassubrulename}}
+  %           { \subjudg{\Gamma}{A}{C}{\Delta}  }
+  %           { \subjudg{\Gamma}{A}{\TypeAlias{B}{C}}{\Delta} }
+  % \\
+  \Infer{\SubExvar}
+            { }
+            {\subjudg{\Gamma[\ahat]}{\ahat}{\ahat}{\Gamma[\ahat]}}
+  \and
+  \Infer{\SubArr}
+            {\subjudg{\Gamma}{B_1}{A_1}{\Theta} \\
+              \subjudg{\Theta}{[\Theta]A_2}{[\Theta]B_2}{\Delta}}
+            {\subjudg{\Gamma}{A_1 \arr A_2}{B_1 \arr B_2}{\Delta}}
+  \\
+  \Infer{\SubAllL}
+            {\subjudg{\Gamma, \MonnierComma{\ahat}, \ahat}
+                     {[\ahat/\alpha]A}
+                     {B}
+                     {\Delta, \MonnierComma{\ahat}, \Theta}}
+            {\subjudg{\Gamma}{\alltype{\alpha}{A}}{B}{\Delta}}
+  \and
+  \Infer{\SubAllR}
+            {\subjudg{\Gamma, \alpha}{A}{B}{\Delta, \alpha, \Theta}}
+            {\subjudg{\Gamma}{A}{\alltype{\alpha}{B}}{\Delta}}
+  \\
+  \Infer{\SubInstL}
+            {
+              \ahat \notin \FV{%
+                A}
+              \\
+              \instjudg{\Gamma[\ahat]}{\ahat}{%
+                   A}{\Delta}
+            }
+            {\subjudg{\Gamma[\ahat]}{\ahat}{A}{\Delta}}
+  \and
+  \Infer{\SubInstR}
+            {
+              \ahat \notin \FV{%
+                A}
+              \\
+              \instjudgr{\Gamma[\ahat]}{\ahat}{%
+                A}{\Delta}
+            }
+            {\subjudg{\Gamma[\ahat]}{A}{\ahat}{\Delta}}
+  \\
+  \Infer{\MyTCRule{\Pairsubrulename}}
+    {\subjudg{\Gamma}{A_1}{A_2}{\Theta} \\
+              \subjudg{\Theta}{B_1}{B_2}{\Delta}}
+    { \subjudg{\Gamma}{(A_1, B_1)}{(A_2, B_2)}{\Delta} }
+      \\
+  \Infer{\MyTCRule{\Unionsubrulename}}
+    {(\subjudg{\Gamma_i}{A_i}{B_i}{\Gamma_{i+1}}) \forall i \in [1, 2, \dots, n]}
+    {\subjudg{\Gamma_1}{\Unionname[A_1, A_2, \dots, A_n]}{\Unionname[B_1, B_2, \dots, B_n]}{\Gamma_{n+1}}}
+  \end{mathpar}  
+  \caption{Algorithmic subtyping}
+  \FLabel{fig:alg-subtyping}
+\end{figure*}

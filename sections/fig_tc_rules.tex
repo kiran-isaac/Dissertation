@@ -1,0 +1,92 @@
+\begin{figure*}[htbp]
+  \judgbox{\chkjudg{\Gamma}{e}{A}{\Delta}}%
+     {Under input context $\Gamma$, $e$ checks against input type $A$, 
+     with output context $\Delta$} \\[1ex]
+  \judgbox{\synjudg{\Gamma}{e}{A}{\Delta}}%
+     {Under input context $\Gamma$, $e$ synthesizes output type $A$,
+       with output context $\Delta$} \\[1ex]
+  \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
+     {Under input context $\Gamma$, applying a function of type $A$ to $e$ \\synthesizes type $C$, with output context $\Delta$} \\
+  \begin{mathpar}
+    \Infer{\MyTCRule{\Intsynthrulename}}
+        { }
+        {\synjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma}}
+    \and
+    \Infer{\MyTCRule{\Boolsynthrulename}}
+        { }
+        {\synjudg{\Gamma}{Bool Literal}{\Booltype}{\Gamma}}
+    \and
+     \Infer{\Var}
+          {(x : A) \in \Gamma}
+          {\synjudg{\Gamma}{x}{A}{\Gamma}}
+     \\
+    %  \Infer{\MyTCRule{\Aliasrulename}}
+    %     {\chkjudg{\Gamma}{e}{B}{\Delta}}
+    %     {\chkjudg{\Gamma}{e}{[A : B]}{\Delta}}
+    % \and
+     \Infer{\Sub}
+          {\synjudg{\Gamma}{e}{A}{\Theta}
+            \\
+%
+            \subjudg{\Theta}{[\Theta]A}{[\Theta]B}{\Delta}
+          }
+          {\chkjudg{\Gamma}{e}{B}{\Delta}}
+     \\
+     \def\CompactJudgments{1}   %
+     \Infer{\AllIntro}
+           {\chkjudg{\Gamma, \alpha}{e}{A}{\Delta, \alpha, \Theta}
+           }
+           {\chkjudg{\Gamma}{e}{\alltype{\alpha}{A}}{\Delta}}
+     \and
+     \Infer{\AllApp}
+            {\appjudg{\Gamma,\ahat}{e}{[\ahat/\alpha]A}{C}{\Delta}}
+            {\appjudg{\Gamma}{e}{\alltype{\alpha}{A}}{C}{\Delta}}
+    \and
+     \Infer{\!\ArrIntro}
+          {\chkjudg{\Gamma, x : A}{e}{B}{\Delta, x : A, \Theta}
+          }
+          {\chkjudg{\Gamma}{\lam{x} e}{A \arr B}{\Delta}}
+     \\
+\def\CompactJudgments{0}   %
+     \Infer{%
+        {\!\ArrIntroSyn}
+         }
+           { \chkjudg{\Gamma, \ahat, \bhat, x : \ahat}{e}{\bhat}{\Delta, x : \ahat, \Theta}
+           }
+           {{\synjudg{\Gamma}{\lam{x} e}{\ahat \arr \bhat}{\Delta}}}
+     \and
+     \Infer{\!\ArrElim}
+           {\synjudg{\Gamma}{e_1}{A}{\Theta}
+             \\
+             \appjudg{\Theta}{e_2}{[\Theta]A}{C}{\Delta}
+           }
+           {\synjudg{\Gamma}{e_1\,e_2}{C}{\Delta}}
+      \\
+\def\CompactJudgments{0}
+      %
+      \Infer{\SolveApp}
+            {\chkjudg{\Gamma[\ahat_2, \ahat_1, \hypeq{\ahat}{\ahat_1 \arr \ahat_2}]}{e}{\ahat_1}{\Delta}}
+            {\appjudg{\Gamma[\ahat]}{e}{\ahat}{\ahat_2}{\Delta}}
+      \and
+      \Infer{\ArrApp}
+            {\chkjudg{\Gamma}{e}{A}{\Delta}}
+            {\appjudg{\Gamma}{e}{A \arr C}{C}{\Delta}}
+      \\
+      \Infer{\MyTCRule{\Matchsynthrulename}}
+            {
+            n \ge 1\\
+            \synjudg{\Gamma}{e}{A}{\Theta_1} \\ 
+            (\chkjudg{\Theta_i}{c_i}{A}{\Theta_{i+1}}) \forall i \in [1, 2, \dots, n] \\
+            \Delta_1 = \Theta_{n+1}, \ahat \\
+            (\chkjudg{\Delta_{i}}{c_i}{\ahat}{\Delta_{i+1}}) \forall i \in [1, 2, \dots, n]
+            }
+            {\synjudg{\Gamma}{\text{match e \{} c_1 \rightarrow e_1 \mid c_2 \rightarrow e_2 \mid \dots \mid c_n \rightarrow e_n \}}{\ahat}{\Delta_{n+1}}}
+    % \\
+    % \Infer{\MyTCRule{\Pairsynthrulename}}
+    %     {\synjudg{\Gamma}{e_1}{A}{\Theta} \\ \synjudg{\Theta}{e_2}{B}{\Delta}}
+    %     {\synjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
+    
+  \end{mathpar}
+  \caption{Algorithmic typing}
+  \FLabel{fig:alg-typing}
+\end{figure*}
