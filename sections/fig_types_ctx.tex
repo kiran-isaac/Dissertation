@@ -1,6 +1,6 @@
 \begin{figure}[h]
   \centering
-  \begin{minipage}{0.5\textwidth}
+  \begin{minipage}{0.518\textwidth}
   \[
       \begin{array}{llcl}
       \text{Types} & A, B, C & \bnfas &
@@ -10,7 +10,7 @@
             % \\[1pt] &&&\!\!\!\;\; \TypeAlias{A}{B} \bnfalt  
             \\[1pt] &&&\!\!\!\;\;
             (A, B) \bnfalt
-            \\[1pt] &&&\!\!\!\;\;
+            % \\[1pt] &&&\!\!\!\;\;
             \Unionname[A_1, \dots, A_n]
       \\[2pt]
       \text{Monotypes} & \tau,\sigma & \bnfas &
@@ -45,15 +45,15 @@
   
   \end{minipage}
   \hfill
-  \begin{minipage}{0.475\textwidth}
+  \begin{minipage}{0.474\textwidth}
     \centering
       \[
   \begin{array}[t]{l@{~}c@{~}ll}
       %
       [\Gamma]\alpha   & = &   \alpha &
       \\{}
-      [\Gamma]\unitty   & = &   \unitty &
-      \\[1pt]
+      % [\Gamma]\unitty   & = &   \unitty &
+      % \\[1pt]
       \big[\Gamma[\hypeq{\ahat}{\tau}]\big] \ahat
                & = &   \big[\Gamma[\hypeq{\ahat}{\tau}]\big]\tau &
       \\[2pt]

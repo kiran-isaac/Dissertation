@@ -4,9 +4,9 @@
      with output context $\Delta$} \\[1ex]
   \judgbox{\synjudg{\Gamma}{e}{A}{\Delta}}%
      {Under input context $\Gamma$, $e$ synthesizes output type $A$,
-       with output context $\Delta$} \\[1ex]
+       with output context $\Delta$} \\[0.5ex]
   \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
-     {Under input context $\Gamma$, applying a function of type $A$ to $e$ \\synthesizes type $C$, with output context $\Delta$} \\
+     {Under input context $\Gamma$, applying a function of type $A$ to $e$ synthesizes type $C$, \\ with output context $\Delta$} \\
   \begin{mathpar}
     \Infer{\MyTCRule{\Intsynthrulename}}
         { }
@@ -87,6 +87,6 @@
     %     {\synjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
     
   \end{mathpar}
-  \caption{Algorithmic typing}
+  \caption{Algorithmic typing. The \colorbox{myTcRuleColour}{highlighted} ones are my additions, the rest are from \cite{completebidir}}
   \FLabel{fig:alg-typing}
 \end{figure*}

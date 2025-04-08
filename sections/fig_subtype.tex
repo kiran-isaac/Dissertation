@@ -1,4 +1,4 @@
-\begin{figure*}[h]
+\begin{figure*}[htbp]
   \judgbox{\subjudg{\Gamma}{A}{B}{\Delta}}%
      {Under input context $\Gamma$,
        type $A$ is a subtype of $B$, with output context $\Delta$}
@@ -72,6 +72,6 @@
     {(\subjudg{\Gamma_i}{A_i}{B_i}{\Gamma_{i+1}}) \forall i \in [1, 2, \dots, n]}
     {\subjudg{\Gamma_1}{\Unionname[A_1, A_2, \dots, A_n]}{\Unionname[B_1, B_2, \dots, B_n]}{\Gamma_{n+1}}}
   \end{mathpar}  
-  \caption{Algorithmic subtyping}
+  \caption{Algorithmic subtyping. The \colorbox{myTcRuleColour}{highlighted} ones are my additions, the rest are from \cite{completebidir}}
   \FLabel{fig:alg-subtyping}
 \end{figure*}

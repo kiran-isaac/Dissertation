@@ -62,8 +62,6 @@ First-order polymorphic type constructors would be useful to have in \ac{SFL}, w
 
 We can avoid thinking about kinds by enforcing that a type constructor is always given the correct number of arguments
 
-
-
 % \begin{syntax}[Types in \ac{SFL}]
 % (Inbuilts): \(B::=Int\mid Bool\)\newline
 % (Monotype): \(\tau, \sigma ::= \alpha \mid B \mid \tau \rightarrow \sigma \mid (\tau, \sigma) \mid \Alpha \;T, U,...\)\newline
@@ -85,18 +83,7 @@ This design was meant to be a work in progress but it looks quite similar to the
 \section{Implementation}
 \subsection{The Parser}
 
-\subsubsection{The Type Checker}
-The type checker will be bidirectional, and will follow and algorithm largely based on the one in \cite{completebidir}. The quote that follows is from this paper, and describes bidirectional type checking and its merits:
-\begin{quote}
-Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability ..., its error reporting, and its relative ease of implementation.
-\end{quote}
-\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. 
-
-This paper describes an algorithm for bidirectional type checking.
-
-\input{sections/fig_types_ctx}
-
-\section{Types}
+\subsection{Types}
 
 Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system), quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
 
@@ -129,12 +116,28 @@ pub enum Type {
 
 We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size: the size of a pointer in the target architecture. We also define Existential, as an implementation detail needed for the type checker. 
 
-\subsection{Methods on Types}
+\subsubsection{Methods on Types}
 Below are a selection of the more important or interesting methods implemented on Types.
 
 \paragraph{Substitution of type variables} We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
 
 \paragraph{To String} We will frequently wish to display types as strings for debugging purposes. 
+
+\subsection{The Type Checker}
+The type checker will be bidirectional, and will follow and algorithm largely based on the one in \cite{completebidir}. The quote that follows is from this paper, and describes bidirectional type checking and its merits:
+\begin{quote}
+`Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability ..., its error reporting, and its relative ease of implementation.'
+\end{quote}
+\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking id ($\lambda x. x$) against type $\forall a.a\fto a$ (photo of whiteboard derivation included in submission [TODO: is this the right way to cite this]), I modified their algorithm to add my extra types (The inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs. Not including assignment and modules as these are not part of expression syntax). \ref{fig:tc_types} shows the type system, including the typechecker implementation details, as well as the unmodified context structure, which keeps track of the state of the typechecker as it progresses recursively through the type system. \ref{fig:ctx_subst} shows the modified algorithm for substituting all of the information in a context into a type. 
+
+\input{sections/fig_types_ctx}
+
+The full typechecking algorithm is listed here below. Most of these rules are untouched, the ones that I added or modified are \colorbox{myTcRuleColour}{highlighted}.
+
+\input{sections/fig_subtype}
+\input{sections/fig_ctx_instance}
+\input{sections/fig_tc_rules}
+
 
 \section{Evaluation}
 
