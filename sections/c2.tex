@@ -2,48 +2,86 @@
 This second cycle was about extending the language with more complicated features. 
 
 \section{Requirements Analysis}
-I presented the proof of concept project 
+I presented the proof of concept project to my client, who was very positive about the project and its potential. During the meeting, I started by giving my client a demo of the proof of concept. The discussion was informal, a friendly conversation rather than a structured interview, to allow the direction of questioning to change depending on the clients answers. 
+
+\paragraph{What does the client think of the proof of concept language and interface}
+I gave a brief demonstration of the evaluation of the following program 
+
+\begin{verbatim}
+fac n = if n <= 1 then 1 else n * (fac (n - 1))
+main = fac 5
+\end{verbatim}
+The system froze halfway through the evaluation, but upon a refresh we managed to get through the program. My client had the following thoughts about the language in its proof of concept phase:
+
+\begin{itemize}
+    \item She liked that the language looked similar to Haskell. Particularly, she mentioned that she liked the \verb|if _ then _ else| syntax, and the function assignment shorthand syntax (\verb|fac n = ...| rather than \verb|fac = \n. ...|, even though these are identical)
+    \item She thought that the factorial function was quite elegant, and believed that it would be understandable to people who did not know Haskell.  
+\end{itemize}
+
+She had the following thoughts about the UI in its proof of concepts phase (see \ref{fig:screenshot_cycle_1_end})
+
+\begin{itemize}
+    \item She liked the editor, as it felt like the editor she was used to (vs code)
+    \item She recognised that the system is a proof of concept, but emphasised the importance of stability in a teaching tool, as it would waste a lot of time if it constantly broke in the lecture. 
+    \item She was confused about `laziest' being an option, as she could not tell whether it was referring to one of the other on screen options, or if it was a `hidden' option
+    \item She did not like how the redex contraction pairs were represented on the buttons. The vertical bar separating redex from contraction was not obvious enough. On top of this, the bar was not centred so it was hard to look through all of the redexes at once as they were not aligned with each other. 
+\end{itemize}
+
+\paragraph{What functional programming language concepts would be the most useful for this system to demonstrate}
+\begin{itemize}
+    \item Pattern matching
+    \item User definable data types that allow for 
+    \item List and common list functions such as `map' and `fold'. She says that this is one of the areas that students struggle to grasp most
+    \item 
+\end{itemize}
+
+\paragraph{What additional language features should I aim to add}
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\paragraph{What additional interface features should I aim to add}
+\begin{itemize}
+    \item Syntax highlighting, to make the language easier to read
+    \item A history of what 
+\end{itemize}
 
 \section{Design}
-\subsection{Type System}
-We must have types representing integers and booleans in our language, if we are to effectively check the validity of expression containing their respective literals. 
 
-Many languages, including Haskell, also have Algebraic Data Types allowing us to "Compose" other data types. Algebraic data types are isomorphic to an algebraic expression consisting of sums and products of their constituent types. An example of a product type is the tuple \((Int,Bool)\) which is isomorphic to \(Int \times Bool\). Most languages have product types, which often take the form of structs or tuples. 
-An example of a sum type is the Haskell syntax tagged union:
+\subsection{Language Changes}
+\subsubsection{Type System}
+We must have types representing integers and booleans in our language, if we are to effectively represent the type of expression containing their respective literals. We also want our type system to be able to express functions. We also want polymorphism in our type system, as rewriting functions many times for different data types makes programs more verbose. 
 
-\noindent\verb!"data Shape = Circle Int | Rectangle Int Int"!, which is isomorphic to the type \(Int + (Int \times Int)\). 
+Allowing for algebraic user defined data types in a similar manner to Haskell would make the language much more expressive and much more powerful, as well as bringing it closer to Haskell. Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
 
-We will now consider generic data structures, such as a lists that can hold any value of type $a$, written as \(List\;a\)". Here, \(List\) is not a type in itself, but it represents a constructor that takes a type, and returns a concrete type. We could write this as "$Type \rightarrow Type$", indicating that it behaves like a function, but at the type level rather than the value level. If we were to apply the constructor \(List\) to the concrete type \(Int\), the resulting type would be \(List \;Int\). 
+Type names, as well as constructor names, start with uppercase letters in Haskell. This allows them to be easily differentiated from type variables, as well as regular variables. 
 
-Polymorphism as described here is first order polymorphism, as opposed to higher-order polymorphism (also known as higher-kinded polymorphism) where a type can abstract over a type that abstracts over a type \cite{pierce2002types}. An example of a function that is higher-order polymorphic is a function that takes a function, and then applies it to two differently typed values:
-\begin{lstlisting}
-applyToBoth f x y = (f x, f y)
-\end{lstlisting}
-If \verb|f| is to be applied to any type, it must have a type \(\forall a. a\rightarrow a\). This means the type of the function \verb|applyToBoth| must be \(\forall a \;b.(\forall c \rightarrow c) \rightarrow a \rightarrow b \rightarrow (a, b)\)
+First-order polymorphic type constructors would be useful to have in \ac{SFL}, with one example of their utility being defining the polymorphic function "\verb|length :: List a -> Int|" which should work regardless of what type the list is over.
 
-This requires the ability to parse expressions with nested \verb|foralls|, as well as support during type inference for higher-kinded types. We do not think that this is a priority for the system, as 
-These first-order polymorphic type constructors would be useful to have in \ac{SFL}, with one example of their utility being defining the polymorphic function "\verb|length :: List a -> Int|" which should work regardless of what type the list is over. Higher order polymorphism is less important
-The "Type of a Type" is known as its \emph{kind} \cite{pierce2002types}. Another example is the type representing "Either left or right: \(Either \;a\;b\)", that can be defined with its constructors as \verb!data Either a b = Left a | Right b!. "Either" is a type constructor with the kind "Type -> Type -> Type", meaning it takes two concrete types and returns a concrete type. 
-Higher-kinded types are types where there are parenthesis in a kind expression, not including the implicit ones implying right associativity: 
-"\verb|Type -> Type -> Type|" is implicitly "\verb|Type -> (Type -> Type)|"
+\input{sections/fig_sfl_types}
+
 We can avoid thinking about kinds by enforcing that a type constructor is always given the correct number of arguments
 
-Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
-Type names, as well as constructor names, start with uppercase letters in Haskell. This allows them to be easily differentiated from type variables, as well as regular variables. 
-In the below definition of the \ac{SFL} type system, we define \(\Alpha\) as the set of valid type names starting with uppercase letters defined by \(Id\), and \(\alpha\) as the set of valid type variable names defined by \(id\). 
 
-\begin{syntax}[Types in \ac{SFL}]
-(Inbuilts): \(B::=Int\mid Bool\)\newline
-(Monotype): \(\tau, \sigma ::= \alpha \mid B \mid \tau \rightarrow \sigma \mid (\tau, \sigma) \mid \Alpha \;T, U,...\)\newline
-(Alias): \(A ::= Id = T\)\newline
-(Type): \(T, U ::= \alpha \mid B \mid T \rightarrow U \mid (T, U) \mid \forall a. T \mid \Alpha \;T, U,...\)
-\end{syntax}
+
+% \begin{syntax}[Types in \ac{SFL}]
+% (Inbuilts): \(B::=Int\mid Bool\)\newline
+% (Monotype): \(\tau, \sigma ::= \alpha \mid B \mid \tau \rightarrow \sigma \mid (\tau, \sigma) \mid \Alpha \;T, U,...\)\newline
+% (Alias): \(A ::= Id = T\)\newline
+% (Type): \(T, U ::= \alpha \mid B \mid T \rightarrow U \mid (T, U) \mid \forall a. T \mid \Alpha \;T, U,...\)
+% \end{syntax}
 Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type. It can then be double checked for debugging purposes via an assertion in the type checker. 
 
-\subsection{Match}
+\subsubsection{Match}
 To support different execution based on a condition, we must have some structure that can differentiate between values \ref{design:values}. 
 
-\subsection{Syntax Sugar}
+\subsubsection{Syntax Sugar}
+
+\subsection{UI}
+
 
 \section{Implementation}
 \subsection{The Parser}
+
+\subsubsection{The Type Checker}
+\input{sections/fig_types_ctx}

@@ -1,8 +1,8 @@
 \chapter{Cycle 1 - Proof of Concept}
-The goal of Cycle 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This cycle started at the beginning of the project, with a discussion with Jess Foster, my supervisor, and the identification of my client, Samantha Frohlich. I proceeded by designing the system, designing \ac{SFL}, and then implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept by speaking to my client. 
+The goal of Cycle 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This cycle started at the beginning of the project with a discussion my supervisor, and the identification of my client, Samantha Frohlich. I proceeded by designing the system, designing \ac{SFL}, and then implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept by speaking to my client. 
 
 \section{Requirements Analysis}
-This project was proposed by my supervisor, Jess Foster. She is a lecturer at the University of Bristol, who lectures in the \ac{FP} unit in first year. In our meeting in November 2024, we discussed how she wanted a tool that demonstrates how functional languages are evaluated step by step, so she could demonstrate this in these lectures. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. 
+This project was proposed by my supervisor, Jess Foster. She is a lecturer at the University of Bristol, who lectures in the \ac{FP} unit in first year. In our meeting in November 2024, we discussed how she wanted a tool that would help build intuition for how these languages are evaluated. We discussed that a useful tool to have would be one that demonstrates how functional languages are evaluated step by step, so she could demonstrate this in these lectures. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. 
 
 Jess helped me to identify an appropriate client: Samantha Frohlich, another lecturer in functional programming, who also wanted a tool that fit this brief. This was necessary, as Jess's existing role as my supervisor/primary marker could limit guidance she could give me as a client. 
 
@@ -46,7 +46,7 @@ yadadada we should implement features that allow us to implement
 \end{syntax}
 
 \subsection{Basic Syntax}
-Lambda calculus is the basis of modern functional programming languages. As discussed in the background, Lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
+Lambda calculus is the basis of modern functional programming languages. As discussed in the background, lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
 \begin{lstlisting}[]
 f = (\x.x)
 main = f y
@@ -416,7 +416,6 @@ To parse an identifier, we must also check that the identifier is bound at this 
 \subsection{Web UI \ac{MVP}}
 As part of this section, I also developed the MVP for the Web UI. \ref{fig:screenshot_cycle_1_end} shows the web UI after this stage of the project. 
 
-\subsubsection{Project Structure Overhaul}
 Until this point, development was done in one rust package. This package would be compiled to a binary and run natively, with a basic \ac{CLI}. This needed to be changed so that it can compile to \ac{WASM} and run in the web browser. As I wanted to keep the \ac{CLI} for debugging, as well as for use later, I did not want to change the whole project to a project with a \ac{WASM} interface. A solution to keeping both interfaces was to separate the functionality that would be common to the \ac{CLI} as well as the \ac{WASM} library into a separate library, and then have the two interfaces as separate packages that depended on this one. The structure of the project became the following 4 packages. 
 
 \begin{itemize}
@@ -431,5 +430,13 @@ Until this point, development was done in one rust package. This package would b
     \item The Vite+React frontend (see \ref{bg:frontend}) that requires the package that results from compiling \textbf{libsfl\_wasm}
 \end{itemize}
 
+
+[TODO: More stuff about wasm bindings??]
+
 \section{Evaluation}
+Following the implementation stage of this cycle, I met with my client to evaluate the project so far. Her feedback 
+
+
+
 This cycle was an effective starting point for the project. 
+
