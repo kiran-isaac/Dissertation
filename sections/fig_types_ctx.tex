@@ -1,0 +1,79 @@
+\begin{figure}[h]
+  \centering
+  \begin{minipage}{0.5\textwidth}
+  \[
+      \begin{array}{llcl}
+      \text{Types} & A, B, C & \bnfas &
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt 
+            \\[1pt] &&&\!\!\!\;\;\;
+            \alltype{\alpha}{A} \bnfalt A \arr B \bnfalt
+            % \\[1pt] &&&\!\!\!\;\; \TypeAlias{A}{B} \bnfalt  
+            \\[1pt] &&&\!\!\!\;\;
+            (A, B) \bnfalt
+            \\[1pt] &&&\!\!\!\;\;
+            \Unionname[A_1, \dots, A_n]
+      \\[2pt]
+      \text{Monotypes} & \tau,\sigma & \bnfas &
+            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt 
+            \\[1pt] &&&\!\!\!\;\;
+            A \arr B \bnfalt (A, B)
+            % (A, B) \bnfalt \TypeAlias{A}{B}
+        \\[2pt]
+      \text{Contexts} & \Gamma, \Delta, \Theta & \bnfas &
+                  \cdot
+                  \bnfalt \Gamma, \alpha 
+                  \bnfalt \Gamma, x:A
+                  \\[1pt] &&&\!\!\!\;\;
+                  \bnfalt \Gamma, \ahat
+                  \bnfalt \Gamma, \hypeq{\ahat}{\tau}
+                  % \\[1pt] &&&\!\!\!\;\;
+                  \bnfalt \Gamma, \MonnierComma{\ahat}
+      % \\[2pt] % No need as I am not proving completeness
+      % \text{Complete Contexts}     & \Omega & \bnfas &
+      %             \cdot
+      %             \bnfalt    \Omega, \alpha
+      %             \bnfalt    \Omega, x:A
+      %             \\[1pt] &&&\!\!\!
+      %             \bnfalt    \Omega, \hypeq{\ahat}{\tau} 
+      %             \bnfalt    \Omega, \MonnierComma{\ahat}
+      \end{array}
+  \]
+  
+  \captionsetup{justification=centering}\caption{Syntax of types, monotypes, and contexts as seen by the typechecker. Note that the existential type variables ($\ahat$) can not actually be created by users, they are an implementation detail}
+  \FLabel{fig:tc_types}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.475\textwidth}
+    \centering
+      \[
+  \begin{array}[t]{l@{~}c@{~}ll}
+      %
+      [\Gamma]\alpha   & = &   \alpha &
+      \\{}
+      [\Gamma]\unitty   & = &   \unitty &
+      \\[1pt]
+      \big[\Gamma[\hypeq{\ahat}{\tau}]\big] \ahat
+               & = &   \big[\Gamma[\hypeq{\ahat}{\tau}]\big]\tau &
+      \\[2pt]
+      \big[\Gamma[\ahat]\big]\ahat   & = &   \ahat &
+      \\[2pt]
+      [\Gamma](A \arr B)   & = &
+          ([\Gamma]A) \arr ([\Gamma]B) &
+      \\{}
+      [\Gamma](\alltype{\alpha} A)
+         & = & 
+         \alltype{\alpha} [\Gamma]A &
+      \\[2pt]
+      [\Gamma](A, B) 
+         & = &
+         ([\Gamma]A, [\Gamma]B)
+      \\[2pt]
+      [\Gamma]\Unionname[A_1,\dots, A_n]
+         & = &
+         \Unionname[[\Gamma]A_1,\dots, [\Gamma]A_n]
+  \end{array}
+  \]
+  \captionsetup{justification=centering}\caption{Applying a context, as a substitution, to a type}
+  \FLabel{fig:ctx_subst}
+  \end{minipage}
+\end{figure}
