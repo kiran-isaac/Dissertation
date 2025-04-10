@@ -1,53 +1,18 @@
 \chapter{Cycle 2 - Types and Pattern Matching}
-This second cycle was about extending the language with more complicated features. 
+The aim of this cycle was to develop the more technical aspects of the project. In this cycle, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated approach. The requirements for this cycle were motivated by my client meeting (\ref{eval:c1}). 
 
 \section{Requirements Analysis}
-I presented the proof of concept project to my client, who was very positive about the project and its potential. During the meeting, I started by giving my client a demo of the proof of concept. The discussion was informal, a friendly conversation rather than a structured interview, to allow the direction of questioning to change depending on the clients answers. 
+Going into this cycle, we have a proof of concept system and an idea for how the system will look. We also have a 
+The client had many valuable insights into what features would be valuable to add. Below is a list of features identified to add to the system in this cycle. 
 
-\paragraph{What does the client think of the proof of concept language and interface}
-I gave a brief demonstration of the evaluation of the following program 
-
-\begin{verbatim}
-fac n = if n <= 1 then 1 else n * (fac (n - 1))
-main = fac 5
-\end{verbatim}
-The system froze halfway through the evaluation, but upon a refresh we managed to get through the program. My client had the following thoughts about the language in its proof of concept phase:
-
+\paragraph{Language}
 \begin{itemize}
-    \item She liked that the language looked similar to Haskell. Particularly, she mentioned that she liked the \verb|if _ then _ else| syntax, and the function assignment shorthand syntax (\verb|fac n = ...| rather than \verb|fac = \n. ...|, even though these are identical)
-    \item She thought that the factorial function was quite elegant, and believed that it would be understandable to people who did not know Haskell.  
-\end{itemize}
-
-She had the following thoughts about the UI in its proof of concepts phase (see \ref{fig:screenshot_cycle_1_end})
-
-\begin{itemize}
-    \item She liked the editor, as it felt like the editor she was used to (vs code)
-    \item She recognised that the system is a proof of concept, but emphasised the importance of stability in a teaching tool, as it would waste a lot of time if it constantly broke in the lecture. 
-    \item She was confused about `laziest' being an option, as she could not tell whether it was referring to one of the other on screen options, or if it was a `hidden' option
-    \item She did not like how the redex contraction pairs were represented on the buttons. The vertical bar separating redex from contraction was not obvious enough. On top of this, the bar was not centred so it was hard to look through all of the redexes at once as they were not aligned with each other. 
-\end{itemize}
-
-\paragraph{What functional programming language concepts would be the most useful for this system to demonstrate}
-\begin{itemize}
-    \item Pattern matching
-    \item User definable data types that allow for 
-    \item List and common list functions such as `map' and `fold'. She says that this is one of the areas that students struggle to grasp most
-    \item 
-\end{itemize}
-
-\paragraph{What additional language features should I aim to add}
-\begin{itemize}
-    \item 
-\end{itemize}
-
-\paragraph{What additional interface features should I aim to add}
-\begin{itemize}
-    \item Syntax highlighting, to make the language easier to read
-    \item A history of what 
+    \item Pattern Matching
+    \item User definable data types: tagged unions
+    \item Pairs
 \end{itemize}
 
 \section{Design}
-
 \subsection{Language Changes}
 \subsubsection{Type System}
 We must have types representing integers and booleans in our language, if we are to effectively represent the type of expression containing their respective literals. We also want our type system to be able to express functions. We also want polymorphism in our type system, as rewriting functions many times for different data types makes programs more verbose. 
@@ -82,6 +47,45 @@ This design was meant to be a work in progress but it looks quite similar to the
 
 \section{Implementation}
 \subsection{The Parser}
+We must make some changes to the parser to include these new features.
+
+\subsubsection{Parsing Match Statements}
+An example of using a match statement follows:
+\begin{verbatim}
+lengthIsAtLeast2 list = match list {
+  | Cons x (Cons y xs) -> true
+  | _ => false
+}
+\end{verbatim}
+
+The algorithm used for parsing match statements is:
+\begin{itemize}
+    \item Consume the "match" keyword.
+    \item Parse the expression matched over
+    \item Consume an open brace
+    \item While the next token isn't a close brace: \begin{itemize}
+        \item Parse a pattern (\ref{impl:parsing_patterns}).
+        \item Consume a right arrow
+        \item Parse an expression
+    \end{itemize}
+    \item Consume a close brace
+\end{itemize}
+Following this, a match node is created, where the \verb|children| vector is set appropriately with the pattern and expressions.
+
+\paragraph{Patterns}
+\label{impl:parsing_patterns}
+A pattern must be a value \ref{design:values}; a pattern must not contain anything that can be reduced. It would be nonsensical to have a situation where we had a pattern not in normal form such as \verb|1 + 1| and the expression to be matched was \verb|2|. 
+
+To parse a pattern, we may use the same techniques as parsing an expression, with a few differences:
+\begin{itemize}
+    \item Disallowing abstractions
+    \item Identifiers must be either:
+    \begin{itemize}
+        \item Unbound lowercase variables
+        \item Underscore (\verb|_|) representing a wildcard pattern
+        \item A bound uppercase variable (a constructor)
+    \end{itemize}
+\end{itemize}
 
 \subsection{Types}
 
@@ -138,7 +142,13 @@ The full typechecking algorithm is listed here below. Most of these rules are un
 \input{sections/fig_ctx_instance}
 \input{sections/fig_tc_rules}
 
-
 \section{Evaluation}
-
 \label{ref:afg_figma}
+The aims of this cycle were to develop the language as well as some of the other more technical features of this project. 
+
+At the end of this cycle, I held a focus group with the following aims:
+
+\begin{itemize}
+    \item Discussing the language with programming language experts.
+    \item
+\end{itemize}

@@ -1,15 +1,25 @@
 \chapter{Cycle 1 - Proof of Concept}
 The goal of Cycle 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This cycle started at the beginning of the project with a discussion my supervisor, and the identification of my client, Samantha Frohlich. I proceeded by designing the system, designing \ac{SFL}, and then implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept by speaking to my client. 
 
+
+
 \section{Requirements Analysis}
+\subsection{Autoethnography}
+\label{sec:c1_autoethnography}
+\begin{quote}
+`Autoethnography is an ethnographic method in which the fieldworker’s experience is investigated together with the experience of other observed social actors.'\cite{autoethnography}
+\end{quote}
+
+\noindent In this cycle, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then implement a proof of concept of this solution. 
+
+\subsection{The Brief}
 This project was proposed by my supervisor, Jess Foster. She is a lecturer at the University of Bristol, who lectures in the \ac{FP} unit in first year. In our meeting in November 2024, we discussed how she wanted a tool that would help build intuition for how these languages are evaluated. We discussed that a useful tool to have would be one that demonstrates how functional languages are evaluated step by step, so she could demonstrate this in these lectures. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. 
 
-Jess helped me to identify an appropriate client: Samantha Frohlich, another lecturer in functional programming, who also wanted a tool that fit this brief. This was necessary, as Jess's existing role as my supervisor/primary marker could limit guidance she could give me as a client. 
+Following this meeting, I broke down this brief into smaller parts. Taking an ethnographic approach, I used my own experience teaching functional languages to consider solutions and come up with requirements for each part. 
 
-\subsection{Initial Brief Breakdown}
-Following this meeting, I broke down this brief into smaller parts, and thought about what they entailed. 
+\paragraph{Building Intuition} This is the key to an effective solution. Many students to the first year FP unit do not have any experience with functional programming, and find it difficult to gain an intuition from passively watching lectures. 
 
-\paragraph{Demonstrating \ac{FP} language evaluation} The tool must contain, at its core, a functional programming language. The programming language should be designed with the following goals in mind:
+\paragraph{Demonstrating FP language evaluation} The tool must contain, at its core, a functional programming language. The programming language should be designed with the following goals in mind:
 \begin{enumerate}
     \item It should be similar to existing functional languages, to allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work in a similar way).
     \item It should be simple and easy to understand. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand why they work. 
@@ -22,6 +32,7 @@ The features that should be selected for the language are the features that maxi
 \paragraph{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. 
 
 \paragraph{Use as a Self Teaching Tool} The tool should be `self explanatory' enough for people to use it on their own without expert help. It should be fairly intuitive, and should have all of the information required to use it presented to users.
+
 
 \section{Language Design}
 In this section I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design, and it was the proof of concept.  
@@ -68,9 +79,10 @@ These two features massively shorten and simplify programming in this language.
 \end{syntax}
 
 \subsection{Reduction}
-Functional programs progress via reduction. 
+As discussed in the background, functional programs progress via reduction
 \paragraph{Values}
 \label{design:values}
+Values in \ac{SFL} should be 
 
 \section{Implementation}
 \subsection{The Abstract Syntax Tree}
@@ -434,9 +446,66 @@ Until this point, development was done in one rust package. This package would b
 [TODO: More stuff about wasm bindings??]
 
 \section{Evaluation}
-Following the implementation stage of this cycle, I met with my client to evaluate the project so far. Her feedback 
+\label{eval:c1}
+In our initial meeting, Jess helped me to identify an appropriate client: Samantha Frohlich, another lecturer in functional programming, who also wanted a tool that fit this brief. This was necessary, as Jess's existing role as my supervisor/primary marker could limit guidance she could give me as a client. 
 
+At the end of the cycle, I presented the proof of concept project to my client, who was very positive about the project and its potential. The discussion was informal, a friendly conversation rather than a structured interview, to allow the direction of questioning to change depending on the clients answers. The meeting started started with me giving my client a demo of the proof of concept using by using the system to evaluate the following program:
+\begin{verbatim}
+fac n = if n <= 1 then 1 else n * (fac (n - 1))
+main = fac 5
+\end{verbatim}
 
+Below is a summary of my clients thoughts about various aspects of the proof of concept system and potential future iterations
 
-This cycle was an effective starting point for the project. 
+\subsection{The Existing Language}
+\paragraph{Positives:}
+\begin{itemize}
+    \item The language looked similar to Haskell. Particularly, the \verb|if _ then _ else| syntax, and the function assignment shorthand syntax (\verb|fac n = ...| rather than \verb|fac = \n. ...|, even though these are identical)
+    \item The language is minimal and clear
+    \item The factorial function was quite elegant, and it would be understandable to people who did not know Haskell.  
+\end{itemize}
+
+\paragraph{Negatives:}
+\begin{itemize}
+    \item It was lacking many important features. The most difficult things to teach are concepts involving more complex data types
+    \item There is a typechecker, but it does not allow polymorphism. Without the typechecker, polymorphism would work, so the typechecker reduces the number of possible programs without providing much benefit. Either there is a good type checker, or there should be no typechecker. 
+\end{itemize}
+
+\subsection{The Existing UI/UX (see \ref{fig:screenshot_cycle_1_end})}
+\paragraph{Positives:}
+\begin{itemize}
+    \item The editor, as it feels like a very popular editor: VSCode
+\end{itemize}
+
+\paragraph{Negatives:}
+\begin{itemize}
+    \item It is unstable. This is bad in a teaching tool, as it would waste a lot of time if it constantly broke in the lecture. 
+    \item `laziest' as an option is confusing, as it was unclear if it was referring to one of the other on screen options, or if it was referencing a `hidden' option
+    \item The vertical bar separating redex from contraction on the progress buttons was not obvious enough. On top of this, the bar was not centred so it was hard to look through all of the redexes at once as they were not aligned with each other. 
+\end{itemize}
+
+\subsection{Effectiveness as a Teaching Tool}
+\begin{itemize}
+    \item The project is already very useful as a teaching tool to demonstrate:
+    \begin{itemize}
+        \item Evaluation order, and the value of laziness
+        \item Currying
+        \item The \lcalc
+    \end{itemize}
+    \item \textbf{Minimum} The project should be extended to demonstrate:
+    \begin{itemize}
+        \item List and common list functions such as `map' and `fold'. These do not have to by polymorphic, they could be just defined over $Int$s. 
+        \item Pattern matching.
+        \item Non-polymorphic user definable data types
+        \item A list of previous program states as we progress.
+    \end{itemize}
+    \item \textbf{Extra} The project could be extended to demonstrate:
+    \begin{itemize}
+        \item Syntax highlighting, to make the language easier to read   
+        \item User definable data types, preferably polymorphic. This would mean we could define `$List$' as part of the language which would be good. 
+        \item Recursive Types
+        \item Polymorphism
+        \item Type Aliases
+    \end{itemize}
+\end{itemize}
 
