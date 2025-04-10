@@ -8,18 +8,34 @@
   \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
      {Under input context $\Gamma$, applying a function of type $A$ to $e$ synthesizes type $C$, \\ with output context $\Delta$} \\
   \begin{mathpar}
+    \Infer{\MyTCRule{\Intcheckrulename}}
+        { }
+        {\chkjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma}}
+    \and
     \Infer{\MyTCRule{\Intsynthrulename}}
         { }
         {\synjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma}}
+    \\
+    \Infer{\MyTCRule{\Boolcheckrulename}}
+        { }
+        {\chkjudg{\Gamma}{Bool Literal}{\Booltype}{\Gamma}}
     \and
     \Infer{\MyTCRule{\Boolsynthrulename}}
         { }
         {\synjudg{\Gamma}{Bool Literal}{\Booltype}{\Gamma}}
-    \and
+    \\
+    \Infer{\MyTCRule{\Paircheckrulename}}
+        {\chkjudg{\Gamma}{e_1}{A}{\Theta} \\ \chkjudg{\Theta}{e_2}{B}{\Delta}}
+        {\chkjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
+        \and 
+      \Infer{\MyTCRule{\Pairsynthrulename}}
+        {\synjudg{\Gamma}{e_1}{A}{\Theta} \\ \synjudg{\Theta}{e_2}{B}{\Delta}}
+        {\synjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
+     \\
      \Infer{\Var}
           {(x : A) \in \Gamma}
           {\synjudg{\Gamma}{x}{A}{\Gamma}}
-     \\
+      \and
     %  \Infer{\MyTCRule{\Aliasrulename}}
     %     {\chkjudg{\Gamma}{e}{B}{\Delta}}
     %     {\chkjudg{\Gamma}{e}{[A : B]}{\Delta}}
@@ -27,11 +43,10 @@
      \Infer{\Sub}
           {\synjudg{\Gamma}{e}{A}{\Theta}
             \\
-%
             \subjudg{\Theta}{[\Theta]A}{[\Theta]B}{\Delta}
           }
           {\chkjudg{\Gamma}{e}{B}{\Delta}}
-     \\
+      \\ 
      \def\CompactJudgments{1}   %
      \Infer{\AllIntro}
            {\chkjudg{\Gamma, \alpha}{e}{A}{\Delta, \alpha, \Theta}
@@ -74,19 +89,16 @@
       \\
       \Infer{\MyTCRule{\Matchsynthrulename}}
             {
-            n \ge 1\\
+            % Change to for all
+            % Add footnote
             \synjudg{\Gamma}{e}{A}{\Theta_1} \\ 
-            (\chkjudg{\Theta_i}{c_i}{A}{\Theta_{i+1}}) \forall i \in [1, 2, \dots, n] \\
+            (\chkjudg{\Theta_i}{c_i}{A}{\Theta_{i+1}})\; \tcforin{i}{[1, 2, \dots, n]} \\
             \Delta_1 = \Theta_{n+1}, \ahat \\
-            (\chkjudg{\Delta_{i}}{c_i}{\ahat}{\Delta_{i+1}}) \forall i \in [1, 2, \dots, n]
+            (\chkjudg{\Delta_{i}}{e_i}{\ahat}{\Delta_{i+1}})\; \tcforin{i}{[1, 2, \dots, n]}
             }
             {\synjudg{\Gamma}{\text{match e \{} c_1 \rightarrow e_1 \mid c_2 \rightarrow e_2 \mid \dots \mid c_n \rightarrow e_n \}}{\ahat}{\Delta_{n+1}}}
-    % \\
-    % \Infer{\MyTCRule{\Pairsynthrulename}}
-    %     {\synjudg{\Gamma}{e_1}{A}{\Theta} \\ \synjudg{\Theta}{e_2}{B}{\Delta}}
-    %     {\synjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
     
   \end{mathpar}
-  \caption{Algorithmic typing. The \colorbox{myTcRuleColour}{highlighted} ones are my additions, the rest are from \cite{completebidir}}
+  \caption{Algorithmic typing. The rules with \colorbox{myTcRuleColour}{highlighted} names are my additions, the rest are unchanged from \cite{completebidir}. Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm}
   \FLabel{fig:alg-typing}
 \end{figure*}
