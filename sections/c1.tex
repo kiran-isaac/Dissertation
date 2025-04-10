@@ -10,53 +10,75 @@ The goal of Cycle 1, which spanned approximately the first month of my project, 
 `Autoethnography is an ethnographic method in which the fieldworker’s experience is investigated together with the experience of other observed social actors.'\cite{autoethnography}
 \end{quote}
 
-\noindent In this cycle, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then implement a proof of concept of this solution. 
+\noindent In this cycle, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then quickly implement a proof of concept of this solution. 
 
 \subsection{The Brief}
-This project was proposed by my supervisor, Jess Foster. She is a lecturer at the University of Bristol, who lectures in the \ac{FP} unit in first year. In our meeting in November 2024, we discussed how she wanted a tool that would help build intuition for how these languages are evaluated. We discussed that a useful tool to have would be one that demonstrates how functional languages are evaluated step by step, so she could demonstrate this in these lectures. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. 
+This project was proposed by my supervisor, Jess Foster. She is a lecturer at the University of Bristol, who lectures in the \ac{FP} unit in first year. In our meeting in November 2024, we discussed how she wanted a tool that would help build intuition for how these languages are evaluated, that she could demonstrate in these lectures. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. 
 
-Following this meeting, I broke down this brief into smaller parts. Taking an ethnographic approach, I used my own experience teaching functional languages to consider solutions and come up with requirements for each part. 
+Following this meeting, I broke down this brief into smaller parts. Taking an autoethnographic approach, I used my own experience teaching functional languages to consider solutions and come up with requirements for each part. 
 
 \paragraph{Building Intuition} This is the key to an effective solution. Many students to the first year FP unit do not have any experience with functional programming, and find it difficult to gain an intuition from passively watching lectures. 
 
-During the testathon [REFHERE: Testathon] in cycle 2, participants were given a survey to fill in. The participants were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year FP unit. In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. 
+During the testathon in cycle 2 [REFHERE: Testathon], participants were given a survey to fill in. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year FP unit. In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
+
+\begin{figure*}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/imperative_likert.png}
+        \caption{}
+        \label{fig:imp_is_easy}
+    \end{subfigure}
+    
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/fp_likert.png}
+        \caption{}
+        \label{fig:fp_is_hard}
+    \end{subfigure}
+    \caption{The results of a survey performed during the testathon, where a Likert scale was used to gauge participants feelings towards imperative (a) and functional (b) programming languages}
+\end{figure*}
+
+$80\%$ of respondents strongly/agreed that they can program in an imperative language, similarly $80\%$ of respondents strongly/agreed that they had an intuitive understanding of them. $66.7\%$ of respondents strongly/agreed that they knew functional languages, but only $47.6\%$ of respondents would strongly/agree that they had an intuitive understanding of them.
+
+The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
+
+All participants who strongly/agreed/were neutral about functional languages being hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word "different". 
+
+In my experience, a very effective way to build intuition for functional programming languages is to demonstrate their evaluation step by step. I found myself doing this on paper for students when trying to explain them. The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken. 
+
+\paragraph{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. The tool must also be portable, and not require a complex installation process. 
+
+\paragraph{Use as a Self Teaching Tool} The tool should be `self explanatory' enough for people to use it on their own without expert help. It should be fairly intuitive, and should have all of the information required to use it presented to users. The tool must also be portable, and not require a complex installation process. The less complex this tool is to use, the more people will use it. 
+
+\paragraph{Demonstrating FP languages} The tool must contain, at its core, a Haskell-like functional programming language in order to demonstrate Haskell. It could be included/required on the host machine, however creating a demonstration tool around Haskell would be difficult due to the sheer size of the language, the number of features, and the complexity of the type system. It would be better to create Haskell-like language with a strictly limited size and maximum clarity, and include this in the system. The programming language should be designed with simplicity and clarity at its heart.
+
+\subsection{SFL Explorer}
+The requirements extracted from autoethnographic methods, as well as from my initial supervisor meeting, came together to form the idea for SFL Explorer. 
+
+The system should be a website to maximise portability. The system should include a functional programming language, as well as some sort of UI that allows a functional program in the language to be entered, and evaluated step by step in a visual manner. 
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]{images/imperative_likert.png}
-    \caption{The results of a survey performed during the testathon, where I used a Likert scale to gauge participants feelings towards functional programming languages}
-    \label{fig:fp_is_hard}
+    \includegraphics[width=1\linewidth]{images/fp_is_hard_wordcloud.png}
+    \caption{A word cloud of answers entered into the free form text box presented to respondents who reported that they did not disagree that functional languages were hard to learn}
+    \label{fig:fp_wordcloud}
 \end{figure}
 
-$60\%$ of respondents strongly/agreed that they knew functional languages, but only $47.6\%$ of people would strongly/agree that they knew how these languages work.  
-
-\paragraph{Demonstrating FP language evaluation} The tool must contain, at its core, a functional programming language. The programming language should be designed with the following goals in mind:
+\subsubsection{The Simple Functional Language}
+\label{design:goals}
+The language was given a name reflecting its' core design principle: Simplicity. More precisely, the programming language should be designed with the following design principles in mind:
 \begin{enumerate}
-    \item It should be similar to existing functional languages, to allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work in a similar way).
     \item It should be simple and easy to understand. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand why they work. 
+    \item It should be similar to existing functional languages, to allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work in a similar way). 
     \item It should be powerful enough to explain key concepts.
 \end{enumerate}
-The features that should be selected for the language are the features that maximise these goals for the minimum implementation complexity. The language's syntax and type system should also work towards these goals. Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. When adding features for the language, we must prioritise the features that allow explanation of the `core' features of functional languages, and de-prioritise features that are not so `core' to the understanding of functional languages. 
+The features that should be selected for the language are the features that maximise these goals for the minimum implementation complexity. Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. When adding features for the language, we must prioritise the features that allow explanation of the `core' features of functional languages, and de-prioritise features that are not so `core' to the understanding of functional languages. 
 
-\paragraph{Step by Step} The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken.
-
-\paragraph{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. 
-
-\paragraph{Use as a Self Teaching Tool} The tool should be `self explanatory' enough for people to use it on their own without expert help. It should be fairly intuitive, and should have all of the information required to use it presented to users.
-
+\subsubsection{The Explorer}
+The website (the explorer) should include a code editor for people to enter programs. [TODO: Finish this bit, summarise requirements]
 
 \section{Language Design}
 In this section I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design, and it was the proof of concept.  
-
-\subsection{Goals}
-\label{design:goals}
-
-yadadada we should implement features that allow us to implement
-\begin{itemize}
-    \item Complex data structures, lists and trees
-    \item Fold
-    \item IO???
-\end{itemize}
 
 \subsection{Definitions}
 
@@ -91,6 +113,7 @@ These two features massively shorten and simplify programming in this language.
 
 \subsection{Reduction}
 As discussed in the background, functional programs progress via reduction
+\todo{FINISH}
 \paragraph{Values}
 \label{design:values}
 Values in \ac{SFL} should be 
@@ -244,6 +267,7 @@ Below are a selection of the more important or interesting methods implemented o
     \item Replace all instances of x in the abstraction expression with the right hand side of the application: \verb|1|.
     \item Replace all references to the abstraction with references to the abstractions expression. 
 \end{itemize}
+
 Note that this orphans the node for the abstraction, and the node for the abstraction variable \verb|x|. This is hard to rectify as deleting any nodes will shift the whole list, which would invalidate indies of nodes, which will break many of the references. This is rectified by cloning the AST, as described below.
 
 \paragraph{Clone} The AST, or just a subsection of the AST from a given node, can be cloned by starting from the desired new root, and cloning each nodes children recursively. The new indices of each node may not be the same, as they may be moved in the list, but they will all be in the same place relative to each other. This also removes orphaned nodes, as they will never be cloned as they have no parents. 
