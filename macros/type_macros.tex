@@ -10,13 +10,18 @@
 \newcommand{\TypeAlias}[2]{[#1 : #2]}
 
 \newcommand{\Aliasrulename}{\Tyrulename{\ensuremath{}Alias}}
-\newcommand{\Pairsynthrulename}{\Tyrulename{\Producttype$\syn$}}
+\newcommand{\Paircheckrulename}{\Tyrulename{Pair$\chk$}}
+\newcommand{\Pairsynthrulename}{\Tyrulename{Pair$\syn$}}
 \newcommand{\Intsynthrulename}{\Tyrulename{IntLit$\syn$}}
+\newcommand{\Boolcheckrulename}{\Tyrulename{BoolLit$\chk$}}
+\newcommand{\Intcheckrulename}{\Tyrulename{IntLit$\chk$}}
 \newcommand{\Boolsynthrulename}{\Tyrulename{BoolLit$\syn$}}
 \newcommand{\Matchsynthrulename}{\Tyrulename{Match$\syn$}}
 
 \definecolor{myTcRuleColour}{rgb}{0.8, 0.8, 0.8}
 \newcommand{\MyTCRule}[1]{\colorbox{myTcRuleColour}{{#1}}}
+
+\newcommand{\tcforin}[2]{\ensuremath{\text{for}\;{#1}\;\text{in}\;{#2}}}
 
 \newcommand{\Intsubrulename}{\Subrulename{\Inttype}}
 \newcommand{\LAliassubrulename}{\Subrulename{\text{LAlias}}}
