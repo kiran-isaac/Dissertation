@@ -456,7 +456,7 @@ Abstractions (in the simple case) are parsed by:
 However, the definition of abstractions have a few complicating elements of syntax sugar.
 
 \subparagraph{Abstractions May be Assignments}
-The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. As previously mentioned in \ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
+The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. As previously mentioned in\ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
 
 \subparagraph{Abstractions May Have Multiple Variables}
 The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|', and then producing a series of abstractions over these variables in order. 
@@ -464,20 +464,20 @@ The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\
 To parse an identifier, we must also check that the identifier is bound at this location.
 
 \subsection{Web UI \ac{MVP}}
-As part of this section, I also developed the MVP for the Web UI. \ref{fig:screenshot_cycle_1_end} shows the web UI after this stage of the project. 
+As part of this section, I also developed the MVP for the Web UI.\ref{fig:screenshot_cycle_1_end} shows the web UI after this stage of the project. 
 
 Until this point, development was done in one rust package. This package would be compiled to a binary and run natively, with a basic \ac{CLI}. This needed to be changed so that it can compile to \ac{WASM} and run in the web browser. As I wanted to keep the \ac{CLI} for debugging, as well as for use later, I did not want to change the whole project to a project with a \ac{WASM} interface. A solution to keeping both interfaces was to separate the functionality that would be common to the \ac{CLI} as well as the \ac{WASM} library into a separate library, and then have the two interfaces as separate packages that depended on this one. The structure of the project became the following 4 packages. 
 
 \begin{itemize}
     \item \textbf{libsfl}: All of the language functionality, as this is common to both interfaces
     \item \textbf{sflcli}: All of the original CLI functionality without the language functionality.  
-    \item \textbf{libsfl\_wasm}: a package set up for use with wasm-pack (\ref{bg:wasm-pack}). It provides an wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by wasm-bindgen \ref{bg:wasm-bindgen}. wasm-pack would compile this to an \ac{NPM} package containing:
+    \item \textbf{libsfl\_wasm}: a package set up for use with wasm-pack (\ref{bg:wasm-pack}). It provides an wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by wasm-bindgen\ref{bg:wasm-bindgen}. wasm-pack would compile this to an \ac{NPM} package containing:
     \begin{itemize}
         \item The WASM binary blob of the compiled rust code
         \item A JavaScript file that would load the blob into the browsers memory, and provides methods that can call the appropriate the methods in the blob
         \item A TypeScript file providing the types of all of the packages exported functions. 
     \end{itemize}
-    \item The Vite+React frontend (see \ref{bg:frontend}) that requires the package that results from compiling \textbf{libsfl\_wasm}
+    \item The Vite+React frontend (see\ref{bg:frontend}) that requires the package that results from compiling \textbf{libsfl\_wasm}
 \end{itemize}
 
 

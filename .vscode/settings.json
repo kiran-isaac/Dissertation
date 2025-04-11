@@ -1,0 +1,48 @@
+{
+    "latex-workshop.latex.tools": [
+        {
+            "name": "xelatex",
+            "command": "xelatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "xelatex_quick",
+            "command": "xelatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-no-pdf",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "bibtex",
+            "command": "bibtex",
+            "args": [
+                "%DOCFILE%"
+            ]
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "XeLaTeX -> BibTeX -> XeLaTeX (2x)",
+            "tools": [
+                "xelatex_quick",
+                "bibtex",
+                "xelatex_quick",
+                "xelatex"
+            ]
+        }
+    ],
+    "latex-workshop.latex.recipe.default": "XeLaTeX -> BibTeX -> XeLaTeX (2x)",
+    "latex-workshop.synctex.afterBuild.enabled": true,
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.linting.chktex.enabled": false,
+    "editor.wordWrap": "on",
+}
