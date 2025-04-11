@@ -1,4 +1,4 @@
-\chapter{Cycle 1 - Proof of Concept}
+\chapter{Cycle 1 --- Proof of Concept}
 The goal of Cycle 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This cycle started at the beginning of the project with a discussion my supervisor, and the identification of my client. I proceeded by designing the system, designing \ac{SFL}, and then implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept by speaking to my client. 
 
 In our initial meeting, Jess helped me to identify an appropriate client: Samantha Frohlich, a lecturer in the first year Functional Programming module at University of Bristol, who also wanted a tool that fit this brief. It was necessary to identify a client other than Jess, as Jess's existing role as my supervisor/primary marker could limit guidance she could give me as a client. 
@@ -10,7 +10,7 @@ In our initial meeting, Jess helped me to identify an appropriate client: Samant
 \subsection{Autoethnography}
 \label{sec:c1_autoethnography}
 \begin{quote}
-`Autoethnography is an ethnographic method in which the fieldworker’s experience is investigated together with the experience of other observed social actors.'\cite{autoethnography}
+`Autoethnography is an ethnographic method in which the fieldworker's experience is investigated together with the experience of other observed social actors. \cite{autoethnography}'
 \end{quote}
 
 \noindent In this cycle, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then quickly implement a proof of concept of this solution. 
@@ -45,7 +45,7 @@ $80\%$ of respondents strongly/agreed that they can program in an imperative lan
 
 The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
 
-All participants who strongly/agreed/were neutral about functional languages being hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word "different". 
+All participants who strongly/agreed/were neutral about functional languages being hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
 
 In my experience, a very effective way to build intuition for functional programming languages is to demonstrate their evaluation step by step. I found myself doing this on paper for students when trying to explain them. The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken. 
 
@@ -102,7 +102,7 @@ Is identical to
 \begin{lstlisting}[]
 main = (\x.x) y
 \end{lstlisting}
-Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the "entry-point" expression in the program. Haskell, as well as many other languages, use "main" to represent a programs entry point, so we may use main. 
+Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the "entry-point" expression in the program. Haskell, as well as many other languages, use `main' to represent a programs entry point, so we may use main. 
 
 We must also add a way to represent values, such as integers and booleans, to our language. Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated. 
 
@@ -447,7 +447,7 @@ ASTNode {
 Abstractions (in the simple case) are parsed by:
 \begin{itemize}
     \item Consuming a lambda (represented by `\verb|\|' for ease of typing on standard keyboards)
-    \item Parsing a variable. This variable must be added to our set of "bound" variables.
+    \item Parsing a variable. This variable must be added to our set of `bound' variables.
     \item Consuming the dot separator`\verb|.|'
     \item Parsing an expression
     \item Constructing an abstraction node from the variable and the expression
