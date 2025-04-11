@@ -1,5 +1,6 @@
 .DS_Store
 *.aux
+*.xdv
 *.bbl
 *.blg
 *.lof
@@ -8,7 +9,6 @@
 *.out
 *.toc
 *.sw*
-*.synctex.gz
+*.synctex*
 *.fdb_latexmk
 *.fls
-*.xdv
