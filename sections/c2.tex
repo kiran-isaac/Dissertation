@@ -2,7 +2,7 @@
 The aim of this cycle was to develop the more technical aspects of the project. In this cycle, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated approach. The requirements for this cycle were motivated by my client meeting (\ref{eval:c1}). 
 
 \section{Requirements Analysis}
-Going into this cycle, we have a proof of concept system and an idea for how the system will look. We also have a 
+Going into this cycle, we have a proof of concept system and an idea for how the system will look. 
 The client had many valuable insights into what features would be valuable to add. Below is a list of features identified to add to the system in this cycle. 
 
 \paragraph{Language}
@@ -128,11 +128,11 @@ Below are a selection of the more important or interesting methods implemented o
 \paragraph{To String} We will frequently wish to display types as strings for debugging purposes. 
 
 \subsection{The Type Checker}
-The type checker will be bidirectional, and will follow and algorithm largely based on the one in \cite{completebidir}. The quote that follows is from this paper, and describes bidirectional type checking and its merits:
+The type checker will be bidirectional, and will follow and algorithm largely based on the one in \cite{completebidir}. The quote that follows from this paper, describes bidirectional type checking and its merits:
 \begin{quote}
-`Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability ..., its error reporting, and its relative ease of implementation.'
+`Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability ..., its error reporting, and its relative ease of implementation.'\cite{completebidir}
 \end{quote}
-\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking id ($\lambda x. x$) against type $\forall a.a\fto a$ (photo of whiteboard derivation included in submission [TODO: is this the right way to cite this]), I modified their algorithm to add my extra types (The inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs. Not including assignment and modules as these are not part of expression syntax). \ref{fig:tc_types} shows the type system, including the typechecker implementation details, as well as the unmodified context structure, which keeps track of the state of the typechecker as it progresses recursively through the type system. \ref{fig:ctx_subst} shows the modified algorithm for substituting all of the information in a context into a type. 
+\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking id ($\lambda x. x$) against type $\forall a.a\fto a$ (photo of whiteboard derivation included in submission [TODO: is this the right way to cite this]), I modified their algorithm to add my extra types (The inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs. Not including assignment and modules as these are not part of expression syntax). \ref{fig:tc_types} shows the type system, including the typechecker implementation details, as well as the unmodified context structure, which keeps track of the state of the typechecker as it progresses recursively through the type system. \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. \ref{fig:ctx_subst} shows the modified algorithm for substituting all of the information in a context into a type. 
 
 \input{sections/fig_types_ctx}
 
@@ -150,5 +150,5 @@ At the end of this cycle, I held a focus group with the following aims:
 
 \begin{itemize}
     \item Discussing the language with programming language experts.
-    \item
+    \item 
 \end{itemize}
