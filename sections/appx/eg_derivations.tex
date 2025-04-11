@@ -143,7 +143,7 @@ The pair function $\lam{x\;y} (x, y)$ takes two arguments, and returns a pair of
 
 
 \section{Typechecking an Expression Involving Lists}
-We shall attempt to use the algorithm to check the type of $\text{Cons}\;1\;x$ against $List\;Int$. This derivation should serve as a demonstration of how more complex checking works. This derivation assumes $Cons$ and $Nil$ are defined over $Int$s only. Note that we increment the context number without changing the context, this is to reflect how the \Unionsubrulename rules works by iterating over all of the fields. The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced.
+We shall attempt to use the algorithm to check the type of $\text{Cons}\;1\;x$ against $List\;Int$. This derivation should serve as a demonstration of how more complex checking works. This derivation assumes $Cons$ and $Nil$ are defined over $Int$s only. The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced.
 
 \begin{mathpar}
 T_{Nil} = List\;Int\and
