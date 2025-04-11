@@ -1,3 +1,4 @@
+\label{appx:example_derive}
 
 \section{Typechecking the Pair Function}
 The pair function $\lam{x\;y} (x, y)$ takes two arguments, and returns a pair of the two values. Here, we type check it against its correct type $\alltype{\alpha\;\beta}{\alpha \fto \beta \fto (\alpha, \beta)}$. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
@@ -147,7 +148,7 @@ We shall attempt to use the algorithm to check the type of $\text{Cons}\;1\;x$ a
 \begin{mathpar}
 T_{Nil} = List\;Int\and
 T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
-\Gamma_0 = T_{Cons}, T_{Nil}\and\Gamma_1 = \Gamma_0\and\Gamma_2 = \Gamma_1\\
+\Gamma = T_{Cons}, T_{Nil}\and\Gamma = \Gamma_0 = \Gamma_1\\
 
 \\
 
@@ -162,22 +163,22 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
           { 
           {
           \Infer{\Var[9]}
-            {(Nil : T_{Nil}) \in \Gamma_0}
-            {\synjudg{\Gamma_0}{Nil}{T_{Nil}}{\Gamma_0}}
+            {(Nil : T_{Nil}) \in \Gamma}
+            {\synjudg{\Gamma}{Nil}{T_{Nil}}{\Gamma}}
           }
             \\
-            [10]\subjudg{\Gamma_0}{List[Int]}{List[Int]}{\Gamma_{1}}
+            [10]\subjudg{\Gamma}{List[Int]}{List[Int]}{\Gamma}
           }
-          {\chkjudg{\Gamma}{Nil}{List\;Int}{\Gamma_1}}}
-    {\appjudg{\Gamma_0}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma_1}}
+          {\chkjudg{\Gamma}{Nil}{List\;Int}{\Gamma}}}
+    {\appjudg{\Gamma}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma}}
 
 \\
 \Infer{\!\ArrElim[3]}
 {
 {
 \Infer{\Var[4]}
-    {(Cons : T_{Cons}) \in \Gamma_0}
-    {\synjudg{\Gamma_0}{Cons}{T_{Cons}}{\Gamma_0}}
+    {(Cons : T_{Cons}) \in \Gamma}
+    {\synjudg{\Gamma}{Cons}{T_{Cons}}{\Gamma}}
 }
 \\
     {
@@ -185,35 +186,46 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
         {
         \Infer{\MyTCRule{\Intcheckrulename}[6]}
             { }
-            {\chkjudg{\Gamma_0}{1}{\Inttype}{\Gamma_0}}
+            {\chkjudg{\Gamma}{1}{\Inttype}{\Gamma}}
         }
-        {\appjudg{\Gamma_0}{1}{T_{Cons}}{List\;Int \arr List\;Int}{\Gamma_1}}
+        {\appjudg{\Gamma}{1}{T_{Cons}}{List\;Int \arr List\;Int}{\Gamma}}
      % \Infer{\AllApp}
      %    {\appjudg{\Gamma_1,\ahat}{1}{(\ahat \fto List\; \ahat \fto List\;\ahat)}{C}{\Delta}}
      %    {\appjudg{\Gamma_1}{1}{\alltype{\alpha}{\alpha \fto List\; \alpha \fto List\;\alpha}}{C}{\Delta}}
     }
     }
-    {\synjudg{\Gamma_0}{Cons\,1}{List\;Int \arr List\;Int}{\Gamma_1}}
+    {\synjudg{\Gamma}{Cons\,1}{List\;Int \arr List\;Int}{\Gamma}}
 \\
 
 \Infer{\!\ArrElim[2]}
     {
     {
-        [3]{\synjudg{\Gamma_0}{Cons\,1}{List\;Int \arr List\;Int}{\Gamma_1}}
+        [3]{\synjudg{\Gamma}{Cons\,1}{List\;Int \arr List\;Int}{\Gamma}}
     }
     \\
-    [7]\appjudg{\Gamma_0}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma_1}
+    [7]\appjudg{\Gamma}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma}
     }
-    {\synjudg{\Gamma_0}{Cons\,1\,Nil}{List\;Int}{\Gamma_1}}
+    {\synjudg{\Gamma}{Cons\,1\,Nil}{List\;Int}{\Gamma}}
 \\
 
 \Infer{\Sub[1]}
     {
-        [2]{\synjudg{\Gamma_0}{Cons\,1\,Nil}{List\;Int}{\Gamma_1}}
+        [2]{\synjudg{\Gamma}{Cons\,1\,Nil}{List\;Int}{\Gamma}}
         \\
-        [10]\subjudg{\Gamma_0}{List[Int]}{List[Int]}{\Gamma_{2}}
+        [10]\subjudg{\Gamma}{List[Int]}{List[Int]}{\Gamma}
     }
-    {\chkjudg{\Gamma_0}{Cons\;1\;Nil}{List\;Int}{\Gamma_2}}
-
-
+    {\chkjudg{\Gamma}{Cons\;1\;Nil}{List\;Int}{\Gamma}}
 \end{mathpar}
+
+\begin{enumerate}
+    \item To check $Cons\;1\;Nil$ against $List\;Int$ [2], we first synthesise the expression type, and check the synthesised type is as subtype of $List\;Int$ [10].
+    \item To synthesise the type of the expression $Cons\;1\;Nil$ (implicitly $((Cons\;1)\;Nil)$) we synthesise the type of the left hand side of the application $Cons\;1$ to be $List\;Int\arr List\;Int$ [7] and then we synthesise the type of $Nil$ under the application of that type, which gives us $List\;Int$.
+    \item To synthesise the type of $Cons\;1$, we synthesise the type of the left hand side of the application $Cons$ to be $T_{Cons}: Int\arr List\;Int\arr List\;Int$ [4], and then synthesise the type of $1$ under the application of that type, which gives us $List\;Int\arr List\;Int$ [5].
+    \item We synthesise the type of $Cons$ to be $T_{Cons}$ from the context.
+    \item We synthesise the type of $1$ under the application of $T_{Cons}$, by first checking the type of $1$ against the type $Int$ which is the left hand side of the applied type[6]. This allows us to synthesise the right hand side of the applied type: $List\;Int\arr List\;Int$. 
+    \item 1 checks against the type $Int$, as it is an Int literal.
+    \item To synthesise the type of $Nil$ under the application of $List\;Int\arr List\;Int$, we check $Nil$ against the type $List\;Int$ which is the left hand side of the applied type[8]. This allows us to synthesise the right hand side of the applied type: $List\;Int$
+    \item To check $Nil$ against the type $List\;Int$, we first synthesise the type of $Nil$ resulting in $T_{Nil} :List\;Int$[9]. We then check that this is a subtype of $List\;Int$[10].
+    \item We synthesise the type of $Nil$ to be $T_{Nil}$ from the context.
+    \item We apply the \MyTCRule{\Unionsubrulename} rule to check that $List\;Int$ is a subtype (non strict) of $List\;Int$. The first check is that the names are the same, as the names uniquely identify these types. We then iterate over the list of the arguments to the type constructor. The name of the context increments to reflect this iteration, but the context is unchanged during this check. There is only one type in the list
+\end{enumerate}

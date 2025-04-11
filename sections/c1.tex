@@ -1,9 +1,12 @@
 \chapter{Cycle 1 - Proof of Concept}
-The goal of Cycle 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This cycle started at the beginning of the project with a discussion my supervisor, and the identification of my client, Samantha Frohlich. I proceeded by designing the system, designing \ac{SFL}, and then implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept by speaking to my client. 
+The goal of Cycle 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This cycle started at the beginning of the project with a discussion my supervisor, and the identification of my client. I proceeded by designing the system, designing \ac{SFL}, and then implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept by speaking to my client. 
 
-
+In our initial meeting, Jess helped me to identify an appropriate client: Samantha Frohlich, a lecturer in the first year Functional Programming module at University of Bristol, who also wanted a tool that fit this brief. It was necessary to identify a client other than Jess, as Jess's existing role as my supervisor/primary marker could limit guidance she could give me as a client. 
 
 \section{Requirements Analysis}
+\subsection{COMS10016: Imperative and Functional Programming at the University of Bristol}
+
+
 \subsection{Autoethnography}
 \label{sec:c1_autoethnography}
 \begin{quote}
@@ -35,9 +38,9 @@ During the testathon in cycle 2 [REFHERE: Testathon], participants were given a 
         \caption{}
         \label{fig:fp_is_hard}
     \end{subfigure}
-    \caption{The results of a survey performed during the testathon, where a Likert scale was used to gauge participants feelings towards imperative (a) and functional (b) programming languages}
+    \caption{The results of a survey performed during the testathon, where a Likert scale was used to gauge 15 participants feelings towards imperative (a) and functional (b) programming languages}
 \end{figure*}
-
+  
 $80\%$ of respondents strongly/agreed that they can program in an imperative language, similarly $80\%$ of respondents strongly/agreed that they had an intuitive understanding of them. $66.7\%$ of respondents strongly/agreed that they knew functional languages, but only $47.6\%$ of respondents would strongly/agree that they had an intuitive understanding of them.
 
 The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
@@ -66,11 +69,11 @@ The system should be a website to maximise portability. The system should includ
 
 \subsubsection{The Simple Functional Language}
 \label{design:goals}
-The language was given a name reflecting its' core design principle: Simplicity. More precisely, the programming language should be designed with the following design principles in mind:
+The language was given a name reflecting its core design principle: Simplicity. More precisely, the programming language should be designed with the following design principles in mind:
 \begin{enumerate}
-    \item It should be simple and easy to understand. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand why they work. 
-    \item It should be similar to existing functional languages, to allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work in a similar way). 
-    \item It should be powerful enough to explain key concepts.
+    \item \textbf{It should be simple and easy to understand}. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand why they work. 
+    \item \textbf{It should be similar to existing functional languages}. This would allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work in a similar way). 
+    \item \textbf{It should be powerful enough to explain key concepts.}
 \end{enumerate}
 The features that should be selected for the language are the features that maximise these goals for the minimum implementation complexity. Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. When adding features for the language, we must prioritise the features that allow explanation of the `core' features of functional languages, and de-prioritise features that are not so `core' to the understanding of functional languages. 
 
@@ -326,7 +329,7 @@ function diff(ast1, ast2, expr1, expr2) -> Diff {
     \label{fig:diff_list}
 \end{figure}
 
-\section{The Parser}
+\subsection{The Parser}
 The parser needs to consume a program, and return the following things:
 \begin{itemize}
     \item The AST
@@ -373,7 +376,7 @@ The parser will also store a set of all bound variables at each location. This w
     \item \verb|x = y| where y is undefined.
 \end{itemize}
 
-\subsection{Lexical Analysis}
+\subsubsection{Lexical Analysis}
 Lexical analysis is the process splitting a program into its constituent tokens (Lexemes). For instance, the program \verb|main = (\x.x) 1| is the following stream of tokens: \[[Id: main, Assignment, LeftParen, Backslash, Id: x, Dot, Id: x, RightParen, Literal: 1]\]
 See \ref{appx:tokens} for the code listing of the definition of the tokens output by the lexical analysis.
 
@@ -381,7 +384,7 @@ The lexer loads the entire string into memory at once. This is not typical, as t
 
 The lexer provides a \verb|next_token| function that returns the next token, and advances the pointer to the start of the token after. The lexer keeps track of line and column information, which is stored in the token to then be stored in the AST. 
 
-\subsection{Expression Parsing}
+\subsubsection{Expression Parsing}
 Expressions are parsed using recursive descent parsing. Some of the techniques used for this part of the parser were inspired by the discussion of top down parsing in \cite{dragon_book}. 
 
 At the top level, the expression parsing method is \verb|parse_expression|. A variable \verb|left| stores what is currently the index of the expression. It is called \verb|left| as if we encounter a token that denotes that \verb|left| is applied to whatever comes next, it becomes the left hand side of the application. \verb|left| is originally set to be the output of parsing a primary (see \ref{impl:parsing_primary}), and then progresses differently based on the next token.  Below are some of the ways that \verb|parse_expression| could proceed.
@@ -406,7 +409,7 @@ At the top level, the expression parsing method is \verb|parse_expression|. A va
     We return \verb|left|. 
 \end{itemize}
 
-\subsubsection{Primary Parsing}
+\paragraph{Primary Parsing}
 \label{impl:parsing_primary}
 A primary is a less complex structure than an expression. In this system, a primary is any expression structure other than applications. The primaries are:
 \begin{itemize}
@@ -417,7 +420,7 @@ A primary is a less complex structure than an expression. In this system, a prim
 \end{itemize}
 Each of these have their own specific parsing algorithms, which may include calling \verb|parse_expression|. 
 
-\subsubsection{Literal and Identifier Parsing}
+\paragraph{Literal and Identifier Parsing}
 Literals and identifiers are turned trivially into their respective AST Nodes. For instance, the token:
 \begin{verbatim}
 Token {
@@ -440,7 +443,7 @@ ASTNode {
 }
 \end{verbatim}
 
-\subsubsection{Parsing Abstractions}
+\paragraph{Parsing Abstractions}
 Abstractions (in the simple case) are parsed by:
 \begin{itemize}
     \item Consuming a lambda (represented by `\verb|\|' for ease of typing on standard keyboards)
@@ -452,10 +455,10 @@ Abstractions (in the simple case) are parsed by:
 
 However, the definition of abstractions have a few complicating elements of syntax sugar.
 
-\paragraph{Abstractions May be Assignments}
+\subparagraph{Abstractions May be Assignments}
 The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. As previously mentioned in \ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
 
-\paragraph{Abstractions May Have Multiple Variables}
+\subparagraph{Abstractions May Have Multiple Variables}
 The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|', and then producing a series of abstractions over these variables in order. 
 
 To parse an identifier, we must also check that the identifier is bound at this location.
@@ -482,8 +485,6 @@ Until this point, development was done in one rust package. This package would b
 
 \section{Evaluation}
 \label{eval:c1}
-In our initial meeting, Jess helped me to identify an appropriate client: Samantha Frohlich, another lecturer in functional programming, who also wanted a tool that fit this brief. This was necessary, as Jess's existing role as my supervisor/primary marker could limit guidance she could give me as a client. 
-
 At the end of the cycle, I presented the proof of concept project to my client, who was very positive about the project and its potential. The discussion was informal, a friendly conversation rather than a structured interview, to allow the direction of questioning to change depending on the clients answers. The meeting started started with me giving my client a demo of the proof of concept using by using the system to evaluate the following program:
 \begin{verbatim}
 fac n = if n <= 1 then 1 else n * (fac (n - 1))
