@@ -88,10 +88,10 @@ Let us consider the expression and its reduction
 \]
 \noindent The reduction is not a valid value.
 
-We will now attempt to derive the type of $x$, in order to show that it is untypable.
-As $x$ here is applied to itself, it must be some kind of function that takes a term $x$ of with type $T$ and then applies it to itself. This means that $T = T \fto U$ which is absurd. This means that this is `untypable'. Indeed, it is clearly never possible to type an expression where a term is applied to itself. If this was a real programming language, when it got to the normal form \(1\;1\), it would be some form of runtime error. We can see that only allowing typable terms would have prevented us from creating a term that does not evaluate in this case. 
+We will now attempt to derive the type of the parameter $x$, in order to show that it is untypeable.
+As $x$ here is applied to itself, it must be some kind of function that takes a term $x$ of with type $T$ and then applies it to itself. This means that $T = T \fto U$ which is absurd. This means that this is `untypeable'. Indeed, it is clearly never possible to type an expression where a term is applied to itself. If this was a real programming language, when it got to the normal form \(1\;1\), it would be some form of runtime error. We can see that only allowing typeable terms would have prevented us from creating a term that does not evaluate in this case. 
 
-In general, \textbf{well typed programs do not go wrong} \cite{MILNER1978348}. Therefore, if we are able to exclude all terms in our functional language that are untypable, we will be able to guarantee that it does not go wrong, and thus prevent these runtime errors. 
+In general, \textbf{well typed programs do not go wrong} \cite{MILNER1978348}. Therefore, if we are able to exclude all terms in our functional language that are untypeable, we will be able to guarantee that it does not go wrong, and thus prevent these runtime errors. 
 
 The system that looks at a program to decide whether it is well typed is called the \textbf{typechecker}. Types can often also be inferred without specific assignments, which is called \textbf{type inference}.
 
@@ -120,6 +120,13 @@ add x y = x + y
 \end{verbatim}
 
 \subsection{Polymorphic functions}
+In Haskell, functions can be written that operate on values of various types. A simple argument is 
+
+\begin{verbatim}
+id :: a -> a
+id x = x
+\end{verbatim}
+\noindent which simply returns its argument. `a' in the type signature represents any type, and can be substituted for any type. The two `a's must be the same however, mandating that the argument and the return value must be the same type.  
 
 \subsection{User Defined Data Types}
 Haskell allows users to define their own types. For instance, booleans can be defined as
@@ -133,28 +140,49 @@ An example of a product type is the tuple \((Int, Bool)\): the set of all possib
 
 An example of a union type in Haskell is the tagged union:
 
-\noindent\verb!"data Shape = Circle Int | Rectangle Int Int"!, which is isomorphic to the type \(Int \cup (Int \times Int)\). 
+\begin{verbatim}
+data Shape = Circle Int | Rectangle Int Int
+\end{verbatim}
 
-\subsection{Polymorphic Types}
+\noindent which is isomorphic to the type \(Int \cup (Int \times Int)\). 
+
+\subsection{Polymorphic Types and Kinds}
 Haskell includes polymorphic types. These are `types that are universally quantified in some way over all types' \cite{hudak1992gentle}. 
 
-One example is a list that can hold any value of type $a$, written as \(List\;a\)". Here, \(List\) is not a type in itself, but it represents a constructor that takes a type, and returns a concrete type. We could write this as "$Type \fto Type$", indicating that it behaves like a function, but at the type level rather than the value level. If we were to apply the constructor \(List\) to the concrete type \(Int\), the resulting type would be the concrete type \(List \;Int\). 
+One example is the type constructor $Maybe$, written as \(Maybe\;a\). This is first-order polymorphism, as opposed to higher-order polymorphism where a type can be an `abstraction over type constructors'. \cite{yallop2014lightweightpoly}. Here, \(Maybe\) is not a type in itself, but it represents a constructor that takes a type, and returns a concrete type. 
 
-This is first-order polymorphism (rank 1 polymorphism), as opposed to higher-order polymorphism (also known as higher-kinded polymorphism) where a type can "abstraction over type constructors" \cite{yallop2014lightweightpoly}. 
+The `Type of a Type' is its \emph{kind} \cite{pierce2002types}. For example, the type constructor $Maybe$ has the kind $* \fto *$. This notation looks similar to how functions over values are defined, indicating that it behaves like a function, but at the type level rather than the value level. If we were to apply the constructor \(Maybe\) to the concrete type \(Int\), the resulting type would be the concrete type \(Maybe \;Int\). 
 
-The "Type of a Type" is its \emph{kind} \cite{pierce2002types}. For example, the type constructor $List$ has the kind $Type \fto Type$ 
+`Either' is a type constructor with the kind $* \fto * \fto *$, meaning it takes two concrete types and returns a concrete type. 
 
-`Either' is a type constructor with the kind $Type \fto Type \fto Type$, meaning it takes two concrete types and returns a concrete type. 
 \subsection{Pattern Matching}
+Haskell allows us to do pattern matching, allowing conditional execution based on whether a term matches a given form. The following function would have different results depending on whether the input value was 0 or another number
 
+\begin{verbatim}
+isZero :: Int -> Bool
+isZero 0 = true
+isZero _ = false
+\end{verbatim}
 
-Functional languages have a long history that we do not need to go into
+\noindent The underscore `\verb|_|' represents a wildcard pattern that matches anything. In this case, it matches any $Int$ that is not $0$. We can match more complicated expressions, and assign variables throughout the pattern.
+
+\begin{verbatim}
+data SomeValues a = One a | Two a a | Three a a a | Four a a a a
+
+valuesToList :: SomeValues a -> [a]
+valuesToList (One x) = [x]
+valuesToList (Two x1 x2) = [x1, x2]
+valuesToList (Three x1 x2 x3) = [x1, x2, x3]
+valuesToList (Four x1 x2 x3 x4) = [x1, x2, x3, x4]
+\end{verbatim}
+
+\noindent In the first match case of \verb|valuesToList|, we assign the variable $x$ when matching the pattern. In the second, we assign \verb|x1| and \verb|x2| etc. 
 
 \section{Rust}
 \label{bg:rust}
 This project is written in rust. Some of the decisions made, particularly in the implementation of the AST, require an understanding of Rust, especially the memory management model.
 
-"Ownership" is an important concept. The rules of ownership \cite{rust_book}:
+`Ownership' is an important concept. The rules of ownership \cite{rust_book}:
 \begin{itemize}
     \item Each value in Rust has an owner.
     \item There can only be one owner at a time.
@@ -175,19 +203,22 @@ These rules ensure that immutable references are to things that don't change, an
     \item Vite
     \item React
     \item NPM
+    \item PWAs
 \end{itemize}
+
+
 
 \section{Web Assembly} \label{bg:wasm}
 This project runs entirely within the browser, despite being written in Rust. This is due to the fact that it compiles to web assembly. Automated tools exist for the generation of JavaScript bindings around Rust functions/types, but this process places certain restrictions around their arguments and return type, or attributes. We will discuss this here to allow us to refer to these restrictions, and also to explain the process of compiling and using Rust code in a modern web browser. 
 
-Web Assembly 2.0 is a 32 bit target \cite{WebAssemblyCoreSpecification2}. This means we only have 4GB of addressable memory. The Rust compiler is based on LLVM, which provides a web-assembly compilation target. The Rust compiler has a toolchain around this compilation target [REFHERE: rust wasm toolchain], that allows for easy compilation to web-assembly. However, this only creates a binary blob, which requires more work to make interoperable with our JavaScript build system (Vite). We must do two things to achieve interoperability:
+Web Assembly 2.0 is a 32 bit target \cite{WebAssemblyCoreSpecification2}. This means we only have 4 GB of addressable memory. The Rust compiler is based on LLVM, which provides a web-assembly compilation target. The Rust compiler has a toolchain around this compilation target [REFHERE: rust WASM toolchain], that allows for easy compilation to web-assembly. However, this only creates a binary blob, which requires more work to make interoperable with our JavaScript build system (Vite). We must do two things to achieve interoperability:
 \begin{itemize}
     \item Incorporate it into our build so it can be served with it.
-    \item Load the wasm package in a way that allows for us to call the functions.
+    \item Load the WASM package in a way that allows for us to call the functions.
 \end{itemize}
-Producing an NPM package with some JavaScript functions that call the webasembly functions would achieve both of these goals. However, if we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the wasm functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 
+Producing an NPM package with some JavaScript functions that call the WebAssembly functions would achieve both of these goals. However, if we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the WASM functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 
 
-Fortunately, the rust crate \verb|wasm-bindgen| provides macros that generate a whole NPM package, including TS bindings, automatically. This package can then be added as a dependency to an NPM app that provides a website, and the functions within it can [TODO: wasm bindgen vs wasm pack?]
+Fortunately, the rust crate \verb|wasm-bindgen| provides macros that generate a whole NPM package, including TS bindings, automatically. This package can then be added as a dependency to an NPM app that provides a website, and the functions within it can [TODO: WASM-bindgen vs WASM pack?]
 
 \paragraph{wasm-pack}
 \label{bg:wasm-pack}

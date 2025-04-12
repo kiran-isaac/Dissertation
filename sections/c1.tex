@@ -11,7 +11,7 @@ The goal of Cycle 1, which spanned approximately the first month of my project, 
 \noindent In this cycle, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then quickly implement a proof of concept of this solution. 
 
 \subsection{The Brief}
-This project was proposed by my supervisor, Jess Foster. She is a lecturer at the University of Bristol, who lectures in the \ac{FP} unit in first year. In our meeting in November 2024, we discussed how she wanted a tool that would help build intuition for how these languages are evaluated, that she could use to supplement her explanation of otherwise difficult to intuit functional language concepts. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. 
+This project was proposed by my supervisor, Jess Foster. In our initial meeting, we discussed how she wanted a tool that would help build intuition for how these languages are evaluated, that she could use to supplement her explanation of otherwise difficult to intuit functional language concepts. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. Jess helped me to identify an appropriate client: Samantha Frohlich. Jess and Samantha are both lecturers on \hyperref[COMS10016]{COMS10016}. It was necessary to identify a client other than Jess, as her existing role as my supervisor/primary marker could limit guidance she would be able to give me if she were also my client. 
 
 Following this meeting, I broke down this brief into smaller parts. Taking an autoethnographic approach, I used my own experience teaching functional languages to consider solutions and come up with requirements for each part. 
 
@@ -36,15 +36,15 @@ During cycle 2 [REFHERE: Testathon], to confirm my belief that students found fu
     \caption{The results of a survey performed during the cycle 2 [REFHERE: Testathon], where a Likert scale was used to gauge 15 participants feelings towards imperative (a) and functional (b) programming languages}
 \end{figure*}
   
-$80\%$ of respondents strongly/agreed that they can program in an imperative language, similarly $80\%$ of respondents strongly/agreed that they had an intuitive understanding of them. $66.7\%$ of respondents strongly/agreed that they knew functional languages, but only $47.6\%$ of respondents would strongly/agree that they had an intuitive understanding of them.
+$80\%$ of respondents agreed/strongly agreed that they can program in an imperative language, similarly $80\%$ of respondents agreed/strongly agreed that they had an intuitive understanding of them. $66.7\%$ of respondents strongly/agreed that they knew functional languages, but only $47.6\%$ of respondents would strongly/agree that they had an intuitive understanding of them.
 
 The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
 
-All participants who strongly/agreed/were neutral about functional languages being hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
+All participants who did not disagree that functional languages are hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
 
-In my experience, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for student during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'. \cite{fp_first_year}.
+In my experience, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for student during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'. \cite{fp_first_year}
 
-A tool to perform these step by step evaluations in an interactive manner would be very valuable. The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken. This would allow students to understand and interact with a stepwise evaluation, without anyone having to undertake the long process of writing it out, and without risk of incorrecness. Furthermore, the effects of changing the input program could be seen quickly, providing instant feedback. 
+A tool to perform these step by step evaluations in an interactive manner would be very valuable. The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken. This would allow students to understand and interact with a stepwise evaluation, without anyone having to undertake the long process of writing it out, and without risk of incorrectness. Furthermore, the effects of changing the input program could be seen quickly, providing instant feedback. 
 
 \paragraph{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. The tool must also be portable, and not require a complex installation process. 
 
@@ -57,10 +57,10 @@ The requirements extracted from autoethnographic methods, as well as from my ini
 
 The system should be a website to maximize portability. The system should include a functional programming language, as well as some sort of UI that allows a functional program in the language to be entered, and evaluated step by step in a visual manner. 
 
-\begin{figure}[ht]
+\begin{figure}[t]
     \centering
     \includegraphics[width=1\linewidth]{images/fp_is_hard_wordcloud.png}
-    \caption{A word cloud of answers entered into the free form text box presented to respondents who reported that they did not disagree that functional languages were hard to learn}
+    \caption{A word cloud of answers entered into the free form text box presented to the 10 respondents who reported that they did not disagree that functional languages were hard to learn}
     \label{fig:fp_wordcloud}
 \end{figure}
 
@@ -75,7 +75,9 @@ The language was given a name reflecting its core design principle: Simplicity. 
 The features that should be selected for the language are the features that maximize these goals for the minimum implementation complexity. Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. When adding features for the language, we must prioritize the features that allow explanation of the `core' features of functional languages, and de-prioritise features that are not so `core' to the understanding of functional languages. 
 
 \subsubsection{The Explorer}
-The website (the explorer) should include a code editor for people to enter programs. [TODO: Finish this bit, summarize requirements]
+The website (the explorer) should include a code editor for people to enter programs. Including the functionality for the language inside the website rather than requiring complex client/server communication would simplify the system, as well as improving responsiveness. 
+
+[TODO: Finish this bit, summarize requirements]
 
 \section{Language Design}
 In this section I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design, and it was the proof of concept.  
@@ -137,7 +139,8 @@ Rather than this solution, which would have a non-constant node lookup time, a s
 
 \begin{figure}[t]
     \centering
-    \begin{tabular}{c}
+    \begin{tabular}{|c|}
+    \hline
     \begin{lstlisting}[language=Rust]
 struct AST {
     vec: Vec<ASTNode>,
@@ -166,6 +169,7 @@ struct ASTNode {
     additional_syntax_information: ASTNodeSyntaxInfo
 }
     \end{lstlisting}
+    \\\hline
     \end{tabular}
     \caption{The Rust code listing for the definition of the AST, with lifetime specifiers, accessibility modifiers, and the syntax information (see \ref{paragraph:to_string}) removed for conciseness.}
     \label{fig:ast_lst}
@@ -225,7 +229,8 @@ Despite this, the decision was made not to update the implementation for several
 
 \begin{figure}[t]
     \centering
-    \begin{tabular}{c}
+    \begin{tabular}{|c|}
+        \hline
     \begin{lstlisting}[language=Rust]
 struct AST<'a> {
     vec: Vec<ASTNode<'a>>,
@@ -249,12 +254,13 @@ struct ASTNode<'a> {
     info: ASTNodeSyntaxInfo
 }
     \end{lstlisting}
+    \\\hline
     \end{tabular}
     \caption{An alternative implementation with a few advantages over the actual implementation. }
     \label{fig:ast_lst_2}
 \end{figure}
 
-\subsubsection{Methods on the AST}
+\subsection{Methods on the AST}
 Below are a selection of the more important or interesting methods implemented on the AST and its nodes.
 
 \paragraph{Adding new nodes} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so the tree will add them to the end, and return their index. These methods are needed extensively for the parser.
@@ -281,11 +287,10 @@ We must also take into account whether a binary infix operator was used to gener
 
 % There is also other syntax sugar, such as turning a List from `Cons' syntax into more familiar braced syntax, with comma separation.   For instance: \verb|Cons 1 (Cons 2 (Cons 3 Nil))| should be displayed as \verb|[1,2,3]|. [TODO: Consider whether to have only literals in this syntax or everything. Maybe toggleable syntax sugar?]
 
-\paragraph{Diff} \label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. \ref{fig:diff_list} shows a subsection of this algorithm, showing how it works for IDs, Literals and Pairs.
-
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
-    \begin{tabular}{c}
+    \begin{tabular}{|c|}
+        \hline
     \begin{lstlisting}[language=Rust]
 enum DiffElem {
     Similarity(String),
@@ -321,10 +326,15 @@ function diff(ast1, ast2, expr1, expr2) -> Diff {
     return diff;
 }
     \end{lstlisting}
+    \\\hline
     \end{tabular}
     \caption{The Rust code listing for the type of the output of the AST::diff function, as well as a small section of the algorithm. There is also (not shown) a wrapper around the Diff type, to allow for conversion into JavaScript (see \ref{bg:wasm}), as well as the some logic for combining diffs.}
     \label{fig:diff_list}
 \end{figure}
+
+\paragraph{Diff} \label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. \ref{fig:diff_list} shows a subsection of this algorithm, showing how it works for IDs, Literals and Pairs.
+
+
 
 \subsection{The Parser}
 The parser needs to consume a program, and return the following things:
@@ -471,18 +481,18 @@ Until this point, development was done in one rust package. This package would b
     \item \textbf{libsfl\_wasm}: a package set up for use with wasm-pack (\ref{bg:wasm-pack}). It provides an wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by wasm-bindgen\ref{bg:wasm-bindgen}. wasm-pack would compile this to an \ac{NPM} package containing:
     \begin{itemize}
         \item The WASM binary blob of the compiled rust code
-        \item A JavaScript file that would load the blob into the browsers memory, and provides methods that can call the appropriate the methods in the blob
+        \item A JavaScript file that would load the blob into the browsers' memory, and provides methods that can call the appropriate the methods in the blob
         \item A TypeScript file providing the types of all of the packages exported functions. 
     \end{itemize}
     \item The Vite+React frontend (see\ref{bg:frontend}) that requires the package that results from compiling \textbf{libsfl\_wasm}
 \end{itemize}
 
 
-[TODO: More stuff about wasm bindings??]
+[TODO: More stuff about WASM bindings??]
 
 \section{Evaluation}
 \label{eval:c1}
-At the end of the cycle, I presented the proof of concept project to my client, who was very positive about the project and its potential. The discussion was informal, a friendly conversation rather than a structured interview, to allow the direction of questioning to change depending on the clients answers. The meeting started started with me giving my client a demo of the proof of concept using by using the system to evaluate the following program:
+At the end of the cycle, I presented the proof of concept project to my client, who was very positive about the project and its potential. The discussion was informal, a friendly conversation rather than a structured interview, to allow the direction of questioning to change depending on the clients answers. The meeting started with me giving my client a demo of the proof of concept using by using the system to evaluate the following program:
 \begin{verbatim}
 fac n = if n <= 1 then 1 else n * (fac (n - 1))
 main = fac 5

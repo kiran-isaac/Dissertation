@@ -6,3 +6,12 @@ Testathon
 Likert
 datatypes
 SFL-explorer
+TODO
+Vite
+WASM
+redex
+VSCode
+typechecker
+higher-kinded
+untypeable
+Typechecking

@@ -93,7 +93,8 @@ Rust allows us to represent our types (see \ref{fig:tc_types} for the definition
 
 \begin{figure}[ht]
     \centering
-    \begin{tabular}{c}
+    \begin{tabular}{|c|}
+    \hline
     \begin{lstlisting}[language=Rust]
 pub enum Primitive {
     Int64,
@@ -113,6 +114,7 @@ pub enum Type {
     Existential(usize),
 }
     \end{lstlisting}
+    \\\hline
     \end{tabular}
     \caption{The Rust code listing for the definition of types. Existential is separated as it is more of an implementation detail than a part of the type system}
     \label{fig:type_lst}

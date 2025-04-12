@@ -1,2 +1,10 @@
 {"rule":"BOTH_AS_WELL_AS","sentence":"^\\QThe interface must be understandable, for both \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q `experts' (lecturers, advanced users) as well as people who have never seen a functional language before.\\E$"}
 {"rule":"EN_COMPOUNDS","sentence":"^\\QSFL-explorer takes the form of a functional language (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q), packaged with two interfaces that allows users to observe the process of evaluation of a term as a series of step by step or multi-step reductions, and control the order that sub-terms are evaluated.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qbreak\\E$"}
+{"rule":"WHITESPACE_RULE","sentence":"^\\Qbreak\\E$"}
+{"rule":"KIND_OF_A","sentence":"^\\QThe `Type of a Type' is its kind \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
+{"rule":"SOME_OF_THE","sentence":"^\\QSome of the decisions made, particularly in the implementation of the AST, require an understanding of Rust, especially the memory management model.\\E$"}
+{"rule":"ALL_OF_THE","sentence":"^\\Qwasm-pack would compile this to an \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q package containing: The WASM binary blob of the compiled rust code A JavaScript file that would load the blob into the browsers' memory, and provides methods that can call the appropriate the methods in the blob A TypeScript file providing the types of all of the packages exported functions.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhich simply returns its argument.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhich is isomorphic to the type \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QIn the first match case of valuesToList, we assign the variable \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q when matching the pattern.\\E$"}
