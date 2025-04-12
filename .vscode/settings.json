@@ -35,7 +35,7 @@
             "tools": [
                 "xelatex_quick",
                 "bibtex",
-                "xelatex_quick",
+                // "xelatex_quick",
                 "xelatex"
             ]
         }
@@ -45,4 +45,6 @@
     "latex-workshop.view.pdf.viewer": "tab",
     "latex-workshop.linting.chktex.enabled": false,
     "editor.wordWrap": "on",
+    "editor.wrappingStrategy": "advanced",
+    "latex-workshop.latex.autoBuild.run": "onSave",
 }
