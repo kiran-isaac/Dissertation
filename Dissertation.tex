@@ -3,10 +3,73 @@
 \usepackage{caption}  
 \usepackage{subcaption}
 \usepackage{array}
+\usepackage{makecell}
+\usepackage{longtable}
 \usepackage{float}
+\usepackage{listings, listings-rust}
 
 \input{macros/Krishnaswami_Dunfield_macros}
 \input{macros/macros}
+
+\lstdefinelanguage{SFL}{
+      sensitive = true,
+      keywords={},
+      otherkeywords={->, <=, >=, ::, ==, *, +, /, -},
+      keywords = [2]{
+            if, map, foldr, filter, repeat, length, take, range, infiniteFrom, sum      
+      },
+      keywords = [3]{
+        Int, Bool, List, Maybe, Either
+      },
+      keywords = [4]{
+        match, data, type, _, |
+      },
+      keywordstyle=\color{green},
+      keywordstyle=[2]\color{blue},
+      keywordstyle=[3]\color{teal},
+      keywordstyle=[4]\color{red},
+      numbers=left,
+      numberstyle=\scriptsize,
+      stepnumber=1,
+      numbersep=8pt,
+      showstringspaces=false,
+      breaklines=true,
+      frame=lines,
+      comment=[l]{//},
+      morecomment=[s]{/*}{*/},
+      commentstyle=\color{purple}\ttfamily,
+} %
+
+\lstdefinelanguage{SFL_unboxed}{
+      sensitive = true,
+      keywords={},
+      otherkeywords={->, <=, >=, ::, ==, *, +, /, -},
+      keywords = [2]{
+            if, map, foldr, filter, repeat, length, take, range, infiniteFrom, sum      
+      },
+      keywords = [3]{
+        Int, Bool, List, Maybe, Either
+      },
+      keywords = [4]{
+        match, data, type, _
+      },
+      keywordstyle=\color{green},
+      keywordstyle=[2]\color{blue},
+      keywordstyle=[3]\color{teal},
+      keywordstyle=[4]\color{red},
+      % numbers=left,
+      % numberstyle=\scriptsize,
+      % stepnumber=1,
+      % numbersep=8pt,
+      % showstringspaces=false,
+      % breaklines=true,
+      % frame=lines,
+      comment=[l]{//},
+      morecomment=[s]{/*}{*/},
+      commentstyle=\color{purple}\ttfamily,
+} %
+
+\newcommand{\sflinline}[1]{\lstinline[language=SFL]!#1!}
 
 \newtheoremstyle{break}{\topsep}{\topsep}{\itshape}{}{\bfseries}{}{\newline}{}
 
