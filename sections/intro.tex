@@ -9,8 +9,9 @@ SFL-explorer takes the form of a functional language (\ac{SFL}), packaged with t
 \end{itemize}
 
 \section{The Language}
-The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL-explorer and apply it to these languages. Here is an example program in the language, to find the factorial of 2. The relevant prelude functions are included for clarity.
+The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL-explorer and apply it to these languages. \ref{tab:fac_2_table_input} is an example program in the language, to find the factorial of 2. The relevant prelude functions are included for clarity.
 
+\begin{figure}[h]
 \begin{lstlisting}[language=SFL]
 if :: Bool -> a -> a -> a
 if cond then_branch else_branch = match cond {
@@ -24,10 +25,16 @@ fac n = if (n <= 1) (1) (n * (fac (n - 1)))
 main :: Int
 main = fac 2
 \end{lstlisting}
+\caption{An example SFL program. Evaluation is shown \ref{tab:fac_2_table}}
+\label{tab:fac_2_table_input}
+\end{figure}
 
-Below is a table showing the evaluation of this function in lazy mode by the system. The `Prompt` column shows what the user is presented with as a button to make progress. The first prompt entry at row $0$ is empty, as it represents the starting program state. 
+\ref{tab:fac_2_table} is a table showing the evaluation of this function in lazy mode by the system. The `Prompt` column shows what the user is presented with as a button to make progress. The first prompt entry at row $0$ is empty, as it represents the starting program state. This table is generated dynamically as the user progresses through the given program.  
 
-\begin{longtable}{|l|p{5cm}|l|}
+
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{|l|p{5cm}|l|}
 \hline
     Step & \textbf{Prompt} & \textbf{Main Expression Afterwards} \\ \hline
     0 &     \  & \begin{lstlisting}[language=SFL_unboxed]
@@ -91,8 +98,12 @@ match (false) {
     & \begin{lstlisting}[language=SFL_unboxed,aboveskip=0pt,belowskip=10pt]
 2
      \end{lstlisting}\\\hline
-\end{longtable}
-% \lstinline[language=SFL]!match (2 <= 1) {| true -> 1| false -> 2 * (fac (2 - 1))}! 
+\end{tabular}
+    \caption{A table showing how the system leads a user through the step by step evaluation of the program shown at \ref{tab:fac_2_table_input}]}
+    \label{tab:fac_2_table}
+\end{figure}
+
+The user is provided with messages telling them what the next step that they can make is. Additionally, there is a `free choice' mode where users are presented with the options for progress, and they can choose which one is taken.
 
 \section{COMS10016: Imperative and Functional Programming at the University of Bristol}
 \label{COMS10016}

@@ -62,7 +62,6 @@
 \RequirePackage[algochapter]{algorithm2e}
 % http://www.ctan.org/tex-archive/macros/latex/contrib/listings
 \RequirePackage{listings}
-\RequirePackage{listings-rust}
 % http://www.ctan.org/tex-archive/macros/latex/contrib/xstring
 \RequirePackage{xstring}
 % http://www.ctan.org/tex-archive/macros/latex/contrib/url

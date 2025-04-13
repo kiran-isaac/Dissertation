@@ -6,7 +6,27 @@
 \usepackage{makecell}
 \usepackage{longtable}
 \usepackage{float}
-\usepackage{listings, listings-rust}
+
+\lstdefinelanguage{Rust}{
+  morekeywords={
+    as, break, const, continue, crate, else, enum, extern, false, fn,
+    for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return,
+    self, Self, static, struct, super, trait, true, type, unsafe, use, where,
+    while, dyn, abstract, become, box, do, final, macro, override, priv, try,
+    typeof, unsized, virtual, yield, await
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]{"},
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{orange},
+  commentstyle=\color{gray}\itshape,
+  showstringspaces=false,
+  tabsize=4,
+  breaklines=true,
+  columns=fullflexible
+}
 
 \input{macros/Krishnaswami_Dunfield_macros}
 \input{macros/macros}
