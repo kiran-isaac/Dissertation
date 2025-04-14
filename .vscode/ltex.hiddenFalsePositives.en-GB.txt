@@ -8,3 +8,8 @@
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhich simply returns its argument.\\E$"}
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhich is isomorphic to the type \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QIn the first match case of valuesToList, we assign the variable \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q when matching the pattern.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QStep Prompt Main Expression Afterwards 0 1 Apply function `fac' to 2 2 [l]Apply function if to (2 <= 1), 1 and (2 * (fac (2 - 1))) 3 Apply inbuilt <= to `2' and `1' 4 Match to pattern `false' 5 [l]Apply function fac to (2 - 1) 6 [l]Apply function if to ((2 - 1) <= 1), 1 and ((2 - 1) * (fac ((2 - 1) - 1))) 7 [l]Apply inbuilt - to 2 and 1\\E$"}
+{"rule":"ARROWS","sentence":"^\\QStep Prompt Main Expression Afterwards 0 1 Apply function `fac' to 2 2 [l]Apply function if to (2 <= 1), 1 and (2 * (fac (2 - 1))) 3 Apply inbuilt <= to `2' and `1' 4 Match to pattern `false' 5 [l]Apply function fac to (2 - 1) 6 [l]Apply function if to ((2 - 1) <= 1), 1 and ((2 - 1) * (fac ((2 - 1) - 1))) 7 [l]Apply inbuilt - to 2 and 1\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QSFL Simple Functional Language FP Functional Programming WASM Web ASseMbly CLI Command Line Interface MVP Minimum Viable Product NPM Node Package Manager\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QThis language is type checked, using a modified version of Dunfield and Krishnaswami's bidirectional type checking algorithm \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, modified to include SFL's extended type system.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QFor instance, in the provided `squaresum' example:\\E$"}

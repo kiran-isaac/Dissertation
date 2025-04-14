@@ -5,3 +5,7 @@ valuesToList (One x) = [x]
 valuesToList (Two x1 x2) = [x1, x2]
 valuesToList (Three x1 x2 x3) = [x1, x2, x3]
 valuesToList (Four x1 x2 x3 x4) = [x1, x2, x3, x4]
+
+fix f = f $ fix f
+
+main = fix id

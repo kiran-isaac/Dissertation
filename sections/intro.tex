@@ -39,10 +39,10 @@ main = fac 2
     Step & \textbf{Prompt} & \textbf{Main Expression Afterwards} \\ \hline
     0 &     \  & \begin{lstlisting}[language=SFL_unboxed]
 fac 2
-     \end{lstlisting} \\\hline
+     \end{lstlisting} \\ \hline
      1 & Apply function `fac' to 2 & \begin{lstlisting}[language=SFL_unboxed]
 if (2 <= 1) 1 (2 * (fac (2 - 1)))
-     \end{lstlisting} \\\hline
+     \end{lstlisting} \\ \hline
     2 &\makecell[l]{Apply function if to (2 <= 1), 1 \\\ \ and (2 * (fac (2 - 1)))}
     & \begin{lstlisting}[language=SFL_unboxed]
 match (2 <= 1) {
@@ -99,7 +99,7 @@ match (false) {
 2
      \end{lstlisting}\\\hline
 \end{tabular}
-    \caption{A table showing how the system leads a user through the step by step evaluation of the program shown at \ref{tab:fac_2_table_input}]}
+    \caption{A table showing how the system leads a user through the step by step evaluation of the program shown at \ref{tab:fac_2_table_input}}
     \label{tab:fac_2_table}
 \end{figure}
 
@@ -133,6 +133,4 @@ Each cycle was further subdivided into four phases:
     \caption{A spiral representation of the project lifecycle, showing the 4 iterations, and the work done in each part of each cycle. }\label{fig:spiral}
 \end{figure}
 
-This iterative methodology helped manage complexity and uncertainty. Getting frequent feedback from users and my client allowed me to keep 
-
-
+This iterative methodology helped manage complexity and uncertainty. Getting frequent feedback from focus groups 

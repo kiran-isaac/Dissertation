@@ -1,2 +1,96 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
+The aims of this project were to create a system to help to build an intuitive understanding of functional programming languages
+
+\section{Strengths}
+\subsection{The Language Achieves Its Design Aims}
+To remind the reader, the design aims for the language were:
+
+\begin{enumerate}
+    \item \textbf{It should be simple and easy to understand}. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand why they work. 
+    \item \textbf{It should be similar to existing functional languages}. This would allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work similarly). 
+    \item \textbf{It should be powerful enough to explain key concepts.}
+\end{enumerate}
+
+
+
+\section{Limitations}
+\subsection{The Expressions Balloon During Evaluation}
+I believe that the languages lack of inbuilts is one of the languages best `features'. However, it is also a curse: as everything is defined with match expressions, the expression balloons vertically with match statements during evaluation. For instance, in the provided `square\_sum' example:
+
+% \begin{figure}[h]
+\begin{lstlisting}[language=SFL]
+square :: Int -> Int
+square x = x * x
+
+// List of the square numbers from lower to upper
+list_of_squares :: Int -> Int -> List Int
+list_of_squares lower upper = map square $ range lower upper
+
+main :: Int
+main = sum $ list_of_squares 1 5
+\end{lstlisting}
+% \end{figure}
+
+Despite their being no match expressions in sight, the `main' expression balloons to 3 match statements deep within 6 lazy steps:
+
+% \begin{figure}[h]
+\begin{lstlisting}[language=SFL]
+match (match (match (infiniteFrom 1) {
+    | Nil -> Nil
+    | Cons x xs -> if ((5 - 1) > 0) (Cons x (take ((5 - 1) - 1) xs)) Nil
+}) {
+    | Nil -> Nil
+    | Cons x xs -> Cons (square x) (map square xs)
+}) {
+    | Nil -> 0
+    | Cons x xs -> (\x. \acc. x + acc) x (foldr (\x. \acc. x + acc) 0 xs)
+}
+\end{lstlisting}
+% \end{figure}
+
+The outer one comes from `sum', the middle one comes from `map', and the inner one comes from `range', all prelude functions. Unfortunately, this is only really solvable to an extent, as pattern matching is a key concept in functional programming languages. Furthermore, a conclusion of the intermediate focus group was that the explicit match syntax, where it was obvious where/how pattern matching was occurring, made understanding pattern matching much easier. Indeed, they agreed that they would have liked to have SFL to learn about pattern matching rather than Haskell (see \ref{eval:IFG}). 
+
+This situation could be improved by being able to select which functions we are interested in seeing the expansion of, and which ones we are not. See \ref{fw:function_checkboxes}
+
+\section{Future Work}
+\subsection{Selective Skipping}
+\label{fw:function_checkboxes}
+We are not always interested in all the functions involved in our program. For instance, if a lecturer is attempting to demonstrate \verb|foldr| over a list, they may not be interested in the expansion of how \verb|range| works in order to generate their list they are going to fold over. They may want the evaluation of some things to be skipped over. This is something that I have considered doing from the start, however I have not had time to properly investigate how this could be done. 
+
+We could mark certain expressions as `uninteresting', and evaluate them as much as we can immediately. For instance, if the syntax for an uninteresting expression looked like `[e]':
+
+\begin{lstlisting}[language=SFL]
+main :: Int 
+main = sum $ [range 1 4]
+\end{lstlisting}
+
+\noindent We could immediately evaluate `\lstinline[language=SFL]|range 1 4|' to `\lstinline[language=SFL]|Cons 1 (Cons 2 (Cons 3 Nil))|'. However, consider:
+
+\begin{lstlisting}[language=SFL]
+fix f = f $ fix f
+
+id x = x
+
+main = if true 1 [fix id]
+\end{lstlisting}
+
+The evaluation of `\lstinline[language=SFL]|fix id|' will never terminate. If we were to attempt to evaluate this, it would run forever. If we were to provide a mechanism that forces full evaluation of a term, we would be providing functionality that the user could use to `shoot themselves in the foot'. This would need to be clearly communicated to the user, and a mechanism of stopping this evaluation should be provided if the user judges it has been too long. 
+
+\subsection{More Extensive User Testing}
+The agile approach taken during this project allowed for 5 different testing opportunities:
+\begin{itemize}
+    \item The Proof of Concept client meeting
+    \item The Advanced Focus group
+    \item The Intermediate Focus Group
+    \item The Beginner Focus Group
+    \item The final client meeting
+\end{itemize}
+
+However, the 
+
+\subsection{Extensions to the language}
+
+
+
+\subsection{Improvements to the UI}
