@@ -140,9 +140,10 @@ The type checker will be bidirectional, and will follow and algorithm largely ba
 
 \input{sections/fig_types_ctx}
 
-The full typechecking algorithm is listed here below. Most of these rules are untouched, the ones that I added or modified are \colorbox{myTcRuleColour}{highlighted}.
+The full typechecking algorithm is listed in figures \ref{fig:alg-subtyping}, \ref{fig:instantiation}, \ref{fig:alg-typing}. \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. 
 
-\ref{fig:alg-subtyping} shows the algorithm for how types 
+Most of these rules are untouched, the ones that I added or modified are \colorbox{myTcRuleColour}{highlighted}.
+
 
 \input{sections/fig_subtype}
 \input{sections/fig_ctx_instance}
