@@ -16,3 +16,5 @@ higher-kinded
 untypeable
 Typechecking
 inbuilts
+redexes
+arity

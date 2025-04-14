@@ -21,7 +21,7 @@ Allowing for algebraic user defined data types in a similar manner to Haskell wo
 
 Type names, as well as constructor names, start with uppercase letters in Haskell. This allows them to be easily differentiated from type variables, as well as regular variables. 
 
-First-order polymorphic type constructors would be useful to have in \ac{SFL}, with one example of their utility being defining the polymorphic function "\verb|length :: List a -> Int|" which should work regardless of what type the list is over.
+First-order polymorphic type constructors would be useful to have in \ac{SFL}, with one example of their utility being defining the polymorphic function `\verb|length :: List a -> Int|' which should work regardless of what type the list is over.
 
 \input{sections/fig_sfl_types}
 
@@ -33,7 +33,7 @@ We can avoid thinking about kinds by enforcing that a type constructor is always
 % (Alias): \(A ::= Id = T\)\newline
 % (Type): \(T, U ::= \alpha \mid B \mid T \rightarrow U \mid (T, U) \mid \forall a. T \mid \Alpha \;T, U,...\)
 % \end{syntax}
-Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type. It can then be double checked for debugging purposes via an assertion in the type checker. 
+Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type. It can then be double-checked for debugging purposes via an assertion in the type checker. 
 
 \subsubsection{Match}
 To support different execution based on a condition, we must have some structure that can differentiate between values \ref{design:values}. 
@@ -41,9 +41,11 @@ To support different execution based on a condition, we must have some structure
 \subsubsection{Syntax Sugar}
 
 \subsection{UI}
-I completely redesigned the UI based on the clients feedback, as well as some other factors. See \ref{fig:screenshot_cycle_1_end} for the current state. See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. 
+I completely redesigned the UI based on the clients' feedback, as well as some other factors. See \ref{fig:screenshot_cycle_1_end} for the current state. See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. 
 
-This design was meant to be a work in progress but it looks quite similar to the final release of the product (Screenshots \ref{fig:screenshot_final_dark}, \ref{fig:screenshot_final_light}, \ref{fig:screenshot_final_dark_prelude_free} and \ref{fig:screenshot_final_light_prelude_free}). Before implementing this design, I discussed this design with the Advanced Focus Group (see \ref{ref:afg_figma}) and they were much more positive about this UI than the existing one 
+This design was meant to be a work in progress, but it looks quite similar to the final release of the product (Screenshots \ref{fig:screenshot_final_dark}, \ref{fig:screenshot_final_light}, \ref{fig:screenshot_final_dark_prelude_free} and \ref{fig:screenshot_final_light_prelude_free}). Before implementing this design, I discussed this design with the Advanced Focus Group (see \ref{ref:afg_figma}) and they were much more positive about this UI than the existing one 
+
+Design principle: simplicity, speed, minimalism, feeling like vscode.
 
 \section{Implementation}
 \subsection{The Parser}
@@ -60,7 +62,7 @@ lengthIsAtLeast2 list = match list {
 
 The algorithm used for parsing match statements is:
 \begin{itemize}
-    \item Consume the "match" keyword.
+    \item Consume the `match' keyword.
     \item Parse the expression matched over
     \item Consume an open brace
     \item While the next token isn't a close brace: \begin{itemize}

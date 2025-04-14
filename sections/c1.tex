@@ -40,7 +40,7 @@ $80\%$ of respondents agreed/strongly agreed that they can program in an imperat
 
 The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
 
-All participants who did not disagree that functional languages are hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
+% All participants who did not disagree that functional languages are hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
 
 In my experience, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for student during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'. \cite{fp_first_year}
 
@@ -57,12 +57,12 @@ The requirements extracted from autoethnographic methods, as well as from my ini
 
 The system should be a website to maximize portability. The system should include a functional programming language, as well as some sort of UI that allows a functional program in the language to be entered, and evaluated step by step in a visual manner. 
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=1\linewidth]{images/fp_is_hard_wordcloud.png}
-    \caption{A word cloud of answers entered into the free form text box presented to the 10 respondents who reported that they did not disagree that functional languages were hard to learn}
-    \label{fig:fp_wordcloud}
-\end{figure}
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[width=1\linewidth]{images/fp_is_hard_wordcloud.png}
+%     \caption{A word cloud of answers entered into the free form text box presented to the 10 respondents who reported that they did not disagree that functional languages were hard to learn}
+%     \label{fig:fp_wordcloud}
+% \end{figure}
 
 \subsubsection{The Simple Functional Language}
 \label{design:goals}
@@ -522,10 +522,11 @@ Below is a summary of my clients thoughts about various aspects of the proof of 
 \begin{itemize}
     \item It is unstable. This is bad in a teaching tool, as it would waste a lot of time if it constantly broke in the lecture. 
     \item `laziest' as an option is confusing, as it was unclear if it was referring to one of the other on screen options, or if it was referencing a `hidden' option
-    \item The vertical bar separating redex from contraction on the progress buttons was not obvious enough. On top of this, the bar was not centred so it was hard to look through all of the redexes at once as they were not aligned with each other. 
+    \item The vertical bar separating redex from contraction on the progress buttons was not obvious enough. On top of this, the bar was not centred, so it was hard to look through all the redexes at once as they were not aligned with each other. 
 \end{itemize}
 
 \subsection{Effectiveness as a Teaching Tool}
+Below are some notes on what the client thought about the effectiveness of the project as a teaching tool, and how it could be improved in future iterations.
 \begin{itemize}
     \item The project is already very useful as a teaching tool to demonstrate:
     \begin{itemize}
@@ -550,3 +551,5 @@ Below is a summary of my clients thoughts about various aspects of the proof of 
     \end{itemize}
 \end{itemize}
 
+\subsection{Cycle Conclusion}
+This iteration was successful in its goal of producing an effective proof of concept. Future cycles will focus on extending the language
