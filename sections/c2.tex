@@ -17,7 +17,7 @@ The client had many valuable insights into what features would be valuable to ad
 \subsubsection{Type System}
 We must have types representing integers and booleans in our language, if we are to effectively represent the type of expression containing their respective literals. We also want our type system to be able to express functions. We also want polymorphism in our type system, as rewriting functions many times for different data types makes programs more verbose. 
 
-Allowing for algebraic user defined data types in a similar manner to Haskell would make the language much more expressive and much more powerful, as well as bringing it closer to Haskell. Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
+Allowing for algebraic user defined data types similarly to Haskell would make the language much more expressive and much more powerful, as well as bringing it closer to Haskell. Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
 
 Type names, as well as constructor names, start with uppercase letters in Haskell. This allows them to be easily differentiated from type variables, as well as regular variables. 
 
@@ -134,7 +134,7 @@ Below are a selection of the more important or interesting methods implemented o
 \subsection{The Type Checker}
 The type checker will be bidirectional, and will follow and algorithm largely based on the one in \cite{completebidir}. The quote that follows from this paper, describes bidirectional type checking and its merits:
 \begin{quote}
-`Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability ..., its error reporting, and its relative ease of implementation.'\cite{completebidir}
+`Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability \ldots its error reporting, and its relative ease of implementation' \cite{completebidir}
 \end{quote}
 \noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking id ($\lambda x. x$) against type $\forall a.a\fto a$ (photo of whiteboard derivation included in submission [TODO: is this the right way to cite this]), I modified their algorithm to add my extra types (The inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs. Not including assignment and modules as these are not part of expression syntax). \ref{fig:tc_types} shows the type system, including the typechecker implementation details, as well as the unmodified context structure, which keeps track of the state of the typechecker as it progresses recursively through the type system. \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. \ref{fig:ctx_subst} shows the modified algorithm for substituting all of the information in a context into a type. 
 
@@ -151,9 +151,9 @@ Most of these rules are untouched, the ones that I added or modified are \colorb
 
 \section{Evaluation}
 \label{ref:afg_figma}
-The aims of this cycle were to develop the language as well as some of the other more technical features of this project. 
+The aims of this cycle were to develop the language as well as some other more technical features of this project. 
 
-At the end of this cycle, I held a focus group with the following aims:
+At the end of this cycle, to evaluate and to discuss next steps, I held a focus group. As the UI/UX was not polished at this stage, I wanted to find people who would be able to discuss the parts that I had already implemented to a reasonable level of completion: the language. However, I still wanted to discuss future steps for the system as a whole, rather than just the language. Because of this, I wanted to find people who had only recently learned functional languages as a part of a university course, so they would have an insight into what is required for the system to be useful for use in this setting. I wanted to find people who knew as much as possible about functional languages, but they had 
 
 \begin{itemize}
     \item Discussing the language with programming language experts.

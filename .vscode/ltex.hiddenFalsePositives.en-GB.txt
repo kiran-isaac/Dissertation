@@ -13,3 +13,4 @@
 {"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QSFL Simple Functional Language FP Functional Programming WASM Web ASseMbly CLI Command Line Interface MVP Minimum Viable Product NPM Node Package Manager\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QThis language is type checked, using a modified version of Dunfield and Krishnaswami's bidirectional type checking algorithm \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, modified to include SFL's extended type system.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QFor instance, in the provided `squaresum' example:\\E$"}
+{"rule":"MASS_AGREEMENT","sentence":"^\\QThe Type Checker.\\E$"}

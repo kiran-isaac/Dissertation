@@ -18,3 +18,5 @@ Typechecking
 inbuilts
 redexes
 arity
+typechecking
+subtyping
