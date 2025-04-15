@@ -40,8 +40,24 @@ To support different execution based on a condition, we must have some structure
 
 \subsubsection{Syntax Sugar}
 
-\subsection{UI}
-I completely redesigned the UI based on the clients' feedback, as well as some other factors. See \ref{fig:screenshot_cycle_1_end} for the current state. See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. 
+\subsection{Next UI Iteration}
+I completely redesigned the UI based on the clients' feedback, as well as some other factors. See \ref{fig:screenshot_cycle_1_end} for the current state. See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. These designs were done using \href{https://figma.com}{Figma}. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/figma_1.png} 
+    \captionsetup{justification=centering}
+    \caption{Screenshot 1 of the Figma design of the web UI}
+    \label{fig:screenshot_figma1}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/figma_2.png}
+    \captionsetup{justification=centering}
+    \caption{Screenshot 2 of the Figma design of the web UI. This version shows the prelude extended}
+    \label{fig:screenshot_figma2}
+\end{figure}
 
 This design was meant to be a work in progress, but it looks quite similar to the final release of the product (Screenshots \ref{fig:screenshot_final_dark}, \ref{fig:screenshot_final_light}, \ref{fig:screenshot_final_dark_prelude_free} and \ref{fig:screenshot_final_light_prelude_free}). Before implementing this design, I discussed this design with the Advanced Focus Group (see \ref{ref:afg_figma}) and they were much more positive about this UI than the existing one 
 
@@ -149,11 +165,26 @@ Most of these rules are untouched, the ones that I added or modified are \colorb
 \input{sections/fig_ctx_instance}
 \input{sections/fig_tc_rules}
 
-\pagebreak
+\pagebreak % To force the typing stuff to be on the same page
 
-\subsection{The Prelude}
+\subsection{The Prelude, and `if e then a else b'}
+Most programming languages come with functionality packaged that is included by default, and is written in the language. In Haskell, this is referred to as the Prelude. There is also the standard library which is more extensive and is not imported by default. 
 
-\subsection{The UI}
+As our language does not need extensive extra functionality, we do not need a whole standard library. However, a basic prelude with common functionality would be useful. \ref{appx:prelude} shows the SFL prelude. I included `if' in the prelude to show that it is based on a match statement, rather than being a mysterious inbuilt: 
+
+\begin{lstlisting}[language=SFL]
+if :: Bool -> a -> a -> a
+if cond then_branch else_branch = match cond {
+    | true -> then_branch
+    | false -> else_branch
+}    
+\end{lstlisting}
+
+In order to make the language more like Haskell, I also added syntax sugar that allowed you to use it using the `\lstinline[language=SFL_ite]|if e then a else b|' syntax. The parser would ignore the `\lstinline[language=SFL_ite]|then|' and the `\lstinline[language=SFL_ite]|else|' keywords, and it would be equivalent to `\lstinline[language=SFL_ite]|(((if e)  a)  b)|' internally. However, this was unpopular with the advanced focus group, who said that this was confusing (see \ref{ref:afg_ite}). 
+
+\subsection{Changes to the Proof of Concept UI}
+In this cycle, I made some changes to the proof of concept web UI
+
 - Initial approach to diff
 - separate lazy and free choice mode
 
@@ -203,7 +234,7 @@ This focus group started with me briefly presenting SFL explorer. \ref{fig:scree
 \end{itemize}
 
 \begin{itemize}
-    \item They were confused about if-then-else. They said it could be confusing to have the parser act differently for one specific function type. `The issue I was having is just the fact that there is a function in the prelude which has
+    \item \label{ref:afg_ite} They were confused about if-then-else. They said it could be confusing to have the parser act differently for one specific function type. `The issue I was having is just the fact that there is a function in the prelude which has
     the same name as some syntactic sugar that is a parser construct' [42.55]
     \item They wanted syntax highlighting
     \item They liked the explicit match statements: `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [24:11]

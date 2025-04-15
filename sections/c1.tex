@@ -15,7 +15,7 @@ This project was proposed by my supervisor, Jess Foster. In our initial meeting,
 
 Following this meeting, I broke down this brief into smaller parts. Taking an autoethnographic approach, I used my own experience teaching functional languages to consider solutions and come up with requirements for each part. 
 
-\paragraph{Building Intuition} This is the key to an effective solution. Many students to the first year FP unit do not have any experience with functional programming, and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
+\subsubsection{Building Intuition} This is the key to an effective solution. Many students to the first year FP unit do not have any experience with functional programming, and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
 
 During cycle 2 [REFHERE: Testathon], to confirm my belief that students found functional languages harder to learn, and harder to build an intuition about, I performed a survey. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year FP unit. In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
 
@@ -42,7 +42,7 @@ The number of people who claim to know how to program in functional languages is
 
 % All participants who did not disagree that functional languages are hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
 
-In my experience, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for student during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'. \cite{fp_first_year}
+In my experience, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for student during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'. \cite{fp_first_year} [TODO: theres more things to cite here]
 
 A tool to perform these step by step evaluations in an interactive manner would be very valuable. The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken. This would allow students to understand and interact with a stepwise evaluation, without anyone having to undertake the long process of writing it out, and without risk of incorrectness. Furthermore, the effects of changing the input program could be seen quickly, providing instant feedback. 
 
@@ -113,12 +113,13 @@ These two features massively shorten and simplify programming in this language.
 (Module) \(M ::= A\: M \mid End\)
 \end{syntax}
 
-\subsection{Reduction}
-As discussed in the background, functional programs progress via reduction
+\subsection{Reduction and Progress}
+As discussed in the background, functional programs progress via reduction. SFL programs can reduce when we have an abstraction applied to a term. 
+
+We may also want to replace variables with their assigned values. This is not reduction, however it is still progress
+
+
 \todo{FINISH}
-\paragraph{Values}
-\label{design:values}
-Values in \ac{SFL} should be 
 
 \section{Implementation}
 \subsection{The Abstract Syntax Tree}
@@ -194,7 +195,8 @@ In order to effectively explain the structure of a parsed program going forwards
     \item Nodes are represented as one line each, where, with the name of the node type, followed by its value for \verb|Literal|s and \verb|Identifier|s.
     \item The children of a node are all of the nodes with an indentation level one deeper than the node in question listed directly below it, until a shallower or equal depth node is listed. 
 \end{itemize}
-\filbreak\noindent
+
+\noindent
 For instance, 
 \begin{lstlisting}
 main = (\x.1) 2
@@ -476,13 +478,13 @@ Until this point, development was done in one rust package. This package would b
 \begin{itemize}
     \item \textbf{libsfl}: All of the language functionality, as this is common to both interfaces
     \item \textbf{sflcli}: All of the original CLI functionality without the language functionality.  
-    \item \textbf{libsfl\_wasm}: a package set up for use with wasm-pack (\ref{bg:wasm-pack}). It provides an wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by wasm-bindgen\ref{bg:wasm-bindgen}. wasm-pack would compile this to an \ac{NPM} package containing:
+    \item \textbf{libsfl\_wasm}: a package set up for use with wasm-pack (\ref{bg:wasm-pack}). It provides a wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by wasm-bindgen\ref{bg:wasm-bindgen}. wasm-pack would compile this to an \ac{NPM} package containing:
     \begin{itemize}
         \item The WASM binary blob of the compiled rust code
         \item A JavaScript file that would load the blob into the browsers' memory, and provides methods that can call the appropriate the methods in the blob
         \item A TypeScript file providing the types of all of the packages exported functions. 
     \end{itemize}
-    \item The Vite+React frontend (see\ref{bg:frontend}) that requires the package that results from compiling \textbf{libsfl\_wasm}
+    \item The Vite+React frontend (see \ref{bg:frontend}) that requires the package that results from compiling \textbf{libsfl\_wasm}
 \end{itemize}
 
 
@@ -551,5 +553,5 @@ Below are some notes on what the client thought about the effectiveness of the p
     \end{itemize}
 \end{itemize}
 
-\subsection{Cycle Conclusion}
-This iteration was successful in its goal of producing an effective proof of concept. Future cycles will focus on extending the language
+% \subsection{Cycle Conclusion}
+% This iteration was successful in its goal of producing an effective proof of concept. Future cycles will focus on extending the language   

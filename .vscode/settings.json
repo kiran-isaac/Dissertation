@@ -65,7 +65,6 @@
             "tools": [
                 "pdflatex",
                 "bibtex",
-                // "pdflatex_quick",
                 "pdflatex",
                 "pdflatex"
             ]
