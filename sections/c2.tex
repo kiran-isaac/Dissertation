@@ -4,7 +4,11 @@ In this cycle, I moved away from the autoethnographic (\ref{sec:c1_autoethnograp
 At the end of this cycle, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the cycle, 
 
 \section{Requirements Analysis}
-The requirements for this cycle were motivated by my client meeting (\ref{eval:c1}). I wanted to tackle the most technical aspects in this cycle to give me the maximum time to complete them, as this was still early in the project lifecycle. The most difficult features out of the client's requests were the ones to do with extending the language. 
+The requirements for this cycle were motivated by my client meeting (\ref{eval:c1}). I wanted to tackle the most technical aspects in this cycle to give me the maximum time to complete them, as this was still early in the project lifecycle. The most difficult features out of the client's requests were the ones to do with extending the language, so these were the main focus for this cycle. 
+
+The client's central idea for what they wanted to use the tool was to demonstrate methods on lists, such as `map' and `foldr/l'. This requires lists to be built into the language. Lists in functional programming languages are commonly defined recursively, using \verb|Cons x xs| to represent constructing a list from an element \verb|x| and the rest of the list \verb|xs|. \verb|Nil| represents an empty list. This recursive construction of lists comes from Lisp \cite{mccarthy1960recursivelisp}. 
+
+In Haskell, lists are defined as \verb!data [a] = [] | a : [a]!
 
 \section{Design}
 \subsection{Language Changes}
