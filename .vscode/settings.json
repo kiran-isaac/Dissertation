@@ -27,6 +27,27 @@
             "args": [
                 "%DOCFILE%"
             ]
+        },
+        {
+            "name": "pdflatex",
+            "command": "pdflatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "latexmk",
+            "command": "latexmk",
+            "args": [
+                "-pdf",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ]
         }
     ],
     "latex-workshop.latex.recipes": [
@@ -35,13 +56,30 @@
             "tools": [
                 "xelatex_quick",
                 "bibtex",
-                // "xelatex_quick",
+                "xelatex_quick",
                 "xelatex"
+            ]
+        },
+        {
+            "name": "PDFLaTeX -> BibTeX -> PDFLaTeX (2x)",
+            "tools": [
+                "pdflatex",
+                "bibtex",
+                // "pdflatex_quick",
+                "pdflatex",
+                "pdflatex"
+            ]
+        },
+        {
+            "name": "latexmk (pdf)",
+            "tools": [
+                "latexmk"
             ]
         }
     ],
     "latex-workshop.latex.recipe.default": "XeLaTeX -> BibTeX -> XeLaTeX (2x)",
     "latex-workshop.synctex.afterBuild.enabled": true,
+    // "latex-workshop.message.error.show": "log",
     "latex-workshop.view.pdf.viewer": "tab",
     "latex-workshop.linting.chktex.enabled": false,
     "editor.wordWrap": "on",
