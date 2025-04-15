@@ -20,3 +20,4 @@ redexes
 arity
 typechecking
 subtyping
+testathon

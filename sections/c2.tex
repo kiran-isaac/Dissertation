@@ -36,7 +36,7 @@ We can avoid thinking about kinds by enforcing that a type constructor is always
 Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type. It can then be double-checked for debugging purposes via an assertion in the type checker. 
 
 \subsubsection{Match}
-To support different execution based on a condition, we must have some structure that can differentiate between values \ref{design:values}. 
+To support different execution based on a condition, we must have some structure that can differentiate between values.  
 
 \subsubsection{Syntax Sugar}
 
@@ -149,11 +149,53 @@ Most of these rules are untouched, the ones that I added or modified are \colorb
 \input{sections/fig_ctx_instance}
 \input{sections/fig_tc_rules}
 
-\section{Evaluation}
-\label{ref:afg_figma}
-The aims of this cycle were to develop the language as well as some other more technical features of this project. 
+\pagebreak
 
-At the end of this cycle, to evaluate and to discuss next steps, I held a focus group. As the UI/UX was not polished at this stage, I wanted to find people who would be able to discuss the parts that I had already implemented to a reasonable level of completion: the language. However, I still wanted to discuss future steps for the system as a whole, rather than just the language. Because of this, I wanted to find people who had only recently learned functional languages as a part of a university course, so they would have an insight into what is required for the system to be useful for use in this setting. I wanted to find people who knew as much as possible about functional languages, but they had 
+\subsection{The Prelude}
+
+\subsection{The UI}
+- Initial approach to diff
+- separate lazy and free choice mode
+
+\section{The Advanced Focus Group: Evaluation and Next Steps}
+\label{ref:afg_figma}
+The aims of this cycle were to develop the language as well as some other more technical features of this project. To discuss the language, I held a focus group with students who were very knowledgable and interested in functional programming languages. 
+
+This was my first of three focus groups, the most advanced of the three. As the UI/UX was not polished at this stage, I wanted to find people who would be able to discuss the parts that I had already implemented to a reasonable level of completion: the language. However, I still wanted to discuss future steps for the system as a whole, rather than just the language. Because of this, I wanted to find people who had learned functional languages as a part of a university course fairly recently and within memory, so they would have an insight into what is required for the system to be useful for use in this setting. 
+
+\subsection{Selection}
+
+For this focus group, I recruited four students in their fourth year of studies here at the University of Bristol. They had all taken \hyperref[COMS10016]{the first-year FP unit} 3 years prior, and they had all taken units specializing in programming language theory since, including:
+
+\begin{itemize}
+    \item The second year Programming Languages and Computation unit COMS20007, where they learnt to (among other things) `Understand the interplay between the design and implementation of programming languages' \cite{COMS20007_PLC}
+    \item The third year optional Types and Lambda Calculus unit COMS30040 where they learnt (among other things): \cite{COMS30040_TLC}
+    \begin{itemize}
+        \item `Type systems: types, judgements and rules'
+        \item `Syntax and semantics of an untyped lambda calculus'
+    \end{itemize}
+    \item The fourth year optional Advanced Topics in Programming Languages, where the unit outcomes were that they should be able to (among other things): \cite{COMSM0067_ATPL}
+    \begin{itemize}
+        \item `Specify the dynamics of program evaluation for a variety of programming constructs'
+        \item `Specify static typing rules for a variety of programming constructs'
+    \end{itemize}
+\end{itemize}
+
+These people I selected for this focus group were the closest to `subject experts' that I could find while still being students. 
+
+\subsection{Format}
+This focus group started with me briefly presenting SFL explorer. \ref{fig:screenshot_afg} shows how the system looked at this stage of the project. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/afg_2.png} 
+    \captionsetup{justification=centering}
+    \caption{The product at the end of cycle two during lazy evaluation of the `sum of squares' sample program, with the prelude dropdown extended}
+    \label{fig:screenshot_afg}
+\end{figure}
+
+
+\subsection{Outcomes}
 
 \begin{itemize}
     \item Discussing the language with programming language experts.
@@ -165,8 +207,7 @@ At the end of this cycle, to evaluate and to discuss next steps, I held a focus 
     the same name as some syntactic sugar that is a parser construct' [42.55]
     \item They wanted syntax highlighting
     \item They liked the explicit match statements: `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [24:11]
-    \item They wanted an indication of which direction evaluation was going so i added numbers: `Because the reduction steps generate bottom-up,
-    it might be good to have some sort of indication about the direction things are going in'. This was already in the new UI
+    \item They wanted an indication of which direction evaluation was going so I added numbers: `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in'. This was already in the new UI
     \item They really appreciated its utility for what it was designed for. `I think this is very good \ldots\ I wish I'd had this in the functional labs' [1:00:09]
 \end{itemize}
 
