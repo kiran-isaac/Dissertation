@@ -1,16 +1,10 @@
-\chapter{Cycle 2 - Types and Pattern Matching}
-The aim of this cycle was to develop the more technical aspects of the project. In this cycle, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated approach. The requirements for this cycle were motivated by my client meeting (\ref{eval:c1}). 
+\chapter{Cycle 2 --- Types and Pattern Matching}
+In this cycle, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated client-led approach. 
+
+At the end of this cycle, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the cycle, 
 
 \section{Requirements Analysis}
-Going into this cycle, we have a proof of concept system and an idea for how the system will look. 
-The client had many valuable insights into what features would be valuable to add. Below is a list of features identified to add to the system in this cycle. 
-
-\paragraph{Language}
-\begin{itemize}
-    \item Pattern Matching
-    \item User definable data types: tagged unions
-    \item Pairs
-\end{itemize}
+The requirements for this cycle were motivated by my client meeting (\ref{eval:c1}). I wanted to tackle the most technical aspects in this cycle to give me the maximum time to complete them, as this was still early in the project lifecycle. The most difficult features out of the client's requests were the ones to do with extending the language. 
 
 \section{Design}
 \subsection{Language Changes}
@@ -97,7 +91,7 @@ A pattern must be a value \ref{design:values}; a pattern must not contain anythi
 To parse a pattern, we may use the same techniques as parsing an expression, with a few differences:
 \begin{itemize}
     \item Disallowing abstractions
-    \item Identifiers must be either:
+    \item Identifiers must be either
     \begin{itemize}
         \item Unbound lowercase variables
         \item Underscore (\verb|_|) representing a wildcard pattern
@@ -183,13 +177,23 @@ if cond then_branch else_branch = match cond {
 In order to make the language more like Haskell, I also added syntax sugar that allowed you to use it using the `\lstinline[language=SFL_ite]|if e then a else b|' syntax. The parser would ignore the `\lstinline[language=SFL_ite]|then|' and the `\lstinline[language=SFL_ite]|else|' keywords, and it would be equivalent to `\lstinline[language=SFL_ite]|(((if e)  a)  b)|' internally. However, this was unpopular with the advanced focus group, who said that this was confusing (see \ref{ref:afg_ite}). 
 
 \subsection{Changes to the Proof of Concept UI}
+\label{c2_poc_ui_impl}
 In this cycle, I made some changes to the proof of concept web UI
 
 - Initial approach to diff
 - separate lazy and free choice mode
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/cycle-2-end2.png} 
+    \captionsetup{justification=centering}
+    \caption{The product at the end of cycle two during lazy evaluation of the `sum of squares' sample program, with the prelude dropdown extended}
+    \label{fig:screenshot_c2_end}
+\end{figure}
+
 \section{The Advanced Focus Group: Evaluation and Next Steps}
 \label{ref:afg_figma}
+\label{ref:afg}
 The aims of this cycle were to develop the language as well as some other more technical features of this project. To discuss the language, I held a focus group with students who were very knowledgable and interested in functional programming languages. 
 
 This was my first of three focus groups, the most advanced of the three. As the UI/UX was not polished at this stage, I wanted to find people who would be able to discuss the parts that I had already implemented to a reasonable level of completion: the language. However, I still wanted to discuss future steps for the system as a whole, rather than just the language. Because of this, I wanted to find people who had learned functional languages as a part of a university course fairly recently and within memory, so they would have an insight into what is required for the system to be useful for use in this setting. 
@@ -215,16 +219,7 @@ For this focus group, I recruited four students in their fourth year of studies 
 These people I selected for this focus group were the closest to `subject experts' that I could find while still being students. 
 
 \subsection{Format}
-This focus group started with me briefly presenting SFL explorer. \ref{fig:screenshot_afg} shows how the system looked at this stage of the project. 
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=1\linewidth]{images/afg_2.png} 
-    \captionsetup{justification=centering}
-    \caption{The product at the end of cycle two during lazy evaluation of the `sum of squares' sample program, with the prelude dropdown extended}
-    \label{fig:screenshot_afg}
-\end{figure}
-
+This focus group started with me briefly presenting SFL explorer. \ref{fig:screenshot_c2_end} shows how the system looked at this stage of the project. 
 
 \subsection{Outcomes}
 

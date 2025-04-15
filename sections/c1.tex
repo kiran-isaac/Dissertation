@@ -15,7 +15,9 @@ This project was proposed by my supervisor, Jess Foster. In our initial meeting,
 
 Following this meeting, I broke down this brief into smaller parts. Taking an autoethnographic approach, I used my own experience teaching functional languages to consider solutions and come up with requirements for each part. 
 
-\subsubsection{Building Intuition} This is the key to an effective solution. Many students to the first year FP unit do not have any experience with functional programming, and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
+\subsubsection{Building Intuition}
+\label{building_intuition}
+This is the key to an effective solution. Many students to the first year FP unit do not have any experience with functional programming, and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
 
 During cycle 2 [REFHERE: Testathon], to confirm my belief that students found functional languages harder to learn, and harder to build an intuition about, I performed a survey. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year FP unit. In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
 
@@ -471,7 +473,15 @@ The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\
 To parse an identifier, we must also check that the identifier is bound at this location.
 
 \subsection{Web UI \ac{MVP}}
-As part of this section, I also developed the MVP for the Web UI.\ref{fig:screenshot_cycle_1_end} shows the web UI after this stage of the project. 
+As part of this section, I also developed the MVP for the Web UI. \ref{fig:screenshot_cycle_1_end} shows the web UI after this stage of the project. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/cycle-1-end.png} 
+    \captionsetup{justification=centering}
+    \caption{The Web UI \ac{MVP}, as presented to my client at the end of cycle 1.}
+    \label{fig:screenshot_cycle_1_end}
+\end{figure}
 
 Until this point, development was done in one rust package. This package would be compiled to a binary and run natively, with a basic \ac{CLI}. This needed to be changed so that it can compile to \ac{WASM} and run in the web browser. As I wanted to keep the \ac{CLI} for debugging, as well as for use later, I did not want to change the whole project to a project with a \ac{WASM} interface. A solution to keeping both interfaces was to separate the functionality that would be common to the \ac{CLI} as well as the \ac{WASM} library into a separate library, and then have the two interfaces as separate packages that depended on this one. The structure of the project became the following 4 packages. 
 
@@ -490,7 +500,7 @@ Until this point, development was done in one rust package. This package would b
 
 [TODO: More stuff about WASM bindings??]
 
-\section{Evaluation}
+\section{Proof of Concept Client Meeting: Evaluation and \newline Next Steps}
 \label{eval:c1}
 At the end of the cycle, I presented the proof of concept project to my client, who was very positive about the project and its potential. The discussion was informal, a friendly conversation rather than a structured interview, to allow the direction of questioning to change depending on the clients answers. The meeting started with me giving my client a demo of the proof of concept using by using the system to evaluate the following program:
 \begin{verbatim}
@@ -499,6 +509,31 @@ main = fac 5
 \end{verbatim}
 
 Below is a summary of my clients thoughts about various aspects of the proof of concept system and potential future iterations
+
+\subsection{Usefulness as a Teaching Tool}
+Below are some notes on what the client thought about the effectiveness of the project as a teaching tool, and how it could be improved in future iterations.
+\begin{itemize}
+    \item The project is already very useful as a teaching tool to demonstrate:
+    \begin{itemize}
+        \item Evaluation order, and the importance of laziness
+        \item Currying
+        \item Recursion
+        \item The \lcalc
+    \end{itemize}
+
+    \item On top of this my client wanted to be able to use the system to demonstrate: 
+    \begin{itemize}
+        \item High Priority
+        \begin{itemize}
+            \item List and common list functions such as `map' and `fold'. These do not have to by polymorphic, they could be just defined over $Int$s or some other type. These also do not need to be user-definable, they can be built in. 
+            \item Pattern Matching
+        \end{itemize}
+        \item Lower Priority 
+        \begin{itemize}
+            \item User definable data types, preferably polymorphic. This would mean we could define `$List$' as part of the language which would be good for clarity. 
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
 
 \subsection{The Existing Language}
 \paragraph{Positives:}
@@ -509,49 +544,37 @@ Below is a summary of my clients thoughts about various aspects of the proof of 
 \end{itemize}
 
 \paragraph{Negatives:}
+My client had no specific complaints about the language as it currently stands, however we agreed was lacking many important features. The most difficult things to teach are concepts involving more complex data types. 
+
+\paragraph{Requested Features:}
+Below are the specific features my client asked for in order for the system to be able to demonstrate the things she wants to use the system to demonstrate:
 \begin{itemize}
-    \item It was lacking many important features. The most difficult things to teach are concepts involving more complex data types
-    \item There is a typechecker, but it does not allow polymorphism. Without the typechecker, polymorphism would work, so the typechecker reduces the number of possible programs without providing much benefit. Either there is a good type checker, or there should be no typechecker. 
+    \item Recursive Types
+    \item Polymorphism
+    \item Type Aliases
+    \item Typechecking
+    \item User Definable Data Types
 \end{itemize}
 
-\subsection{The Existing UI/UX (see \ref{fig:screenshot_cycle_1_end})}
+\subsection{The Existing UI/UX}
 \paragraph{Positives:}
 \begin{itemize}
     \item The editor, as it feels like a very popular editor: VSCode
 \end{itemize}
 
-\paragraph{Negatives:}
+\paragraph{Negatives}
 \begin{itemize}
     \item It is unstable. This is bad in a teaching tool, as it would waste a lot of time if it constantly broke in the lecture. 
     \item `laziest' as an option is confusing, as it was unclear if it was referring to one of the other on screen options, or if it was referencing a `hidden' option
     \item The vertical bar separating redex from contraction on the progress buttons was not obvious enough. On top of this, the bar was not centred, so it was hard to look through all the redexes at once as they were not aligned with each other. 
 \end{itemize}
 
-\subsection{Effectiveness as a Teaching Tool}
-Below are some notes on what the client thought about the effectiveness of the project as a teaching tool, and how it could be improved in future iterations.
+\paragraph{Requested Features}
 \begin{itemize}
-    \item The project is already very useful as a teaching tool to demonstrate:
-    \begin{itemize}
-        \item Evaluation order, and the value of laziness
-        \item Currying
-        \item The \lcalc
-    \end{itemize}
-    \item \textbf{Minimum} The project should be extended to demonstrate:
-    \begin{itemize}
-        \item List and common list functions such as `map' and `fold'. These do not have to by polymorphic, they could be just defined over $Int$s. 
-        \item Pattern matching.
-        \item Non-polymorphic user definable data types
-        \item A list of previous program states as we progress.
-    \end{itemize}
-    \item \textbf{Extra} The project could be extended to demonstrate:
-    \begin{itemize}
-        \item Syntax highlighting, to make the language easier to read   
-        \item User definable data types, preferably polymorphic. This would mean we could define `$List$' as part of the language which would be good. 
-        \item Recursive Types
-        \item Polymorphism
-        \item Type Aliases
-    \end{itemize}
+    \item Syntax highlighting, to make the language easier to read   
+    \item A history of what the expression has been is vital to demonstrate step by step evaluation. I identified this as an important feature at the beginning of the cycle (see \ref{building_intuition}), but I had not finished it by the client meeting. It was implemented in the next cycle (see \ref{c2_poc_ui_impl}). 
+    \item Sample Programs
 \end{itemize}
 
-% \subsection{Cycle Conclusion}
-% This iteration was successful in its goal of producing an effective proof of concept. Future cycles will focus on extending the language   
+\subsection{Conclusion}
+At the end of this cycle, and going into cycle 2, I had a strong proof of concept system and an idea for how the system will look. The meeting with my client yielded many ideas, all of which I sucessfully implemented throughout this project. 
