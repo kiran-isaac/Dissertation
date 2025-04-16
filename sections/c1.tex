@@ -11,15 +11,15 @@ The goal of Cycle 1, which spanned approximately the first month of my project, 
 \noindent In this cycle, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then quickly implement a proof of concept of this solution. 
 
 \subsection{The Brief}
-This project was proposed by my supervisor, Jess Foster. In our initial meeting, we discussed how she wanted a tool that would help build intuition for how these languages are evaluated, that she could use to supplement her explanation of otherwise difficult to intuit functional language concepts. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. Jess helped me to identify an appropriate client: Samantha Frohlich. Jess and Samantha are both lecturers on \hyperref[COMS10016]{COMS10016}. It was necessary to identify a client other than Jess, as her existing role as my supervisor/primary marker could limit guidance she would be able to give me if she were also my client. 
+This project was proposed by my supervisor, Jess Foster. In our initial meeting, we discussed how she wanted a tool that would help build intuition for how functional languages are evaluated, that she could use to supplement her explanation of otherwise difficult to intuit functional language concepts. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. Jess helped me to identify an appropriate client: Samantha Frohlich. Jess and Samantha are both lecturers on \hyperref[COMS10016]{COMS10016}. It was necessary to identify a client other than Jess, as her existing role as my supervisor/primary marker could limit guidance she would be able to give me if she were also my client. 
 
 Following this meeting, I broke down this brief into smaller parts. Taking an autoethnographic approach, I used my own experience teaching functional languages to consider solutions and come up with requirements for each part. 
 
 \subsubsection{Building Intuition}
 \label{building_intuition}
-This is the key to an effective solution. Many students to the first year FP unit do not have any experience with functional programming, and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
+This is the key to an effective solution. \sam{MOST students OF}Many students to the first year \ac{FP} \sam{fo here} unit do not have any experience with functional programming \sam{functional programming here},\sam{.} \sam{I disagree with the rest, cos we strive for the lectures to be engaging (so maybe you can say that the teaching style is already to make learning not passive, so this will further that. Also your comment about not attending or engaging with labs is irrelevant cos if they dont engage with labs why would they use your tool? }and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
 
-During cycle 2 [REFHERE: Testathon], to confirm my belief that students found functional languages harder to learn, and harder to build an intuition about, I performed a survey. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year FP unit. In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
+During cycle 2 \sam{but this is the cycle 1 section?} [REFHERE: Testathon], to confirm my belief that students found functional languages harder to learn, and harder to build an intuition about, I performed a survey. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year \ac{FP} unit. In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
 
 \begin{figure*}[ht]
     \begin{subfigure}{\textwidth}
@@ -37,22 +37,23 @@ During cycle 2 [REFHERE: Testathon], to confirm my belief that students found fu
     \end{subfigure}
     \caption{The results of a survey performed during the cycle 2 [REFHERE: Testathon], where a Likert scale was used to gauge 15 participants feelings towards imperative (a) and functional (b) programming languages}
 \end{figure*}
-  
-$80\%$ of respondents agreed/strongly agreed that they can program in an imperative language, similarly $80\%$ of respondents agreed/strongly agreed that they had an intuitive understanding of them. $66.7\%$ of respondents strongly/agreed that they knew functional languages, but only $47.6\%$ of respondents would agree/strongly agree that they had an intuitive understanding of them.
 
+\sam{flip sentences so it is clear which language we are talking about BEFORE giving the number}
+\sam{For imperative languages,} $80\%$ of respondents agreed/strongly agreed that they can program in an imperative language, similarly $80\%$ of respondents agreed/strongly agreed that they had an intuitive understanding of them. \sam{for functional languages,}$66.7\%$ of respondents strongly/agreed that they knew functional languages, but only $47.6\%$ of respondents would agree/strongly agree that they had an intuitive understanding of them.
+\sam{no new line}
 The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
 
 % All participants who did not disagree that functional languages are hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
 
-In my experience, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for student during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'. \cite{fp_first_year} [TODO: theres more things to cite here]
+In my experience \sam{teaching fp}, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for student during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'. \cite{fp_first_year} [TODO: theres more things to cite here]
 
-A tool to perform these step by step evaluations in an interactive manner would be very valuable. The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken. This would allow students to understand and interact with a stepwise evaluation, without anyone having to undertake the long process of writing it out, and without risk of incorrectness. Furthermore, the effects of changing the input program could be seen quickly, providing instant feedback. 
+\sam{Thus} A tool to perform these step by step evaluations in an interactive manner would be very valuable. The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken. This would allow students to understand and interact with a stepwise evaluation, without anyone having to undertake the long process of writing it out, and without risk of incorrectness. Furthermore, the effects of changing the input program could be seen quickly, providing instant feedback. 
 
-\paragraph{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. The tool must also be portable, and not require a complex installation process. 
+\subsubsection{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} \sam{and here cos its the first ac use its fully expanded,  but you have already said FP and then functuional programming} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. The tool must also be portable, and not require a complex installation process. 
 
-\paragraph{Use as a Self Teaching Tool} The tool should be `self-explanatory' enough for people to use it on their own without expert help. It should be fairly intuitive, and should have all the information required to use it presented to users. The tool must also be portable, and not require a complex installation process. The less complex this tool is to use, the more people will use it. 
+\subsubsection{Use as a Self Teaching Tool} The tool should be `self-explanatory' enough for people to use it on their own without expert help. It should be fairly intuitive, and should have all the information required to use it presented to users. The tool must also be portable, and not require a complex installation process. The less complex this tool is to use, the more people will use it. 
 
-\paragraph{Demonstrating FP languages} The tool must contain, at its core, a Haskell-like functional programming language in order to demonstrate Haskell. It could be included/required on the host machine, however creating a demonstration tool around Haskell would be difficult due to the sheer size of the language, the number of features, and the complexity of the type system. It would be better to create Haskell-like language with a strictly limited size and maximum clarity, and include this in the system. The programming language should be designed with simplicity and clarity at its heart.
+\subsubsection{Demonstrating \ac{FP} languages} The tool must contain, at its core, a \sam{it doesnt have to be haskell, but we will pick haskell to match the first year unit at bristol to allow for better evaluation}Haskell-like functional programming language in order to demonstrate Haskell. It could be included/required on the host machine, however creating a demonstration tool around Haskell would be difficult due to the sheer size of the language, the number of features, and the complexity of the type system. It would be better to create Haskell-like language with a strictly limited size and maximum clarity, and include this in the system. The programming language should be designed with simplicity and clarity at its heart.
 
 \subsection{SFL Explorer}
 The requirements extracted from autoethnographic methods, as well as from my initial supervisor meeting, came together to form the idea for SFL Explorer. 
@@ -82,7 +83,7 @@ The website (the explorer) should include a code editor for people to enter prog
 [TODO: Finish this bit, summarize requirements]
 
 \section{Language Design}
-In this section I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design, and it was the proof of concept.  
+In this section, I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design, and it was the proof of concept.  
 
 \subsection{Definitions}
 
@@ -92,36 +93,38 @@ In this section I will discuss the design of \ac{SFL} with respect to the requir
 (Operator): \(op ::= + \mid - \mid \times \mid / \mid > \mid \ge \mid < \mid \le \mid== \mid \mathrel{\mathtt{!=}} \)\newline
 (Uppercase Identifier): \(Id ::= [A..Z][a..zA..Z0..9\_]*\)
 \end{syntax}
+\sam{im so sorry but this looks ugly. I think it just needs more space, it is very crampt, this is a minor thing and can wait till the very end}
 
 \subsection{Basic Syntax}
-Lambda calculus is the basis of modern functional programming languages. As discussed in the background, lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
+Lambda calculus is the basis of modern functional programming languages. As discussed in the background, lambda calculus consists of 3 structures: identifiers, application, and abstraction. \sam{sadly this effectly says in prose the same as the BG, the only thing the BG adds is the formal definition, which not everyone will be able to read} One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
 \begin{lstlisting}[]
 f = (\x.x)
 main = f y
 \end{lstlisting}
-Is identical to
+Is identical to \sam{dont do this, cos it gives latex the chance to mess up your formatting. Always give your listings a name and use the name in a full sentence e.g. "For instance, listing 1 and listing 2 are semantically equivalent"}
 \begin{lstlisting}[]
 main = (\x.x) y
 \end{lstlisting}
-Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the `entry-point' expression in the program. Haskell, as well as many other languages, use `main' to represent a programs' entry point, so we may use main. 
+Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the `entry-point' expression in the program. Haskell, as well as many other languages, uses `main' to represent a programs' entry point, so we may use main. 
 
-We must also add a way to represent values, such as integers and booleans, to our language. Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated. 
-
+We must \sam{why must? (because we want to run our code), this is also a common extension of the STLC} also add a way to represent values, such as integers and booleans, to our language. Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated.  \sam{bring this why forward}
+\sam{this is a very typical para for you: i encourage you to structure your paras as because of x we need y, instead of we need x because of y}
+\sam{no new line}
 These two features massively shorten and simplify programming in this language.
 
+\sam{this is not referenced anywhere. Above you say we need x and then just dump x here. Instead motivate, introduce and explain. What additions have been made to execute x. Explain your definitions like you would explain your code}
 \begin{syntax}[The basic syntax of \ac{SFL}]
-(Expression) \(E ::= [-][0, 1, ..] \mid true \mid false \mid id \mid \setminus id. E \mid E\:F\)\newline
+(Expression) \(E, F ::= [-][0, 1, ..]\mid E\; op\; F \mid true \mid false \mid id \mid \setminus id. E \mid E\:F\)\newline
 (Assignment) \(A ::= id = E\)\newline
 (Module) \(M ::= A\: M \mid End\)
 \end{syntax}
 
 \subsection{Reduction and Progress}
-As discussed in the background, functional programs progress via reduction. SFL programs can reduce when we have an abstraction applied to a term. 
+As discussed in the background, functional programs progress via reduction. \ac{SFL}  programs can reduce when we have an abstraction applied to a term. 
 
 We may also want to replace variables with their assigned values. This is not reduction, however it is still progress
 
-
-\todo{FINISH}
+\todo{FINISH, will be easier when the bg on reduction is improved}
 
 \section{Implementation}
 \subsection{The Abstract Syntax Tree}
@@ -136,6 +139,8 @@ The tree structure of \ac{SFL} requires the following different types of tree no
     \item Assignment
     \item Module
 \end{itemize}
+\sam{bullets look silly}
+
 Initially, the approach taken when implementing this tree structure was to have each node `owning' its child nodes (see \ref{bg:rust}). However, it will be necessary frequently to be able to find nodes based on certain conditions (for example, the condition that this node is a valid redex) and then provide a value that represents the location of this node within the tree. Even if each of the tree nodes had a unique ID, locating a node from this value representing its location will require some sort of tree search.
 
 Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as AST and ASTNode, where AST was an array of ASTNodes, and each ASTNode stored their children's indices in this array. The position in the array of an ASTNode will be referred to as its index.
@@ -215,7 +220,7 @@ Module:
       Literal: 2
 \end{lstlisting}
 
-\subsubsection{With the Benefit of Hindsight}
+\subsubsection{With the Benefit of Hindsight} % for jess's benefit as she did not like my AST definition so i want to aknowledge what she said about it
 This project was my first major project using Rust. Below is a discussion of some Rust features which were not fully taken advantage of in this definition of syntax trees, followed by a discussion of the combination of these features that would have been more optimal. 
 
 \paragraph{Tagged Unions}
@@ -465,7 +470,7 @@ Abstractions (in the simple case) are parsed by:
     \item Constructing an abstraction node from the variable and the expression
 \end{itemize}
 
-However, the definition of abstractions have a few complicating elements of syntax sugar.
+However, the definition of abstractions has a few complicating elements of syntax sugar.
 
 \subparagraph{Abstractions May be Assignments}
 The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. As previously mentioned in\ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
