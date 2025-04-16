@@ -1,0 +1,40 @@
+Formatting:
+    - Make acronyms more consistant
+    - Add syntax highlighting
+
+Introduction
+    - Introduce the system as a whole better
+    - Finish bit about agile
+    - Figure out how to link to the website
+
+Background
+    - Improve lambda calc stuff, make less "terse"
+    - Reduction stuff really needs work
+    - Types: motivation
+    - Existing systems research, perhaps dedicate an entire day to this
+    
+
+C1
+    - Improve bit about building intuition when talking about coms10016
+    - Talk about redex finding system, including "ready calls" and multi step stuff
+    - Fix/consider all the things sam mentioned
+    - Improve language design stuff
+
+C2
+
+
+C3 
+    - Requirements analysis based on AFG. Discuss positives of new UI
+    - Design: Probably quite minimal
+        - Find some tweaks to make to web UI based on AFG. 
+    - Implementation
+        - Can discuss bugfixes? Discuss difficulties of debugging typechecker. Can be pretty vauge
+        - Discuss the reimplemented UI, attatch screenshots to make less dry
+
+C4:
+    - Untyped mode, syntax highlighting, UI horizontal overflow bugs, settings menu, settings persistance, default light mode. Discuss how untyped + free choice was useful for introducing functional programmers to absolute beginners.
+
+Code:
+    - Fix the way that the dollar sign operator works. It can be redefined as an inbuilt as its just an infix op
+    - Consider redefining cons using infix op
+
