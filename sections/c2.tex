@@ -39,6 +39,7 @@ To support different execution based on a condition, we must have some structure
 \subsubsection{Syntax Sugar}
 
 \subsection{Next UI Iteration}
+\label{c2:next_ui}
 I completely redesigned the UI based on the clients' feedback, as well as some other factors. See \ref{fig:screenshot_cycle_1_end} for the current state. See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. These designs were done using \href{https://figma.com}{Figma}. 
 
 \begin{figure}[h]
@@ -62,7 +63,10 @@ This design was meant to be a work in progress, but it looks quite similar to th
 Design principle: simplicity, speed, minimalism, feeling like vscode.
 
 \section{Implementation}
-\subsection{The Parser}
+\subsection{Redex Finding Changes}
+
+
+\subsection{Parser Changes}
 We must make some changes to the parser to include these new features.
 
 \subsubsection{Parsing Match Statements}
@@ -202,6 +206,8 @@ The aims of this cycle were to develop the language as well as some other more t
 
 This was my first of three focus groups, the most advanced of the three. As the UI/UX was not polished at this stage, I wanted to find people who would be able to discuss the parts that I had already implemented to a reasonable level of completion: the language. However, I still wanted to discuss future steps for the system as a whole, rather than just the language. Because of this, I wanted to find people who had learned functional languages as a part of a university course fairly recently and within memory, so they would have an insight into what is required for the system to be useful for use in this setting. 
 
+The transcript from this focus group is included in the additional submitted materials (see \ref{appx:additional_mats})
+
 \subsection{Selection}
 
 For this focus group, I recruited four students in their fourth year of studies here at the University of Bristol. They had all taken \hyperref[COMS10016]{the first-year FP unit} 3 years prior, and they had all taken units specializing in programming language theory since, including:
@@ -223,21 +229,35 @@ For this focus group, I recruited four students in their fourth year of studies 
 These people I selected for this focus group were the closest to `subject experts' that I could find while still being students. 
 
 \subsection{Format}
-This focus group started with me briefly presenting SFL explorer. \ref{fig:screenshot_c2_end} shows how the system looked at this stage of the project. 
+This focus group started with me briefly presenting SFL explorer. \ref{fig:screenshot_c2_end} shows how the system looked at this stage of the project. We also discussed the next UI iteration (see \ref{c2:next_ui}). 
 
 \subsection{Outcomes}
+Below is the summary of outcomes from the discussion with this focus group. The assertions about what they thought are backed up with quotes, marked with timestamps of where these quotes can be found in the transcript. 
 
+\subsection{The Existing Language}
+\paragraph{Positives:}
 \begin{itemize}
-    \item Discussing the language with programming language experts.
-    \item 
+    \item They liked the explicit match statements: `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [24:11]
+\end{itemize}
+
+\paragraph{Negatives:}
+\begin{itemize}
+    \item \label{ref:afg_ite} They were confused about if-then-else syntax. They said it could be confusing to have the parser act differently for one specific function type. `The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct' [42.55]
+\end{itemize}
+
+\paragraph{Requested Features:}
+Below are the specific features my client asked for in order for the system to be able to demonstrate the things she wants to use the system to demonstrate:
+\begin{itemize}
+    \item Recursive Types
+    \item Polymorphism
+    \item Type Aliases
+    \item Typechecking
+    \item User Definable Data Types
 \end{itemize}
 
 \begin{itemize}
-    \item \label{ref:afg_ite} They were confused about if-then-else. They said it could be confusing to have the parser act differently for one specific function type. `The issue I was having is just the fact that there is a function in the prelude which has
-    the same name as some syntactic sugar that is a parser construct' [42.55]
     \item They wanted syntax highlighting
-    \item They liked the explicit match statements: `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [24:11]
-    \item They wanted an indication of which direction evaluation was going so I added numbers: `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in'. This was already in the new UI
+    \item They wanted an indication of which direction evaluation was going so I added numbers: `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in'. This was already in the new UI, which that had not seen by this point in the transcript.
     \item They really appreciated its utility for what it was designed for. `I think this is very good \ldots\ I wish I'd had this in the functional labs' [1:00:09]
 \end{itemize}
 

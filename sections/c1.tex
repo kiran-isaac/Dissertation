@@ -338,6 +338,9 @@ function diff(ast1, ast2, expr1, expr2) -> Diff {
 
 \paragraph{Diff} \label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. \ref{fig:diff_list} shows a subsection of this algorithm, showing how it works for IDs, Literals and Pairs.
 
+\subsection{Finding Redexes}
+In SFL, a redex is an application
+
 \subsection{The Parser}
 The parser needs to consume a program, and return the following things:
 \begin{itemize}
