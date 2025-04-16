@@ -42,7 +42,6 @@ To support different execution based on a condition, we must have some structure
 \label{c2:next_ui}
 At this phase of the project, the current version of the web UI is a proof of concept. See \ref{fig:screenshot_cycle_1_end} for the current state. 
 
-
 I completely redesigned the UI based on the clients' feedback, as well as some other factors.  See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. These designs were done using \href{https://figma.com}{Figma}. 
 
 \begin{figure}[h]
@@ -62,8 +61,8 @@ I completely redesigned the UI based on the clients' feedback, as well as some o
 \end{figure}
 
 This design was meant to be a work in progress, but it looks quite similar to the final release of the product (Screenshots \ref{fig:screenshot_final_dark}, \ref{fig:screenshot_final_light}, \ref{fig:screenshot_final_dark_prelude_free} and \ref{fig:screenshot_final_light_prelude_free}). Before implementing this design, I discussed this design with the Advanced Focus Group (see \ref{ref:afg_figma}) and they were much more positive about this UI than the existing one 
-
-Design principle: simplicity, speed, minimalism, feeling like vscode.
+\todo{Discuss revert}
+\todo{Design principle: simplicity, speed, minimalism, feeling like vscode.}
 
 \section{Implementation}
 \subsection{Redex Finding Changes}
@@ -259,6 +258,7 @@ Below are the specific features my client asked for in order for the system to b
 \end{itemize}
 
 \begin{itemize}
+    \item They liked the revert: `Something I had not thought of, very good' [54:59]
     \item They wanted syntax highlighting
     \item They wanted an indication of which direction evaluation was going so I added numbers: `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in'. This was already in the new UI, which that had not seen by this point in the transcript.
     \item They really appreciated its utility for what it was designed for. `I think this is very good \ldots\ I wish I'd had this in the functional labs' [1:00:09]

@@ -30,9 +30,11 @@ C3
     - Implementation
         - Can discuss bugfixes? Discuss difficulties of debugging typechecker. Can be pretty vauge
         - Discuss the reimplemented UI, attatch screenshots to make less dry
+        - Undo required reimplementation of wasm interface, discuss memory limitations. Originally only one AST stored, but we needed to pass it to the frontend
 
 C4:
     - Untyped mode, syntax highlighting, UI horizontal overflow bugs, settings menu, settings persistance, default light mode. Discuss how untyped + free choice was useful for introducing functional programmers to absolute beginners.
+    - A/B tested various different light mode colour schemes, and different syntax highlighting colour schemes
 
 Code:
     - Fix the way that the dollar sign operator works. It can be redefined as an inbuilt as its just an infix op
