@@ -5,10 +5,13 @@
 \newcommand{\lcalc}{$\lambda$-calculus}
 \newcommand{\lCalc}{$\lambda$-Calculus}
 \newcommand{\fto}{\rightarrow}
-The lambda calculus (\lcalc) was described by Alonzo Church in 1936 \cite{church1936unsolvable}. Below is a definition of the \lcalc
-\cite{barendregt2013lambda}
+The lambda calculus (\lcalc) was described by Alonzo Church in 1936~\cite{church1936unsolvable}. 
+\sam{too terse: what is the lamda calc? (model of computation). Why is it important / interesting to this project?}
+Below is a definition of the \lcalc~\cite{barendregt2013lambda}.
+
+\sam{you can't jump straight into this}
 \begin{definition}[The \lcalc]
-    The set of $\lambda$-terms, notation $\Lambda$, is built up from an infinite set of variables $V={v,v',v'',...}$ using application and (function) abstraction:
+    The set of $\lambda$-terms, notation $\Lambda$, is built up from an infinite set of variables $V={v,v',v'',...}$ \sam{here you say v, but below you use x} using application and (function) abstraction: \sam{functions? application? abstraction? what are these? I recommend getting Sarah to have a look a this BG to see what a non-PL person needs to know}
     \begin{alignat*}{3}
     &x \in V                 \quad && \implies \quad && x \in \Lambda\\
     &M,N \in \Lambda         \quad && \implies \quad && (M N) \in \Lambda\\
@@ -20,22 +23,23 @@ The lambda calculus (\lcalc) was described by Alonzo Church in 1936 \cite{church
     &V       && ::= \; && v \mid V'\\
     &\Lambda && ::= \; && V \mid (\Lambda\Lambda) \mid (\lambda V\Lambda)
     \end{alignat*}
+    \sam{I dont think the way you have done variables is standard, i know you dont wanna plagurise, but this is such a basic thing that its better to cite where you got the AST from than tweek to get your own}
 \end{definition}
 
 We shall also use the following conventions:
 
 \begin{definition}[The \lCalc\ Conventions]$\ $\vspace{-0.5cm}
     \begin{enumerate}
-        \item \(x, y, z,...\) denote arbitrary variables
-        \item We may omit outermost parenthesis
-        \item Nested abstractions can be grouped. For instance, if we were to write the term $\lambda x \;y. M$, we would mean $(\lambda x . (\lambda\;y. M))$
-        \item We assume that the body of an abstraction extends as far to the right as possible. For instance, the term $\lambda x. M\;N$ means $(\lambda x. (M\;N))$ and not $((\lambda x. M)\;N)$
+        \item \(x, y, z,...\) denote arbitrary variables.
+        \item We may omit outermost parenthesis.
+        \item Nested abstractions can be grouped. For instance, if we were to write the term $\lambda x \;y. M$, we would mean $(\lambda x . (\lambda\;y. M))$.
+        \item We assume that the body of an abstraction extends as far to the right as possible. For instance, the term $\lambda x. M\;N$ means $(\lambda x. (M\;N))$ and not $((\lambda x. M)\;N)$. \sam{is this case you have used the standard thing, but I'd cite where you got these conventions from}
     \end{enumerate}
 \end{definition}
 
 \newcommand{\BetaReduce}{\rightarrow_\beta}
 \subsection{Reduction}
-The \lcalc\ is evaluated by $\beta$-reduction. This is where an abstraction is applied to a value. The result of applying an abstraction to a term is the body of the abstraction, with the all free instances of the abstracted variable are substituted with the term the abstraction was applied to. Below is the definition of how this substitution works, followed by the definition of $\beta$-reduction. 
+The \lcalc\ is evaluated by $\beta$-reduction. This is where an abstraction is applied to a value. The result of applying an abstraction to a term is the body of the abstraction, with the all free \sam{what do you mean by free?} instances of the abstracted variable are substituted with the term the abstraction was applied to. Below is the definition of how this substitution works, followed by the definition of $\beta$-reduction. 
 
 \begin{definition}[Substitution of free variables in terms of the \lcalc]$\ $\vspace{-0.5cm}
 \begin{alignat*}{3}
@@ -58,8 +62,15 @@ The \lcalc\ is evaluated by $\beta$-reduction. This is where an abstraction is a
 A term is said to be in normal form if it cannot be $\beta$-reduced
 \end{definition}
 
+\sam{these are all standard, so you should cite where they come from and explain them. Spend more time on reduction, because that will be key later}
+\sam{this section is very dry. why do we want to learn about lambda calc? well we are writing an evaluator, so to understand what that means we need to understand syntax and evaluation, so lets looks at the lambda calc as a small example. It makes the intro of lambda calc more active and motivated, rather than a bunch of dry definitions, instead its a small example of what we will do later, that is background cos its pre-defined and not implemented we are just exploring the ideas we will implement}
+
 \subsection{Types}
+\sam{para generally motivating types}
+
 The \lcalc\ that we have discussed so far is untyped. This means that any $\lambda$ term can be applied to any other term. When a term can no longer be $\beta$-reduced (i.e. no further reductions are possible), we say it is a value. This is why $\beta$-reduction is often referred to as \textit{evaluation} — it is the process by which terms are reduced to their final, fully evaluated form (i.e. values).
+
+\sam{i havent read further of lambda calc, cos i think my above advise applies here too. 1. you are burdened with too much knowledge so you keep jumping into the middle of an explanation 2. it is unclear why we are learning about types 3. remember lambda calc is a whole 3rd year course, and you've seen how long stevens notes are, we cannot replicate that so we need to highlight to the user what is important to understand about the lambda calc for just this project}
 
 If we were to extend our \lcalc\ with a new sort of term, an integer literal (something commonly done, especially when building up to discussing practical functional languages) \[\dots, -2, -1, 0, 1, 2, \dots\] we could say that these values are members of a set of values $Int$. It would be useful for us to be able to assert that a term eventually evaluates to one of these $Int$s. The \lcalc\ terms that evaluate to a value in the set of $Int$s can all be said to have `type' $Int$. More generally: 
 
@@ -96,6 +107,7 @@ In general, \textbf{well typed programs do not go wrong} \cite{MILNER1978348}. T
 The system that looks at a program to decide whether it is well typed is called the \textbf{typechecker}. Types can often also be inferred without specific assignments, which is called \textbf{type inference}.
 
 \section{Haskell: A Functional Programming Language}
+\sam{why are we talking about Haskell? we need to talk about SFL!}
 Functional programming languages are programming languages where `computation is carried out entirely through the evaluation of expressions' \cite{hudak1989conceptionfunctionalprogranning}. Functional programming languages are based on the lambda calculus. In this section, we will only discuss one example: Haskell. 
 
 Haskell is a very prominent functional programming language that is widely taught. It is a programming language specifically designed to be suitable for teaching \cite{hudak2007history}. This dissertation involves the development of a programming language with some similar features to Haskell, so the corresponding Haskell features and ideas will be introduced here. 
@@ -180,7 +192,8 @@ valuesToList (Four x1 x2 x3 x4) = [x1, x2, x3, x4]
 
 \section{Rust}
 \label{bg:rust}
-This project is written in rust. Some of the decisions made, particularly in the implementation of the AST, require an understanding of Rust, especially the memory management model.
+
+This project is written in rust. \sam{why? motivate} Some of the decisions made, particularly in the implementation of the AST, require an understanding of Rust, especially the memory management model.
 
 `Ownership' is an important concept. The rules of ownership \cite{rust_book}:
 \begin{itemize}
