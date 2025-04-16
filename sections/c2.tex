@@ -8,7 +8,7 @@ The requirements for this cycle were motivated by my client meeting (\ref{eval:c
 
 The client's central idea for what they wanted to use the tool was to demonstrate methods on lists, such as `map' and `foldr/l'. This requires lists to be built into the language. Lists in functional programming languages are commonly defined recursively, using \verb|Cons x xs| to represent constructing a list from an element \verb|x| and the rest of the list \verb|xs|. \verb|Nil| represents an empty list. This recursive construction of lists comes from Lisp \cite{mccarthy1960recursivelisp}. 
 
-In Haskell, lists are defined as \verb!data [a] = [] | a : [a]!
+In Haskell, lists are defined as \verb!data [a] = [] | a : [a]! \\\todo{finish yapping about lists and talk about why that means we need ADTs}
 
 \section{Design}
 \subsection{Language Changes}
@@ -208,7 +208,7 @@ For this focus group, I recruited four students in their fourth year of studies 
 
 \begin{itemize}
     \item The second year Programming Languages and Computation unit COMS20007, where they learnt to (among other things) `Understand the interplay between the design and implementation of programming languages' \cite{COMS20007_PLC}
-    \item The third year optional Types and Lambda Calculus unit COMS30040 where they learnt (among other things): \cite{COMS30040_TLC}
+    \item The third year optional Types and Lambda Calculus unit COMS30040 where they learnt (among other things): \cite{COMS30040_TLC} 
     \begin{itemize}
         \item `Type systems: types, judgements and rules'
         \item `Syntax and semantics of an untyped lambda calculus'
