@@ -15,7 +15,7 @@ Background
     - Existing systems research, perhaps dedicate an entire day to this
 
 lifecycle
-    - nothing happaned in cycle 3 and 4 design. 
+    - nothing happaned in phase 3 and 4 design. 
     - Remove pattern matching from c3 design
     
 

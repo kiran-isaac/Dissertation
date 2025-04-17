@@ -148,7 +148,7 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ysskoGdbqaUmGtHIPNJA-5" value="Figma design&amp;nbsp;&lt;div&gt;of Web UI&lt;div&gt;(Implemented next&lt;/div&gt;&lt;div&gt;cycle)&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="ysskoGdbqaUmGtHIPNJA-5" value="Figma design&amp;nbsp;&lt;div&gt;of Web UI&lt;div&gt;(Implemented next&lt;/div&gt;&lt;div&gt;phase)&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="463" y="313.41" width="117" height="70" as="geometry" />
         </mxCell>
         <mxCell id="ysskoGdbqaUmGtHIPNJA-6" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=none;startFill=0;strokeColor=light-dark(#C74440,#EDEDED);movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;entryX=0.353;entryY=0.941;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1">
@@ -241,16 +241,16 @@
         <mxCell id="dPtq7rBxvpi5ur3fX5a5-19" value="&lt;u&gt;Client&lt;/u&gt;&lt;div&gt;Discussion&amp;nbsp;&lt;div&gt;of language&lt;/div&gt;&lt;/div&gt;&lt;div&gt;requirements&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="255" y="387" width="88" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="dPtq7rBxvpi5ur3fX5a5-20" value="&lt;b&gt;&lt;u&gt;Cycle 1&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Proof of&amp;nbsp;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;concept&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="dPtq7rBxvpi5ur3fX5a5-20" value="&lt;b&gt;&lt;u&gt;Phase 1&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Proof of&amp;nbsp;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;concept&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="334" y="465" width="67" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="dPtq7rBxvpi5ur3fX5a5-21" value="&lt;b&gt;&lt;u&gt;Cycle 2&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Typesafe&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;language&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="dPtq7rBxvpi5ur3fX5a5-21" value="&lt;b&gt;&lt;u&gt;Phase 2&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Typesafe&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;language&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="248" y="464" width="71" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="dPtq7rBxvpi5ur3fX5a5-22" value="&lt;b&gt;&lt;u&gt;Cycle 3&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Implementing&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Web UI&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="dPtq7rBxvpi5ur3fX5a5-22" value="&lt;b&gt;&lt;u&gt;Phase 3&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Implementing&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Web UI&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="154" y="465" width="96" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="dPtq7rBxvpi5ur3fX5a5-23" value="&lt;b&gt;&lt;u&gt;Cycle 4&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;UI/UX&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Iteration&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="dPtq7rBxvpi5ur3fX5a5-23" value="&lt;b&gt;&lt;u&gt;Phase 4&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;UI/UX&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Iteration&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="87.24" y="464" width="65" height="55" as="geometry" />
         </mxCell>
         <mxCell id="dPtq7rBxvpi5ur3fX5a5-24" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;strokeColor=light-dark(#C74440,#EDEDED);entryX=0.626;entryY=0.464;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1">
@@ -260,7 +260,7 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="dPtq7rBxvpi5ur3fX5a5-25" value="&lt;b&gt;&lt;u&gt;Cycle 5&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Bug Fixes/&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Iteration&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="dPtq7rBxvpi5ur3fX5a5-25" value="&lt;b&gt;&lt;u&gt;Phase 5&lt;/u&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;Bug Fixes/&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Iteration&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="-1" y="464" width="79" height="55" as="geometry" />
         </mxCell>
         <mxCell id="dPtq7rBxvpi5ur3fX5a5-26" value="&lt;u&gt;Client&lt;/u&gt;&lt;div&gt;Evaluation of&lt;div&gt;Web UI MVP&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">

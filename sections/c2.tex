@@ -1,10 +1,10 @@
-\chapter{Cycle 2 --- Types and Pattern Matching}
-In this cycle, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated client-led approach. 
+\chapter{Phase 2 --- Types and Pattern Matching}
+In this phase, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated client-led approach. 
 
-At the end of this cycle, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the cycle, 
+At the end of this phase, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the phase, 
 
 \section{Requirements Analysis}
-The requirements for this cycle were motivated by my client meeting (\ref{eval:c1}). I wanted to tackle the most technical aspects in this cycle to give me the maximum time to complete them, as this was still early in the project lifecycle. The most difficult features out of the client's requests were the ones to do with extending the language, so these were the main focus for this cycle. 
+The requirements for this phase were motivated by my client meeting (\ref{eval:c1}). I wanted to tackle the most technical aspects in this phase to give me the maximum time to complete them, as this was still early in the project lifephase. The most difficult features out of the client's requests were the ones to do with extending the language, so these were the main focus for this phase. 
 
 The client's central idea for what they wanted to use the tool was to demonstrate methods on lists, such as `map' and `foldr/l'. This requires lists to be built into the language. Lists in functional programming languages are commonly defined recursively, using \verb|Cons x xs| to represent constructing a list from an element \verb|x| and the rest of the list \verb|xs|. \verb|Nil| represents an empty list. This recursive construction of lists comes from Lisp \cite{mccarthy1960recursivelisp}. 
 
@@ -40,7 +40,7 @@ To support different execution based on a condition, we must have some structure
 
 \subsection{Next UI Iteration}
 \label{c2:next_ui}
-At this phase of the project, the current version of the web UI is a proof of concept. See \ref{fig:screenshot_cycle_1_end} for the current state. The UI requires a total redesign
+At this phase of the project, the current version of the web UI is a proof of concept. See \ref{fig:screenshot_phase_1_end} for the current state. The UI requires a total redesign
 
 I completely redesigned the UI based on the clients' feedback, as well as based on other requiremenets identified during the \hyperref[sec:c1_autoethnography]{autoethnographic} phase of the project.  See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. These designs were done using \href{https://figma.com}{Figma}. 
 
@@ -188,23 +188,23 @@ In order to make the language more like Haskell, I also added syntax sugar that 
 
 \subsection{Changes to the Proof of Concept UI}
 \label{c2_poc_ui_impl}
-In this cycle, I made some changes to the proof of concept web UI
+In this phase, I made some changes to the proof of concept web UI
 
 - Initial approach to diff
 - separate lazy and free choice mode
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=1\linewidth]{images/cycle-2-end2.png} 
+    \includegraphics[width=1\linewidth]{images/phase-2-end2.png} 
     \captionsetup{justification=centering}
-    \caption{The product at the end of cycle two during lazy evaluation of the `sum of squares' sample program, with the prelude dropdown extended}
+    \caption{The product at the end of phase two during lazy evaluation of the `sum of squares' sample program, with the prelude dropdown extended}
     \label{fig:screenshot_c2_end}
 \end{figure}
 
 \section{The Advanced Focus Group: Evaluation and Next Steps}
 \label{ref:afg_figma}
 \label{ref:afg}
-The aims of this cycle were to develop the language as well as some other more technical features of this project. To discuss the language, I held a focus group with students who were very knowledgable and interested in functional programming languages. 
+The aims of this phase were to develop the language as well as some other more technical features of this project. To discuss the language, I held a focus group with students who were very knowledgable and interested in functional programming languages. 
 
 This was my first of three focus groups, the most advanced of the three. As the UI/UX was not polished at this stage, I wanted to find people who would be able to discuss the parts that I had already implemented to a reasonable level of completion: the language. However, I still wanted to discuss future steps for the system as a whole, rather than just the language. Because of this, I wanted to find people who had learned functional languages as a part of a university course fairly recently and within memory, so they would have an insight into what is required for the system to be useful for use in this setting. 
 
