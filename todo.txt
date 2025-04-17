@@ -6,6 +6,7 @@ Introduction
     - Introduce the system as a whole better
     - Finish bit about agile
     - Figure out how to link to the website
+    - user testing
 
 Background
     - Improve lambda calc stuff, make less "terse"
