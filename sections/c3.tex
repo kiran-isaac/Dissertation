@@ -30,10 +30,14 @@ enum DiffElem {
 
 type Diff = Vec<DiffElem>
 
-function diff(ast1, ast2, expr1, expr2) -> Diff {
+// rust-like psuedocode, not valid rust
+// ast1 and 2 are the two ASTs, and expr1 and 2 are the indices
+// of the terms we are considering for our diff. 
+fn diff(ast1, ast2, expr1, expr2) -> Diff {
     node1, node2 = ast1.get(expr1), ast2.get(expr2)
-    diff = new Diff;
+    diff = Diff::new();
     match (node1, node2) {
+        // IDs and Lits are compared based on their string "values"
         case (ID, ID)
         case (Lit, Lit) {
             if node1.value == node2.value {
@@ -44,11 +48,16 @@ function diff(ast1, ast2, expr1, expr2) -> Diff {
         }
 
         case (Pair {first1, second1}, Pair {first2, second2}) {
+            // As both are pairs, their opening brackets, 
+            // commas, and closing brackets are in common.
+
+            // We get the diff of the first and second
+            // element to find the diff of the whole pair 
             diff += Similarity("(")
             diff += diff(ast1, ast2, first1, first2)
             diff += Similarity(",")
             diff += diff(ast1, ast2, second1, second2)
-            diff ++ Similarity(")")
+            diff += Similarity(")")
         }
 
         ...
@@ -71,6 +80,7 @@ function diff(ast1, ast2, expr1, expr2) -> Diff {
 
 \subsubsection{Reduction Messages}
 
+
 \subsubsection{Revert Progress Functionality}
 We may wish to undo progress. This was functionality designed into the new UI that the advanced focus group specifically mentioned liking. 
 
@@ -78,8 +88,7 @@ Undoing progress requires that previous \ac{AST} states must be stored. Before n
 
 The issue with dynamic allocation of memory for the \ac{AST}s as they are added to our history is that we no longer know exactly where they will be located, meaning this information must be stored such that it will not be erased between calls to \ac{WASM} library functions. One method of doing this is passing a pointer to where in memory the AST is located to the JavaScript module so that it can refer to it later, and use library functions on it. At first glance, this sounds like a bad idea, as when pointers are returned from a function for which wasm-bindgen (see~\ref{bg:wasm-bindgen}) is used to make a JavaScript binding, the pointer is represented as a JavaScript $number$ type~\cite{wasm_bindgen_guide}, which is a double-precision IEEE-754 value~\cite{ecma262number}. Storing pointers as floating point values, and then attempting to dereference them, sounds like a recipe for memory mismanagement. However, this is safe because WebAssembly 2.0 has 32 (see~\ref{bg:wasm}), and thus has 32 bit pointers, and a double precision floating point number has a 52 bit~\cite{ieee754} mantissa meaning it can safely store the 32-bit memory location without issue. 
 
-In our JavaScript module, we can then store a stack of pointers to the \ac{AST}s, and display the options for reducing the one at the top. When an option is selected, we can apply the reduction and then store the new \ac{AST} on the top of our stack and recalculate reduction options. If the user decides to start evaluating a new program, all the \ac{AST}s with pointers in this list should be freed to avoid memory leaks 
-
+In our JavaScript module, we can then store a stack of pointers to the \ac{AST}s, and display the options for reducing the one at the top. When an option is selected, we can apply the reduction and then store the new \ac{AST} on the top of our stack and recalculate reduction options. If the user decides to start evaluating a new program, all the \ac{AST}s with pointers in this list are freed to avoid memory leaks.
 \subsection{Major Bugfixes}
 \begin{itemize}
     \item Typechecker

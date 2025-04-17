@@ -21,3 +21,4 @@ arity
 typechecking
 subtyping
 testathon
+wasm-bindgen
