@@ -6,14 +6,79 @@ The motivations for this cycle come mainly from the advanced focus group, howeve
 
 The advanced focus group was generally very positive about the language, but they had many thought about the Proof of Concept UI they were presented with. During cycle 2, I created a Figma prototype for the next UI (see \ref{c2:next_ui}). Many of their thoughts about the Proof of Concept UI were things that were already addressed with the new design. This prototype was presented to the advanced focus group, who much preferred it. The advanced focus group had no criticism of the new UI, so it should be implemented as designed for now. 
 
-\section{Implementation}
+The prototype for the new UI also included the functionality to `undo progress', by clicking on a previous program state in the table to make this the current version of the program. 
 
-\subsection{Implementing the new UI}
+\section{Design}
+Because I wanted to be able to evaluate the prototype for the web UI with the advanced focus group, the web UI was designed in the last cycle. I set aside time to design 
+
+
+\todo{there was no design here? the advanced focus group liked the protype a lot and did not have any }
+
+\section{Implementation}
+Implementing the new UI mostly consisted of time-consuming React and CSS tweaks which are not worth mentioning here. However, there were some more challenging aspects that required some more interesting considerations and changes to be made. 
+
+\subsubsection{Diff}
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{|c|}
+        \hline
+    \begin{lstlisting}[language=Rust]
+enum DiffElem {
+    Similarity(String),
+    Difference(String, String)
+}
+
+type Diff = Vec<DiffElem>
+
+function diff(ast1, ast2, expr1, expr2) -> Diff {
+    node1, node2 = ast1.get(expr1), ast2.get(expr2)
+    diff = new Diff;
+    match (node1, node2) {
+        case (ID, ID)
+        case (Lit, Lit) {
+            if node1.value == node2.value {
+                diff += Similarity(node1.value)
+            } else {
+                diff += Difference(node1.value, node2.value)
+            }
+        }
+
+        case (Pair {first1, second1}, Pair {first2, second2}) {
+            diff += Similarity("(")
+            diff += diff(ast1, ast2, first1, first2)
+            diff += Similarity(",")
+            diff += diff(ast1, ast2, second1, second2)
+            diff ++ Similarity(")")
+        }
+
+        ...
+    }
+    
+    return diff;
+}
+    \end{lstlisting}
+    \\\hline
+    \end{tabular}
+    \caption{The Rust code listing for the type of the output of the AST::diff function, as well as a small section of the algorithm. There is also (not shown) a wrapper around the Diff type, to allow for conversion into JavaScript (see \ref{bg:wasm}), as well as the some logic for combining diffs.}
+    \label{fig:diff_list}
+\end{figure}
+
+\label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. \ref{fig:diff_list} shows a subsection of this algorithm, showing how it works for IDs, Literals and Pairs.
+
+% Move to c4
+% \subsubsection{Syntax Highlighting}
+\subsubsection{Display RC history}
+
+\subsubsection{Reduction Messages}
 
 \subsubsection{Revert Progress Functionality}
-We may wish to undo progress. This was functionality designed into the new UI that the advanced focus group specifically mentioned liking. Undoing progress requires that previous \ac{AST} states must be stored. Before now, the most recent \ac{AST} state was stored at a known memory address so any of the functions in the binary could know where to find it. This was done to avoid having to pass the AST to the JavaScript module. If we wanted to store the history of all \ac{AST}s, one approach could be to store all the \ac{AST}s in a pre-allocated memory region in a stack, and then allow the JavaScript module to refer to each of the \ac{AST}s in the history by their stack index. However, pre-allocating enough memory for any potential program execution would be misguided, as it would cause accessibility problems on computers with less memory. Instead, we should employ dynamic allocation. 
+We may wish to undo progress. This was functionality designed into the new UI that the advanced focus group specifically mentioned liking. 
 
-The issue with dynamic allocation of memory for the \ac{AST}s as they are added to our history is that we no longer know exactly where they will be located, meaning this information must be stored such that it will not be erased between calls to \ac{WASM} library functions. One method of doing this is passing a pointer to where in memory the AST is located to the JavaScript module so that it can refer to it later, and use library functions on it. At first glance, this sounds like a bad idea, as when pointers are returned from a function for which wasm-bindgen (see \ref{bg:wasm-bindgen}) is used to make a JavaScript binding, the pointer is represented as a JavaScript $number$ type \cite{wasm_bindgen_guide}, which is a double-precision IEEE-754 value\cite{ecma262number}. Storing pointers as floating point values, and then attempting to dereference them, sounds like a recipe for memory mismanagement. However, this is safe because WebAssembly 2.0 has 32 (see \ref{bg:wasm}), and thus has 32 bit pointers, and a double precion floating point number has a 52 bit  \cite{ieee754} mantissa meaning it can safely store the 32-bit memory location without issue. 
+Undoing progress requires that previous \ac{AST} states must be stored. Before now, the most recent \ac{AST} state was stored at a known memory address so any of the functions in the binary could know where to find it. This was done to avoid having to pass the AST to the JavaScript module. If we wanted to store the history of all \ac{AST}s, one approach could be to store all the \ac{AST}s in a pre-allocated memory region in a stack, and then allow the JavaScript module to refer to each of the \ac{AST}s in the history by their stack index. However, pre-allocating enough memory for any potential program execution logs would be misguided, as it would cause accessibility problems for computers with less memory. Instead, we should employ dynamic allocation. 
+
+The issue with dynamic allocation of memory for the \ac{AST}s as they are added to our history is that we no longer know exactly where they will be located, meaning this information must be stored such that it will not be erased between calls to \ac{WASM} library functions. One method of doing this is passing a pointer to where in memory the AST is located to the JavaScript module so that it can refer to it later, and use library functions on it. At first glance, this sounds like a bad idea, as when pointers are returned from a function for which wasm-bindgen (see~\ref{bg:wasm-bindgen}) is used to make a JavaScript binding, the pointer is represented as a JavaScript $number$ type~\cite{wasm_bindgen_guide}, which is a double-precision IEEE-754 value~\cite{ecma262number}. Storing pointers as floating point values, and then attempting to dereference them, sounds like a recipe for memory mismanagement. However, this is safe because WebAssembly 2.0 has 32 (see~\ref{bg:wasm}), and thus has 32 bit pointers, and a double precision floating point number has a 52 bit~\cite{ieee754} mantissa meaning it can safely store the 32-bit memory location without issue. 
+
+In our JavaScript module, we can then store a stack of pointers to the \ac{AST}s, and display the options for reducing the one at the top. When an option is selected, we can apply the reduction and then store the new \ac{AST} on the top of our stack and recalculate reduction options. If the user decides to start evaluating a new program, all the \ac{AST}s with pointers in this list should be freed to avoid memory leaks 
 
 \subsection{Major Bugfixes}
 \begin{itemize}
