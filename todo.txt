@@ -8,11 +8,14 @@ Introduction
     - Figure out how to link to the website
     - user testing
 
+
 Background
     - Improve lambda calc stuff, make less "terse"
     - Reduction stuff really needs work
     - Types: motivation
     - Existing systems research, perhaps dedicate an entire day to this
+        - figure out what to do about the lambda lessons: https://stevekrouse.github.io/hs.js/ and 
+        -   https://chrisuehlinger.com/LambdaBubblePop/
 
 lifecycle
     - nothing happaned in phase 3 and 4 design. 
