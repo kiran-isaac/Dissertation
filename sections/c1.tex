@@ -139,9 +139,9 @@ The tree structure of \ac{SFL} requires the following different types of tree no
     \item Assignment
     \item Module
 \end{itemize}
-\sam{bullets look silly}
+\sam{bullets look silly, if you have spare time draw a pictures, otherwise just say that it is a tree structure, listing the nodes adds nothing}
 
-Initially, the approach taken when implementing this tree structure was to have each node `owning' its child nodes (see \ref{bg:rust}). However, it will be necessary frequently to be able to find nodes based on certain conditions (for example, the condition that this node is a valid redex) and then provide a value that represents the location of this node within the tree. Even if each of the tree nodes had a unique ID, locating a node from this value representing its location will require some sort of tree search.
+Initially, the approach taken when implementing this tree structure was to have each node `owning' its child nodes (see \ref{bg:rust}). However, it will be frequently necessary to be able to find nodes based on certain conditions (for example, the condition that this node is a valid redex) and then provide a value that represents the location of this node within the tree. Even if each of the tree nodes had a unique ID, locating a node from this value representing its location will require some sort of tree search.
 
 Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as AST and ASTNode, where AST was an array of ASTNodes, and each ASTNode stored their children's indices in this array. The position in the array of an ASTNode will be referred to as its index.
 
@@ -191,7 +191,7 @@ The node indices in the \verb|children| vector represent different things depend
     \item If it is an application, the first node is the function, and the second is the argument.
     \item If it is a pair, the first node is the first in the pair, and the second is the second in the pair.
     \item If it is a match expression, the first node represents the matched value, then after this it consists of the case followed by the resulting expression. Match expressions will always therefore have an odd number of children.
-    \item If it is a module, then each of the children is an assignment
+    \item If it is a module, then each of the children is an assignment.
     \item If it is an assignment, then the first child is the variable being assigned to, and the second is the expression.
 \end{itemize}
 
@@ -221,6 +221,7 @@ Module:
 \end{lstlisting}
 
 \subsubsection{With the Benefit of Hindsight} % for jess's benefit as she did not like my AST definition so i want to aknowledge what she said about it
+\sam{very nice evaluation, love this section}
 This project was my first major project using Rust. Below is a discussion of some Rust features which were not fully taken advantage of in this definition of syntax trees, followed by a discussion of the combination of these features that would have been more optimal. 
 
 \paragraph{Tagged Unions}
@@ -229,10 +230,10 @@ An alternative implementation could have involved \verb|ASTNodeType| being a tag
 \noindent\verb|Identifier(String)|. This would be more space efficient, as each node requires different data. It would also more elegantly represent the fact that each type of node is a different thing, and de-obfuscate the meaning of each of the different fields of a node. 
 
 \paragraph{References}
-This definition of the AST and the nodes has a parent object owning all of the nodes. As previously discussed, this was done to enable constant-time lookup of nodes from their indices. However, all things in a program already have such a reference enabling constant time lookup: a pointer, represented in rust by a reference. This was not used, as there were concerns about ensuring validity of each reference, and avoiding use-after-free bugs. These concerns were unfounded, as one of Rust's major features is that it provides safety guarantees ensuring that these problems are never encountered \cite{rust_book}. An object can only store a reference to another object if it can be guaranteed that it exists, and it will continue to exist for at least as long as the object storing the reference will. This is achieved via lifetime checking, using either inferred or explicitly stated specifiers of how long the two objects will exist relative to each other. 
+This definition of the AST \sam{i dont understand the rest of the sentence} and the nodes has a parent object owning all of the nodes. As previously discussed, this was done to enable constant-time lookup of nodes from their indices. However, all things in a program already have such a reference enabling constant time lookup: a pointer, represented in rust by a reference. This was not used, as there were concerns about ensuring validity of each reference, and avoiding use-after-free bugs. These concerns were unfounded, as one of Rust's major features is that it provides safety guarantees ensuring that these problems are never encountered \cite{rust_book}. An object can only store a reference to another object if it can be guaranteed that it exists, and it will continue to exist for at least as long as the object storing the reference will. This is achieved via lifetime checking, using either inferred or explicitly stated specifiers of how long the two objects will exist relative to each other. 
 
 \paragraph{A Better Implementation}
-\ref{fig:ast_lst_2} shows an implementation that uses tagged unions to store information that is different for different node types, and pointers to the nodes directly rather than list indices. This avoids the possibility of referencing nodes that don't exist. It is also easier to understand what is common between nodes (syntax info) and what is uncommon. It is also more space efficient as it only stores the information that each type requires. The size of the improved implementation is 88 bytes, and the size of the original implementation is 128 bytes. The improved implementation is subjectively more elegant and readable. Objectively, it also takes up less space. It also forces memory safety, without the need for carefully implemented getter and setter functions. 
+\sam{numbers alone look odd, especially at the beginning of a sentence. An easy solution is to always give references titles e.g. Figure bla or Table bla}\ref{fig:ast_lst_2} shows an implementation that uses tagged unions to store information that is different for different node types, and pointers to the nodes directly rather than list indices. This avoids the possibility of referencing nodes that don't exist. It is also easier to understand what is common between nodes (syntax info) and what is uncommon. It is also more space efficient as it only stores the information that each type requires. The size of the improved implementation is 88 bytes, and the size of the original implementation is 128 bytes. The improved implementation is subjectively more elegant and readable. Objectively, it also takes up less space. It also forces memory safety, without the need for carefully implemented getter and setter functions. 
 
 Despite this, the decision was made not to update the implementation for several reasons. The AST is so central to the implementation, that it would take a long time to switch properly. Memory and speed are not major constraints for this project, but implementation time is. Furthermore, as long as all indices used are either produced by a helper function, or the AST root, there should not be a problem with memory safety. 
 
@@ -270,7 +271,7 @@ struct ASTNode<'a> {
 \end{figure}
 
 \subsection{Methods on the AST}
-Below are a selection of the more important or interesting methods implemented on the AST and its nodes.
+Below are a selection of the more important or interesting methods implemented on the AST and its nodes. \sam{i think I want to see the code as well}
 
 \paragraph{Adding new nodes} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so the tree will add them to the end, and return their index. These methods are needed extensively for the parser.
 
@@ -342,18 +343,19 @@ function diff(ast1, ast2, expr1, expr2) -> Diff {
 \end{figure}
 
 \paragraph{Diff} \label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. \ref{fig:diff_list} shows a subsection of this algorithm, showing how it works for IDs, Literals and Pairs.
+\sam{please walk through the code now, maybe you want line numbers in your listings}
 
 \subsection{Finding Redexes}
-In SFL, a redex is an application
+In SFL, a redex is an application \sam{unfinished?}
 
 \subsection{The Parser}
 The parser needs to consume a program, and return the following things:
 \begin{itemize}
-    \item The AST
+    \item The AST.
     \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as a struct `\verb|LabelTable|' which is a wrapper around a \verb|HashMap<String, Type>| with some useful methods. 
     \item The `Type Table': All type constructors and concrete types defined, stored with their arities. This is implemented as: \verb|HashMap<String, usize>|.
 \end{itemize}
-For instance, from the program:
+For instance, from the program: \sam{examples are good!}
 \begin{lstlisting}[]
 data List a = Cons a (List a) | Nil
 double x = x * 2	
@@ -387,6 +389,7 @@ Module:
         \end{itemize}
 \end{itemize}
 
+\sam{some advice i got when i started technical writing, as i think you are writing very similarly to  how I used to: when writing a report it is tempting to well report "this was done" "that was done" "this means" "noun will need to" but this results in quite dry and overly verbose writing. Instead it is more exciting to make the research / the noun the subject of the sentence. e.g. "noun needs to bla because of bla"}
 The parser will also store a set of all bound variables at each location. This will allow us to disqualify some invalid programs while generating the tree, rather than having to traverse it after generation to catch these issues. For instance, we must the following assignments:
 \begin{itemize}
     \item \verb|x = (\x. e)| where e is a valid expression, as x is ambiguous during the expression e. This would be disqualified when attempting to parse the abstraction as x is already bound.  
