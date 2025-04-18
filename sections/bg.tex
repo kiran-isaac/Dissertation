@@ -146,7 +146,7 @@ Many languages, including Haskell, have Algebraic Data Types allowing us to `Com
 
 Haskell allows users to define their own algebraic data types using the \lstinline[language=SFL]|data| keyword. For instance, booleans can be defined as 
 
-\begin{lstlisting}[language=SFL_unboxed]
+\begin{lstlisting}[language=SFL_unboxed_noprelude_notypes]
 data Bool = True | False
 \end{lstlisting} 
 
@@ -169,6 +169,7 @@ The `Type of a Type' is its \emph{kind} \cite{pierce2002types}. For example, the
 `Either' is a type constructor with the kind $* \fto * \fto *$, meaning it takes two concrete types and returns a concrete type. 
 
 \subsection{Pattern Matching}
+\label{bg:haskell_pattern_match}
 Haskell allows us to do pattern matching, allowing conditional execution based on whether a term matches a given form. The following function would have different results depending on whether the input value was 0 or another number
 
 \begin{verbatim}

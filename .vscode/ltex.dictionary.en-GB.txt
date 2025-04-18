@@ -25,3 +25,4 @@ wasm-bindgen
 stringification
 redex-contraction
 zero-ary
+thoguhrougly

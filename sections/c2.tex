@@ -14,6 +14,7 @@ This definition of lists is as example of a polymorphic data type. It also impli
 \subsection{Language Changes}
 The focus of this project phase is mainly to upgrade the language SFL. We have already identified what features we would like to add the language. This section will go into detail about the design for the extension for the language enabling these new features. 
 \subsubsection{Type System}
+\label{sec:type_system_design}
 If we are to effectively represent the type of expression containing integers and booleans, we must have types $Int$ and $Bool$. We also want our type system to be able to express functions, as our language support functions. 
 
 We also want polymorphism in our type system, as rewriting functions many times for different data types makes programs more verbose.  
@@ -46,19 +47,61 @@ Figure \ref{fig:tc_types} shows the type system in SFL. Note that the definition
 % Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type, which can check that it is saturated before 
 
 \subsubsection{User Definable Algebraic Data Types}
-In Haskell, we can create algebraic types using the `data' keyword (see \ref{bg:haskell_udt}). 
+In Haskell, we can create algebraic types using the \sflinline{data} keyword (see \ref{bg:haskell_udt}). Replicating this syntax for \ac{SFL}'s user defined data types would be good, allowing people already familiar with Haskell to use the system, as well as viva versa. 
 
-As an example, the Haskell data declaration:
-\begin{lstlisting}[language=SFL_unboxed]
+As an example, the SFL (and Haskell) data declaration:
+\begin{lstlisting}[language=SFL_unboxed_noprelude]
 data Either a b = Left a | Right b
 \end{lstlisting}
-\noindent creates a tagged union type called $Either$ with two constituent type parameters $a$ and $b$. In our type system (\ref{fig:sfl_types_no_exst}) this would be represented as $Either[a, b]$. The \Unionname \verb|Either| uniquely identifies this type, this must be enforced by the parser. It also creates two data constructors: \verb|Left| which has the type $\forall a\;b. a \fto Either[a,b]$, and \verb|Right| which has the type $\forall a\;b. b \fto Either[a,b]$. 
+\noindent creates a tagged union type called $Either$ with two constituent type parameters $a$ and $b$. In our type system (\ref{sec:type_system_design}) this would be represented as $Either[a, b]$. The \Unionname \verb|Either| uniquely identifies this type, this must be enforced by the parser. It also creates two data constructors: \verb|Left| which has the type $\forall a\;b. a \fto Either[a,b]$, and \verb|Right| which has the type $\forall a\;b. b \fto Either[a,b]$. 
 
+Type aliases allow us to make code more readable and expressive. For instance, if we were to define playing cards like this:
+\begin{lstlisting}[language=SFL_unboxed]
+data Suit = Hearts | Clubs | Spades | Diamonds
+data Rank = Num Int | Jack | Queen | King | Ace
+type Card = (Suit, Rank)
+\end{lstlisting}
+
+\noindent having the type alias \sflinline{Card} for \sflinline{(Suit, Rank)} allows us to very easily, and more readably, create functions on Cards, as well as values with that type. 
+
+To summarize, we will implement type aliases and algebraic data types to work similarly to Haskell with similar syntax. 
 
 \subsubsection{Match}
-To support different execution based on a condition, we must have some structure that can differentiate between values.  
+\label{c2_design_match}
+See \ref{bg:haskell_pattern_match} for more information about Haskell pattern matching. A basic example of pattern matching in Haskell:
 
-\subsubsection{Syntax Sugar}
+\begin{lstlisting}[language=SFL]
+fac :: Int -> Int
+fac 0 = 1
+fac n = n * factorial (n - 1)
+\end{lstlisting}
+
+Here, the definition of the `fac' function is different depending on if is it applied to $0$ or to any other $Int$. If it is applied to an $Int$ other than 0, n is substituted for this value in the expression.
+
+Pattern matching at the top level like this would be difficult to implement, as it would require significantly changing how abstractions are represented. It would be easier to create a new syntax structure: a match expression. This could look like:
+
+\begin{lstlisting}[language=SFL]
+fac :: Int -> Int
+fac n = match n {
+    | 0 -> 1
+    | _ -> n * (fac (n - 1))
+}
+\end{lstlisting}
+This syntax was fairly arbitrary, as syntax is quite easy to change. However, this syntax proved to be fairly popular with all three focus groups, so it did not change between this stage and the end of the project.
+
+The `fac' function takes an $Int$ n, and proceeds differently with different values of n. If the value is 0, the value of the whole expression becomes 0, otherwise it becomes \lstinline[language=SFL]!n * (fac (n - 1))!. We can use literals in our pattern to differentiate between different values of literals. Inspired by Haskell, we can use a variable (which is a lowercase identifier) to match anything, a `wildcard' pattern. All instances of the variable in the pattern's corresponding expression with the term that the variable matches. `\_' is a special case wildcard, where no variable is bound but it still matches anything, 
+
+We should also be able to match more complex structures including Algebraic Data Types. For instance, we can write the following function to figure out whether a list has length 2 or grater
+
+\begin{lstlisting}[language=SFL]
+lenIsAtLeastTwo :: List a -> Bool
+lenIsAtLeastTwo list = match list {
+    | Cons _ (Cons _ _) -> true
+    | _ -> false
+}    
+\end{lstlisting}
+
+\noindent In this example, it is important that we evaluate the term `list' enough to \textit{know for sure} that it does not match the first pattern before moving on to the second, as the second pattern is irrefutable. 
 
 \subsection{Next UI Iteration}
 \label{c2:next_ui}
@@ -87,9 +130,6 @@ This design was meant to be a work in progress, but it looks quite similar to th
 \todo{Design principle: simplicity, speed, minimalism, feeling like vscode.}
 
 \section{Implementation}
-\subsection{Redex Finding Changes}
-
-
 \subsection{Parser Changes}
 We must make some changes to the parser to include these new features.
 
@@ -153,18 +193,22 @@ pub enum Type {
     Forall(String, Box<Type>),
     Product(Box<Type>, Box<Type>),
     Union(String, Vec<Type>),
-    Alias(String, Box<Type>),
 
+    Alias(String, Box<Type>),
     Existential(usize),
 }
     \end{lstlisting}
     \\\hline
     \end{tabular}
-    \caption{The Rust code listing for the definition of types. Existential is separated as it is more of an implementation detail than a part of the type system}
+    \caption{The Rust code listing for the definition of types. Existential and Alias are separated as they are more of an implementation detail than a part of the type system}
     \label{fig:type_lst}
 \end{figure}
 
-We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size: the size of a pointer in the target architecture. We also define Existential, as an implementation detail needed for the type checker. 
+We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size: the size of a pointer in the target architecture. 
+
+We also define Existential, as an implementation detail needed for the type checker. 
+
+Aliases are defined here with their name, and the type they are an alias for. Aliases could simply be implemented by replacing all occurrences of the string on the left with the string on the right, but defining them here allows us to use their names to generate type errors making them easier to understand. 
 
 \subsubsection{Methods on Types}
 Below are a selection of the more important or interesting methods implemented on Types.
@@ -178,7 +222,7 @@ The type checker will be bidirectional, and will follow and algorithm largely ba
 \begin{quote}
 `Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability \ldots its error reporting, and its relative ease of implementation' \cite{completebidir}
 \end{quote}
-\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking id ($\lambda x. x$) against type $\forall a.a\fto a$ (photo of whiteboard derivation included in submission [TODO: is this the right way to cite this]), I modified their algorithm to add my extra types (The inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs. Not including assignment and modules as these are not part of expression syntax). \ref{fig:tc_types} shows the type system, including the typechecker implementation details, as well as the unmodified context structure, which keeps track of the state of the typechecker as it progresses recursively through the type system. \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. \ref{fig:ctx_subst} shows the modified algorithm for substituting all of the information in a context into a type. 
+\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking \sflinline{id} ($\lambda x. x$) against type $\forall a.a\fto a$, I modified their algorithm to add my extra types (the inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs). This does not include assignment and modules as these are not part of expression syntax. \ref{fig:tc_types} shows the type system, including the typechecker implementation details, as well as the unmodified context structure, which keeps track of the state of the typechecker as it progresses recursively through the type system. \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. \ref{fig:ctx_subst} shows the modified algorithm for substituting all of the information in a context into a type. 
 
 \input{sections/fig_types_ctx}
 
@@ -192,6 +236,58 @@ Most of these rules are untouched, the ones that I added or modified are \colorb
 \input{sections/fig_tc_rules}
 
 \pagebreak % To force the typing stuff to be on the same page
+
+\subsection{Pattern Matching}
+We must update the redex finding system with the ability to match patterns. 
+
+As discussed in the design (\ref{c2_design_match}), patterns are checked in order from first to last. We can check an expression against a pattern recursively, and get all variables bound, using the following algorithm:
+
+\paragraph{Pattern Matching Algorithm}
+\begin{lstlisting}[language=Rust]
+// We return a list of 
+enum MatchResult {
+    Sucess{bindings: Vec<(String, Term)>},
+    Unknown,
+    Refute
+}
+
+fn match(expr, pattern) -> MatchResult {
+    if (pattern is "_") {
+        // Suceed but dont bind
+        Sucess([])
+    }
+    if (pattern is a lowercase identifier) {
+        // We suceed as a lowercase ID is a wildcard, and we must add to our list 
+        // of bindings the fact that the named wildcard now has a value, which is the
+        // matched term 
+        Sucess([(pattern.string, expr)])
+    }
+    if (pattern is a constructor) {
+        if (expr is also a constructor with the same name) {
+            return Sucess([])
+        }
+        if (expr is an application) {
+            // `Head' refers to the recursive front of an application
+            if (the head of expr is a constructor) {
+                // We can refute, as constructors never evaluate, so the structure of 
+                // the expression will never be the same as the pattern
+                return Refute
+            }
+        }
+    }
+}
+\end{lstlisting}
+\todo{split description between what type of node pattern is}
+
+However, In the below example, if we 
+\begin{lstlisting}[language=SFL]
+match list {
+    | Cons _ (Cons _ _) -> true
+    | _ -> false
+}
+\end{lstlisting}
+We must be careful not to move on to matching against a pattern until we have thoguhrougly checked that it does not match any pattern before it. Not only do we need to check that it does not match before moving on, we must check that it \textit{can not} match the expression i.e. we must refute the pattern. 
+
 
 \subsection{The Prelude, and `if e then a else b'}
 Most programming languages come with functionality packaged that is included by default, and is written in the language. In Haskell, this is referred to as the Prelude. There is also the standard library which is more extensive and is not imported by default. 
