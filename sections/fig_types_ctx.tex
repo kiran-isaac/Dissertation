@@ -1,30 +1,30 @@
 \begin{figure}[h]
-  \hrule
   \centering
-  \begin{minipage}{0.518\textwidth}
+  \begin{minipage}{\textwidth}
   \[
       \begin{array}{llcl}
+      % \\[4pt]
       \text{Types} & A, B, C & \bnfas &
             \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt 
-            \\[1pt] &&&\!\!\!\;\;\;
+            % \\[1pt] &&&\!\!\!\;\;\;
             \alltype{\alpha}{A} \bnfalt A \arr B \bnfalt
             % \\[1pt] &&&\!\!\!\;\; \TypeAlias{A}{B} \bnfalt  
-            \\[1pt] &&&\!\!\!\;\;
+            % \\[1pt] &&&\!\!\!\;\;
             (A, B) \bnfalt
             % \\[1pt] &&&\!\!\!\;\;
             \Unionname[A_1, \dots, A_n]
       \\[2pt]
-      \text{Monotypes} & \tau,\sigma & \bnfas &
-            \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt 
-            \\[1pt] &&&\!\!\!\;\;
-            A \arr B \bnfalt (A, B)
-            % (A, B) \bnfalt \TypeAlias{A}{B}
-        \\[2pt]
+      % \text{Monotypes} & \tau,\sigma & \bnfas &
+      %       \Inttype \bnfalt \Booltype \bnfalt \alpha \bnfalt \ahat \bnfalt 
+      %       % \\[1pt] &&&\!\!\!\;\;
+      %       \tau \arr \sigma \bnfalt (\tau, \sigma) \bnfalt \Unionname[\tau_1, \dots, \tau_n]
+      %       % (A, B) \bnfalt \TypeAlias{A}{B}
+      %   \\[2pt]
       \text{Contexts} & \Gamma, \Delta, \Theta & \bnfas &
                   \cdot
                   \bnfalt \Gamma, \alpha 
                   \bnfalt \Gamma, x:A
-                  \\[1pt] &&&\!\!\!\;\;
+                  % \\[1pt] &&&\!\!\!\;\;
                   \bnfalt \Gamma, \ahat
                   \bnfalt \Gamma, \hypeq{\ahat}{\tau}
                   % \\[1pt] &&&\!\!\!\;\;
@@ -40,19 +40,22 @@
       \end{array}
   \]
   
-  \captionsetup{justification=centering}\caption{Syntax of types, monotypes, and contexts as seen by the typechecker. Note that the existential type variables ($\ahat$) can not actually be created by users, they are an implementation detail}
+  \captionsetup{justification=centering}\caption{Syntax of types, monotypes, and contexts as seen by the typechecker. The definition of types differ slightly from the definition offered in figure \ref{fig:sfl_types_no_exst}, as we include existential type variables ($\ahat$) that can not actually be created by users. They are an implementation detail required for the type checking algorithm}
   \FLabel{fig:tc_types}
 
   
   \end{minipage}
   \hfill
-  \begin{minipage}{0.474\textwidth}
+  \begin{minipage}{\textwidth}
     \centering
       \[
   \begin{array}[t]{l@{~}c@{~}ll}
       %
-      [\Gamma]\alpha   & = &   \alpha &
-      \\{}
+      [\Gamma]\Inttype  & = & \Inttype &\\{}
+
+      [\Gamma]\Booltype & = & \Booltype &\\{}
+
+      [\Gamma]\alpha    & = & \alpha &\\{}
       % [\Gamma]\unitty   & = &   \unitty &
       % \\[1pt]
       \big[\Gamma[\hypeq{\ahat}{\tau}]\big] \ahat
@@ -79,6 +82,4 @@
   \captionsetup{justification=centering}\caption{Applying a context, as a substitution, to a type}
   \FLabel{fig:ctx_subst}
   \end{minipage}
-\vspace{1ex}
-\hrule
 \end{figure}

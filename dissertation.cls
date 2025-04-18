@@ -23,7 +23,7 @@
       unit           = {COMS30045},
 %      title = string
        title/.store in = \dissertation@title@major,
-       title           = {Implementing a Step by Step Evaluator for a Simple Functional Programming language},
+       title           = {Implementing a Step by Step Evaluator for a Simple Functional Programming Language},
 %   subtitle = string
     subtitle/.store in = \dissertation@title@minor,
     subtitle           = {},

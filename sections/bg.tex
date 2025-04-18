@@ -140,23 +140,24 @@ id x = x
 \end{verbatim}
 \noindent which simply returns its argument. `a' in the type signature represents any type, and can be substituted for any type. The two `a's must be the same however, mandating that the argument and the return value must be the same type.  
 
-\subsection{User Defined Data Types}
-Haskell allows users to define their own types. For instance, booleans can be defined as
-\begin{verbatim}
-data Bool = True | False
-\end{verbatim}
+\subsection{User Defined Algebraic Data Types}
+\label{bg:haskell_udt}
+Many languages, including Haskell, have Algebraic Data Types allowing us to `Compose' other data types. The set of all values of an algebraic data type is isomorphic to an expression involving the sets of values of their constituent types combined using `set algebra' operations. Haskell allows for `union' and `product' types.  
 
-Many languages, including Haskell, also have Algebraic Data Types allowing us to `Compose' other data types. The set of all values of an algebraic data type is isomorphic to an expression involving the sets of values of their constituent types combined using `set algebra' operations. Haskell allows for `union' and `product' types.  
+Haskell allows users to define their own algebraic data types using the \lstinline[language=SFL]|data| keyword. For instance, booleans can be defined as 
+
+\begin{lstlisting}[language=SFL_unboxed]
+data Bool = True | False
+\end{lstlisting} 
+
+\noindent This data definition creates a type $Bool$ with two data constructors, \verb|True| and \verb|False|. These data constructors are zero-ary. We can also have data constructors that have arguments. 
+
+An example of a union type in Haskell is the tagged union \begin{lstlisting}[language=SFL_unboxed]
+data Shape = Circle Int | Rectangle Int Int
+\end{lstlisting} 
+\noindent which is isomorphic to the type \(Int \cup (Int \times Int)\). 
 
 An example of a product type is the tuple \((Int, Bool)\): the set of all possible values of this type is isomorphic to the Cartesian product of the set of all values of \(Int\) and the set of all values of $Bool$. Most languages have product types, which often take the form of structs or tuples. 
-
-An example of a union type in Haskell is the tagged union:
-
-\begin{verbatim}
-data Shape = Circle Int | Rectangle Int Int
-\end{verbatim}
-
-\noindent which is isomorphic to the type \(Int \cup (Int \times Int)\). 
 
 \subsection{Polymorphic Types and Kinds}
 Haskell includes polymorphic types. These are `types that are universally quantified in some way over all types' \cite{hudak1992gentle}. 
