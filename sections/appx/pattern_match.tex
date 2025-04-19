@@ -18,6 +18,7 @@ fn get_redex_from_match(match_expression) -> Option<RedexContractionPair> {
     for ((pattern, resulting_expr) in match_expression.cases) {
         let result = pattern_match(expr, pattern);
         if (result == Refute) {
+            // If refuted, then we can safely consider next pattern
             continue
         }
         if (result == Unknown) {
@@ -70,7 +71,7 @@ fn match_against_identifier(expr, pattern) -> MatchResult {
     if (pattern is a lowercase identifier) {
         // We suceed as a lowercase ID is a wildcard, and we must add to 
         // our list of bindings the fact that the named wildcard now has a 
-        // value, which is the matched term 
+        // value: the expr
         Success([(pattern.string, expr)])
     }
     if (pattern is a constructor (i.e. is uppercase)) {

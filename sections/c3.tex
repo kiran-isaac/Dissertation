@@ -19,10 +19,8 @@ Implementing the new UI mostly consisted of time-consuming React and CSS tweaks 
 
 \subsubsection{Diff}
 \begin{figure}[t]
-    \centering
-    \begin{tabular}{|c|}
-        \hline
-    \begin{lstlisting}[language=Rust]
+    \begin{tabular}{c}
+    \begin{lstlisting}[language=Rust_boxed]
 enum DiffElem {
     Similarity(String),
     Difference(String, String)
@@ -66,7 +64,6 @@ fn diff(ast1, ast2, expr1, expr2) -> Diff {
     return diff;
 }
     \end{lstlisting}
-    \\\hline
     \end{tabular}
     \caption{rust-like psuedocode listing for the type of the output of the AST::diff function, as well as a small section of the algorithm. There is also (not shown) a wrapper around the Diff type, to allow for conversion into JavaScript (see \ref{bg:wasm}), as well as the some logic for combining diffs.}
     \label{fig:diff_list}

@@ -288,12 +288,7 @@ if cond then_branch else_branch = match cond {
 
 In order to make the language more like Haskell, I also added syntax sugar that allowed you to use it using the `\lstinline[language=SFL_ite]|if e then a else b|' syntax. The parser would ignore the `\lstinline[language=SFL_ite]|then|' and the `\lstinline[language=SFL_ite]|else|' keywords, and it would be equivalent to `\lstinline[language=SFL_ite]|(((if e)  a)  b)|' internally. However, this was unpopular with the advanced focus group, who said that this was confusing (see \ref{ref:afg_ite}). 
 
-\subsection{Changes to the Proof of Concept UI}
-\label{c2_poc_ui_impl}
-In this phase, I made some changes to the proof of concept web UI
-
-- Initial approach to diff
-- separate lazy and free choice mode
+The prelude is listed in the appendix: \ref{appx:prelude}.
 
 \begin{figure}[h]
     \centering
@@ -302,6 +297,82 @@ In this phase, I made some changes to the proof of concept web UI
     \caption{The product at the end of phase two during lazy evaluation of the `sum of squares' sample program, with the prelude dropdown extended}
     \label{fig:screenshot_c2_end}
 \end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images/phase-2-end3.png} 
+    \captionsetup{justification=centering}
+    \caption{The product at the end of phase two during free choice evaluation of the `sum of squares' sample program, with the prelude dropdown contracted}
+    \label{fig:screenshot_c2_end_free}
+\end{figure}
+
+\subsection{Changes to the Proof of Concept UI}
+\label{c2_poc_ui_impl}
+In this phase, I made some changes to the proof of concept web UI. See \ref{fig:screenshot_c2_end}, and for a screenshot. 
+
+\paragraph{Lazy Mode}
+Added a separate `Lazy mode' which would only offer one button labelled `Progress Lazily'. The original functionality was included in `Free Choice' mode
+
+\paragraph{History}
+The history of the main expression is listed. The top two rows shows the most recent change, in blue is the result of the most recent change, in red is what it used to be. This does not work using the diff algorithm discussed in Phase 3 (\ref{paragraph:diff}), it instead gets the string before and the string after, and locates them in the second most recent and most recent program state. This is not fully accurate, as a string match results in false positives. If we reduced \sflinline{1 + 1} to \sflinline{2} in the expression \sflinline{(\x. x + (1 + 1)) (1 + 1)}, it would highlight both \sflinline{(1 + 1)}s even though the one in the abstraction has not been reduced. 
+
+\paragraph{Other}
+
+\begin{itemize}
+    \item The prelude was offered as a dropdown.
+    \item Some example programs can be loaded from a dropdown.  
+    \item The program is saved in the browsers `localStorage' as it is edited
+    \item A help menu was offered when the page was loaded, or when the `?' button in the top left corner was pressed: \ref{fig:screenshot_testathon_help}
+\end{itemize}
+
+\subsection{Testathon}
+The testathon was a valuable opportunity to test my system at the midpoint of the project. At this point, I had implemented the following features:
+
+\begin{itemize}
+    \item Parsing and type checking for the following language features
+    \begin{itemize}
+        \item Literals
+        \item Variables
+        \item Abstraction 
+        \item Application
+        \item Some inbuilt binary operators 
+        \item The inbuilt \verb|if|
+        \item Polymorphism, with explicit \verb|foralls|
+    \end{itemize}
+\item A basic react frontend (see \ref{fig:screenshot_testathon}, \ref{fig:screenshot_testathon_mobile}) with the following features
+\begin{itemize}
+    \item Beginning evaluation in `lazy' mode, or `free choice' mode. These were labelled unhelpfully as `Run 1' and `Run *' respectively, representing how it would either run in the mode where you get one option, or the mode where you get many `*'.
+    \item Spawning a help menu. (see \ref{fig:screenshot_testathon_help})
+\end{itemize}
+\end{itemize}
+\subsubsection{Data Gathering}
+During the testathon, I encouraged people to test the system on my laptop, as well as providing a QR code for them to be able to access it on their phone. I initially wanted to adopt a `think aloud' method for usability testing, which is ``a method for studying mental process in which participants are asked to make spoken comment as they work on a task''\cite{thinkaloud}
+
+I planned to implement this and passively watch them interact with the system and not give them any extra instruction, however I found that people required significant instruction. I attempted to delegate any instruction to the `help menu', but this did not solve the problem for the following reasons: people do not naturally want to read instructions, and my instructions were insufficient for people asked to interact with the system without any guidance to be able to effectively use it.
+
+I asked people who did not want to read the instructions to explain why, and their answers centred around the following points:
+\begin{itemize}
+    \item They could not find the instructions
+    \item The instructions look quite intimidating, due to being a large block of text
+    \item The instructions also look quite intimidating due to the unusual/unfamiliar pieces of syntax. This was in reference to the `Language Specification' section, and the `Types' section.
+\end{itemize}
+The first point did not provide any opportunity for further analysis, but the other points convinced me that a significant rework was needed to the UI and to the instructions menu. 
+
+I asked people who did not needed further elaboration why they needed elaboration, and their answers centred around the following points:
+\begin{itemize}
+    \item The instructions contained quite a lot of `technical' language.
+    \item 
+\end{itemize}
+
+I could not gather data about other parts of the system, as I needed to explain the system in detail to everyone in turn, which did not allow me time to ask the questions I wanted to ask before people got bored and moved on. 
+
+\subsubsection{Key Takeaways} The findings from the testathon informed my future testing strategy, and were therefore invaluable. These takeaways were:
+\begin{itemize}
+    \item The `Think aloud' method of watching people interact with this version of the system and asking them to narrate what they are doing is ineffective, as the UI is not `self explanatory' enough for people to be able to use it without help 
+    \item 
+\end{itemize}
+
+One takeaway from the testing day 
 
 \section{The Advanced Focus Group: Evaluation and Next Steps}
 \label{ref:afg_figma}

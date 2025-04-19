@@ -39,31 +39,31 @@ main = fac 2
     Step & \textbf{Prompt} & \textbf{Main Expression Afterwards} \\ \hline
     0 &     \  & \begin{lstlisting}[language=SFL_unboxed]
 fac 2
-     \end{lstlisting} \\ \hline
+\end{lstlisting}\rule[-2ex]{0pt}{0pt} \\ \hline
      1 & Apply function `fac' to 2 & \begin{lstlisting}[language=SFL_unboxed]
 if (2 <= 1) 1 (2 * (fac (2 - 1)))
-     \end{lstlisting} \\ \hline
+\end{lstlisting}\rule[-2ex]{0pt}{0pt} \\ \hline
     2 &\makecell[l]{Apply function if to (2 <= 1), 1 \\\ \ and (2 * (fac (2 - 1)))}
     & \begin{lstlisting}[language=SFL_unboxed]
 match (2 <= 1) {
   | true -> 1
   | false -> 2 * (fac (2 - 1))
 }
-     \end{lstlisting} \\\hline
+\end{lstlisting} \\\hline
     3 & Apply inbuilt <= to `2' and `1'  & \begin{lstlisting}[language=SFL_unboxed]
 match (false) {
   | true -> 1
   | false -> 2 * (fac (2 - 1))
 }
-     \end{lstlisting} \\\hline
+\end{lstlisting} \\\hline
      4 & Match to pattern `false' & \begin{lstlisting}[language=SFL_unboxed]
 2 * (fac (2 - 1))
-     \end{lstlisting} \\\hline
+\end{lstlisting}\rule[-2ex]{0pt}{0pt} \\\hline
     5  & \makecell[l]{Apply function fac to (2 - 1)}
     & \begin{lstlisting}[language=SFL_unboxed]
 2 * (if ((2 - 1) <= 1) 1 ((2 - 1) 
     * (fac ((2 - 1) - 1))))
-     \end{lstlisting} \\\hline
+\end{lstlisting} \\\hline
      
     6 & \makecell[l]{Apply function if to \\\ \ ((2 - 1) <= 1), 1 and \\\ \ ((2 - 1) * (fac ((2 - 1) - 1)))}
     & \begin{lstlisting}[language=SFL_unboxed]
@@ -71,7 +71,7 @@ match (false) {
   | true -> 1
   | false -> (2 - 1) * (fac ((2 - 1) - 1))
 }
-     \end{lstlisting} \\\hline
+\end{lstlisting} \\\hline
      
      7  & \makecell[l]{Apply inbuilt - to 2 and 1}
     & \begin{lstlisting}[language=SFL_unboxed]
@@ -79,7 +79,7 @@ match (false) {
   | true -> 1
   | false -> 1 * (fac (1 - 1))
 }
-     \end{lstlisting} \\\hline
+\end{lstlisting} \\\hline
 
   8  & \makecell[l]{Apply inbuilt <= to 1 and 1}
     & \begin{lstlisting}[language=SFL_unboxed]
@@ -87,19 +87,19 @@ match (false) {
   | true -> 1
   | false -> 1 * (fac (1 - 1))
 }
-     \end{lstlisting} \\\hline
+\end{lstlisting} \\\hline
      
      9 & \makecell[l]{Match to pattern true}
     & \begin{lstlisting}[language=SFL_unboxed,aboveskip=0pt,belowskip=0pt]
 2 * 1
-     \end{lstlisting} \\\hline
+\end{lstlisting}\rule[-2ex]{0pt}{0pt} \\\hline
 
    10 & \makecell[l]{Apply inbuilt $*$ to 2 and 1}
     & \begin{lstlisting}[language=SFL_unboxed,aboveskip=0pt,belowskip=10pt]
 2
-     \end{lstlisting}\\\hline
+\end{lstlisting}\rule[-2ex]{0pt}{0pt}\\\hline
 \end{tabular}
-    \caption{A table showing how the system leads a user through the step by step evaluation of the program shown at \ref{tab:fac_2_table_input}}
+    \caption{A table showing how the system leads a user through the step by step evaluation of the program shown in Figure \ref{tab:fac_2_table_input}}
     \label{tab:fac_2_table}
 \end{figure}
 
