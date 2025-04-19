@@ -26,3 +26,4 @@ stringification
 redex-contraction
 zero-ary
 thoguhrougly
+fac

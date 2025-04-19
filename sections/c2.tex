@@ -89,7 +89,7 @@ fac n = match n {
 \end{lstlisting}
 This syntax was fairly arbitrary, as syntax is quite easy to change. However, this syntax proved to be fairly popular with all three focus groups, so it did not change between this stage and the end of the project.
 
-The `fac' function takes an $Int$ n, and proceeds differently with different values of n. If the value is 0, the value of the whole expression becomes 0, otherwise it becomes \lstinline[language=SFL]!n * (fac (n - 1))!. We can use literals in our pattern to differentiate between different values of literals. Inspired by Haskell, we can use a variable (which is a lowercase identifier) to match anything, a `wildcard' pattern. All instances of the variable in the pattern's corresponding expression with the term that the variable matches. `\_' is a special case wildcard, where no variable is bound but it still matches anything, 
+The `fac' function takes an $Int$ n, and proceeds differently with different values of n. If the value is 0, the value of the whole expression becomes 0, otherwise it becomes \lstinline[language=SFL]!n * (fac (n - 1))!. We can use literals in our pattern to differentiate between different values of literals. Inspired by Haskell, we can use a variable (which is a lowercase identifier) to match anything, a `wildcard' pattern. All instances of the variable in the pattern's corresponding expression with the term that the variable matches. `\_' is a special case wildcard, where no variable is bound, but it still matches anything, 
 
 We should also be able to match more complex structures including Algebraic Data Types. For instance, we can write the following function to figure out whether a list has length 2 or grater
 
@@ -251,7 +251,7 @@ enum MatchResult {
     Refute
 }
 
-fn match(expr, pattern) -> MatchResult {
+fn match_against_identifier(expr, pattern) -> MatchResult {
     if (pattern is "_") {
         // Suceed but dont bind
         Sucess([])
@@ -262,7 +262,7 @@ fn match(expr, pattern) -> MatchResult {
         // matched term 
         Sucess([(pattern.string, expr)])
     }
-    if (pattern is a constructor) {
+    if (pattern is a constructor (i.e. is uppercase)) {
         if (expr is also a constructor with the same name) {
             return Sucess([])
         }
@@ -277,9 +277,9 @@ fn match(expr, pattern) -> MatchResult {
     }
 }
 \end{lstlisting}
-\todo{split description between what type of node pattern is}
+\todo{split description beteen what type of node pattern is}
 
-However, In the below example, if we 
+We must be careful to distinguish betweens situations where we know we cannot match a pattern 
 \begin{lstlisting}[language=SFL]
 match list {
     | Cons _ (Cons _ _) -> true
