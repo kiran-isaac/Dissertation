@@ -1,0 +1,159 @@
+\chapter{Pattern Matching Algorithm}
+A pattern consists of only:
+\begin{itemize}
+    \item An application
+    \item A literal
+    \item A pair
+    \item An identifier: could be a wildcard, a constructor.
+\end{itemize}
+
+Below is the algorithm for each of these cases, as well as the top level pattern matching algorithm. 
+
+\begin{figure}[h]
+    \begin{lstlisting}[language=Rust_boxed]
+fn get_redex_from_match(match_expression) -> Option<RedexContractionPair> {
+    // get the expression being matched
+    let expr = match_expression.to_be_matched
+    // Iterate through all the patterns and their resulting expressions
+    for ((pattern, resulting_expr) in match_expression.cases) {
+        let result = pattern_match(expr, pattern);
+        if (result == Refute) {
+            continue
+        }
+        if (result == Unknown) {
+            // We get the reduction option for the expression
+            // as we cannot refute this pattern
+            return get_redex(expr)
+        }
+        if (result == Success(bindings)) {
+            return Some(RedexContractionPair {
+                from: match_expression,
+                to: resulting_expr.substitute(bindings),
+                reduction_message: "Match to pattern" + pattern.to_string()
+            })
+        }
+    }
+    // Refuted all patterns
+    return None
+}
+\end{lstlisting}
+    \caption{The algorithm for getting the redex-contraction pair from a match expression. If we sucessfully match, the result will be the expression corresponding to the matching pattern. If we cannot match expressions}
+    \label{fig:all_pattern_list_iterate}
+\end{figure}
+
+\begin{figure}[h]
+    \begin{lstlisting}[language=Rust_boxed]
+fn pattern_match(expr, pattern) -> MatchResult {
+    if (pattern is identifier) {match_against_identifier(expr, pattern)}
+    if (pattern is a pair) {match_against_pair(expr, pattern)}
+    if (pattern is an app) {match_against_application(expr, pattern)}
+    if (pattern is a literal) {
+        if (expr.to_string() == pattern.to_string()) 
+            return Success([])
+        } else {
+            return Refute
+        }
+    }
+}
+\end{lstlisting}
+    \caption{The algorithm for matching an expression against a pattern}
+    \label{fig:pattern_list_top_level}
+\end{figure}
+
+\begin{figure}[h]
+    \begin{lstlisting}[language=Rust_boxed]
+fn match_against_identifier(expr, pattern) -> MatchResult {
+    if (pattern is "_") {
+        // Succeed but dont bind anything
+        Success([])
+    }
+    if (pattern is a lowercase identifier) {
+        // We suceed as a lowercase ID is a wildcard, and we must add to 
+        // our list of bindings the fact that the named wildcard now has a 
+        // value, which is the matched term 
+        Success([(pattern.string, expr)])
+    }
+    if (pattern is a constructor (i.e. is uppercase)) {
+        if (expr is also a constructor with the same name) {
+            return Success([])
+        }
+        if (expr is an application) {
+            // `Head' refers to the recursive front of an application. For 
+            // instance, The head of (Left ((Cons x) xs)) would be Left.
+            if (the head of expr is a constructor) {
+                // We can refute, as constructors never evaluate, so the 
+                // structure of the expression will never be the same as
+                // the pattern. 
+                return Refute
+            } else {
+                // Otherwise further evaluation might lead to a pattern 
+                // that matches this constructor so we cant refute yet
+                return Unknown
+            }
+        }
+        return Unknown;
+    }
+}
+    \end{lstlisting}
+    \caption{The algorithm for matching an expression against a pattern that is an identifier in rust like pseudocode}
+    \label{fig:pattern_list_id}
+\end{figure}
+
+\begin{figure}[h]
+    \begin{lstlisting}[language=Rust_boxed]
+fn match_against_pair(expr, pattern) -> MatchResult {
+    if (expr is also a pair) {
+        let first = pattern_match(expr.first, pattern.first);
+        let second = pattern_match(expr.second, pattern.second);
+
+        // Propogate refute and unknown
+        if (first == Unknown || second == Unknown) {
+            return Unknown;
+        }
+        if (first == Refute || second == Refute) {
+            return Refute;
+        }
+        // first and second have suceeded, return both sets of bindings
+        return Success(first.bindings + second.bindings)
+    }
+    if (expr is an application) {
+        if (the head of expr is a constructor) {
+            return Refute
+        } else {
+            return Unknown
+        }
+    }
+    if (expr is a literal || expr is an abstraction) {return Refute}    
+    
+    return Unknown // catchall: only `match'
+}
+\end{lstlisting}
+    \caption{The algorithm for matching an expression against a pattern that is a pair in rust like pseudocode. See \ref{fig:pattern_list_id} for more detail about the `expr is application' case}
+    \label{fig:pattern_list_pair}
+\end{figure}
+
+\begin{figure}[h]
+    \begin{lstlisting}[language=Rust_boxed]
+fn match_against_application(expr, pattern) -> MatchResult {
+    if (expr is also an application) {
+        let func = pattern_match(expr.func, pattern.func);
+        let arg = pattern_match(expr.arg, pattern.arg);
+
+        // Propogate refute and unknown
+        if (func == Unknown || arg == Unknown) {
+            return Unknown;
+        }
+        if (func == Refute || arg == Refute) {
+            return Refute;
+        }
+        // func and arg have suceeded, return both sets of bindings
+        return Success(func.bindings + arg.bindings)
+    }
+    if (expr is a literal || expr is a pair 
+        || expr is an abstraction) {return Refute}
+    return Unknown
+}
+\end{lstlisting}
+    \caption{The algorithm for matching an expression against a pattern that is a pair in rust like pseudocode. See \ref{fig:pattern_list_id} for more detail about the `expr is application' case}
+    \label{fig:pattern_list_app}
+\end{figure}

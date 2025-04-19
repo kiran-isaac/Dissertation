@@ -16,9 +16,48 @@
   stringstyle=\color{orange},
   commentstyle=\color{commentgray},
   showstringspaces=false,
-  tabsize=4,
+  tabsize=2,
   breaklines=true,
-  columns=fullflexible
+  numbers=left,
+  numberstyle=\scriptsize,
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  comment=[l]//,
+  keepspaces=true,
+  morecomment=[s]{/*}{*/},
+}
+
+\lstdefinelanguage{Rust_boxed}{
+  morekeywords={
+    as, break, const, continue, crate, else, enum, extern, false, fn,
+    for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return,
+    self, Self, static, struct, super, trait, true, type, unsafe, use, where,
+    while, dyn, abstract, become, box, do, final, macro, override, priv, try,
+    typeof, unsized, virtual, yield, await
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]{"},
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{orange},
+  commentstyle=\color{commentgray},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true,
+  numbers=left,
+  numberstyle=\scriptsize,
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=lines,
+  comment=[l]//,
+  keepspaces=true,
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{commentgray}
 }
 
 \input{macros/Krishnaswami_Dunfield_macros}
