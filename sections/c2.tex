@@ -126,7 +126,7 @@ I completely redesigned the UI based on the clients' feedback, as well as based 
 \end{figure}
 
 This design was meant to be a work in progress, but it looks quite similar to the final release of the product (Screenshots \ref{fig:screenshot_final_dark}, \ref{fig:screenshot_final_light}, \ref{fig:screenshot_final_dark_prelude_free} and \ref{fig:screenshot_final_light_prelude_free}). Before implementing this design, I discussed this design with the Advanced Focus Group (see \ref{ref:afg_figma}) and they were much more positive about this UI than the existing one 
-\todo{Discuss revert}
+\todo{Discuss revert}\\
 \todo{Design principle: simplicity, speed, minimalism, feeling like vscode.}
 
 \section{Implementation}
@@ -337,7 +337,7 @@ The testathon was a valuable opportunity to test my system at the midpoint of th
         \item Application
         \item Some inbuilt binary operators 
         \item The inbuilt \verb|if|
-        \item Polymorphism, with explicit \verb|foralls|
+        \item Polymorphism
     \end{itemize}
 \item A basic react frontend (see \ref{fig:screenshot_testathon}, \ref{fig:screenshot_testathon_mobile}) with the following features
 \begin{itemize}
@@ -348,7 +348,7 @@ The testathon was a valuable opportunity to test my system at the midpoint of th
 \subsubsection{Data Gathering}
 During the testathon, I encouraged people to test the system on my laptop, as well as providing a QR code for them to be able to access it on their phone. I initially wanted to adopt a `think aloud' method for usability testing, which is ``a method for studying mental process in which participants are asked to make spoken comment as they work on a task''\cite{thinkaloud}
 
-I planned to implement this and passively watch them interact with the system and not give them any extra instruction, however I found that people required significant instruction. I attempted to delegate any instruction to the `help menu', but this did not solve the problem for the following reasons: people do not naturally want to read instructions, and my instructions were insufficient for people asked to interact with the system without any guidance to be able to effectively use it.
+The plan was to implement this, and passively watch them interact with the system and not give them any extra instruction. However, I found that people required significant instruction. I attempted to delegate any instruction to the `help menu', but this did not solve the problem for the following reasons: people do not naturally want to read instructions, and my instructions were insufficient for people asked to interact with the system without any guidance to be able to effectively use it. Many people couldn't find the instructions, or were confused by the notation
 
 I asked people who did not want to read the instructions to explain why, and their answers centred around the following points:
 \begin{itemize}
@@ -358,21 +358,43 @@ I asked people who did not want to read the instructions to explain why, and the
 \end{itemize}
 The first point did not provide any opportunity for further analysis, but the other points convinced me that a significant rework was needed to the UI and to the instructions menu. 
 
-I asked people who did not needed further elaboration why they needed elaboration, and their answers centred around the following points:
+I asked people needed further elaboration why they needed elaboration, and their answers centred around the following points:
 \begin{itemize}
     \item The instructions contained quite a lot of `technical' language.
-    \item 
+    \item The instructions were not very good, and were incomplete, and often did not include new language features.
 \end{itemize}
 
 I could not gather data about other parts of the system, as I needed to explain the system in detail to everyone in turn, which did not allow me time to ask the questions I wanted to ask before people got bored and moved on. 
 
-\subsubsection{Key Takeaways} The findings from the testathon informed my future testing strategy, and were therefore invaluable. These takeaways were:
+\subsubsection{Survey}
+, to confirm my belief that students found functional languages harder to learn, and harder to build an intuition about, I performed a survey. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year \ac{FP} unit. In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
+
+\begin{figure*}[ht]
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/imperative_likert.png}
+        \caption{}
+        \label{fig:imp_is_easy}
+    \end{subfigure}
+    
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/fp_likert.png}
+        \caption{}
+        \label{fig:fp_is_hard}
+    \end{subfigure}
+    \caption{The results of a survey performed during the phase 2 [REFHERE: Testathon], where a Likert scale was used to gauge 15 participants feelings towards imperative (a) and functional (b) programming languages}
+\end{figure*}
+
+For imperative languages, $80\%$ of respondents agreed/strongly agreed that they can program in them, similarly $80\%$ of respondents agreed/strongly agreed that they had an intuitive understanding of them. For functional languages, $66.7\%$ of respondents strongly/agreed that they knew them, but only $47.6\%$ of respondents would agree/strongly agree that they had an intuitive understanding of them. The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
+
+\subsubsection{Key Takeaways} The findings from the testathon informed my future testing strategy, but were not valuable in themselves. 
 \begin{itemize}
-    \item The `Think aloud' method of watching people interact with this version of the system and asking them to narrate what they are doing is ineffective, as the UI is not `self explanatory' enough for people to be able to use it without help 
-    \item 
+    \item The `Think aloud' method of watching people interact with this version of the system and asking them to narrate what they are doing is ineffective, as the UI is not `self-explanatory' enough for people to be able to use it without help 
+    \item People do not want to read things. 
 \end{itemize}
 
-One takeaway from the testing day 
+My future testing 
 
 \section{The Advanced Focus Group: Evaluation and Next Steps}
 \label{ref:afg_figma}
