@@ -17,10 +17,10 @@ Following this meeting, I broke down this brief into smaller parts. Taking an au
 
 \subsubsection{Building Intuition}
 \label{building_intuition}
-This is the key to an effective solution. \sam{MOST students OF} Many students to the first year \ac{FP} unit do not have any experience with functional programming. 
+This is the key to an effective solution. Most students of the first year \ac{FP} unit do not have any experience with functional programming. 
 % \sam{I disagree with the rest, cos we strive for the lectures to be engaging (so maybe you can say that the teaching style is already to make learning not passive, so this will further that. Also your comment about not attending or engaging with labs is irrelevant cos if they dont engage with labs why would they use your tool? } 
-\todo{REWORK THIS PARA}
-and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
+% \todo{REWORK THIS PARA}
+% and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
 
 
 % All participants who did not disagree that functional languages are hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
@@ -89,9 +89,7 @@ main = (\x.x) y
 \end{lstlisting}
 Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the `entry-point' expression in the program. Haskell, as well as many other languages, uses `main' to represent a programs' entry point, so we may use main. 
 
-We must \sam{why must? (because we want to run our code), this is also a common extension of the STLC} also add a way to represent values, such as integers and booleans, to our language. Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated.  \sam{bring this why forward}
-\sam{this is a very typical para for you: i encourage you to structure your paras as because of x we need y, instead of we need x because of y}
-\sam{no new line}
+Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated.  We must also add a way to represent values, such as integers and booleans, to our language. 
 These two features massively shorten and simplify programming in this language.
 
 \sam{this is not referenced anywhere. Above you say we need x and then just dump x here. Instead motivate, introduce and explain. What additions have been made to execute x. Explain your definitions like you would explain your code}

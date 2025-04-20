@@ -345,29 +345,15 @@ The testathon was a valuable opportunity to test my system at the midpoint of th
     \item Spawning a help menu. (see \ref{fig:screenshot_testathon_help})
 \end{itemize}
 \end{itemize}
-\subsubsection{Data Gathering}
+\subsubsection{Think Aloud}
 During the testathon, I encouraged people to test the system on my laptop, as well as providing a QR code for them to be able to access it on their phone. I initially wanted to adopt a `think aloud' method for usability testing, which is ``a method for studying mental process in which participants are asked to make spoken comment as they work on a task''\cite{thinkaloud}
 
-The plan was to implement this, and passively watch them interact with the system and not give them any extra instruction. However, I found that people required significant instruction. I attempted to delegate any instruction to the `help menu', but this did not solve the problem for the following reasons: people do not naturally want to read instructions, and my instructions were insufficient for people asked to interact with the system without any guidance to be able to effectively use it. Many people couldn't find the instructions, or were confused by the notation
+The plan was to implement this, and passively watch them interact with the system and not give them any extra instruction. However, I found that people required significant instruction. I attempted to delegate any instruction to the `help menu', but this did not solve the problem for the following reasons: people do not naturally want to read instructions, and my instructions were insufficient for people asked to interact with the system without any guidance to be able to effectively use it. Many people couldn't find the instructions, or were confused by the notation.
 
-I asked people who did not want to read the instructions to explain why, and their answers centred around the following points:
-\begin{itemize}
-    \item They could not find the instructions
-    \item The instructions look quite intimidating, due to being a large block of text
-    \item The instructions also look quite intimidating due to the unusual/unfamiliar pieces of syntax. This was in reference to the `Language Specification' section, and the `Types' section.
-\end{itemize}
-The first point did not provide any opportunity for further analysis, but the other points convinced me that a significant rework was needed to the UI and to the instructions menu. 
+\subsubsection{Data Gathering}
+After I explained the system and participants engaged with the system, participants were asked to fill out a survey. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year \ac{FP} unit. 
 
-I asked people needed further elaboration why they needed elaboration, and their answers centred around the following points:
-\begin{itemize}
-    \item The instructions contained quite a lot of `technical' language.
-    \item The instructions were not very good, and were incomplete, and often did not include new language features.
-\end{itemize}
-
-I could not gather data about other parts of the system, as I needed to explain the system in detail to everyone in turn, which did not allow me time to ask the questions I wanted to ask before people got bored and moved on. 
-
-\subsubsection{Survey}
-, to confirm my belief that students found functional languages harder to learn, and harder to build an intuition about, I performed a survey. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year \ac{FP} unit. In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
+In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
 
 \begin{figure*}[ht]
     \begin{subfigure}{\textwidth}
@@ -383,18 +369,44 @@ I could not gather data about other parts of the system, as I needed to explain 
         \caption{}
         \label{fig:fp_is_hard}
     \end{subfigure}
-    \caption{The results of a survey performed during the phase 2 [REFHERE: Testathon], where a Likert scale was used to gauge 15 participants feelings towards imperative (a) and functional (b) programming languages}
+    \caption{The results of a survey performed during the testathon, where a Likert scale was used to gauge 15 participants feelings towards imperative (a) and functional (b) programming languages}
 \end{figure*}
 
 For imperative languages, $80\%$ of respondents agreed/strongly agreed that they can program in them, similarly $80\%$ of respondents agreed/strongly agreed that they had an intuitive understanding of them. For functional languages, $66.7\%$ of respondents strongly/agreed that they knew them, but only $47.6\%$ of respondents would agree/strongly agree that they had an intuitive understanding of them. The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
 
-\subsubsection{Key Takeaways} The findings from the testathon informed my future testing strategy, but were not valuable in themselves. 
+Participants were also given some more free-form questions. The full spreadsheet is available in the additional materials (see \ref{appx:additional_mats}), but the things that I extracted from it were:
+\begin{itemize}
+    \item Participants appreciated the decluttered and simple UI. 
+    \item They noticed that certain UI elements overflowed their boundaries, and that the UI had visual glitches on Safari.
+    \item They found the help menu too long and wordy, and not clear or to the point enough.
+    \item They liked the language, the type system and the inference. 
+\end{itemize}
+
+
+
+% I asked people who did not want to read the instructions to explain why, and their answers centred around the following points:
+% \begin{itemize}
+%     \item They could not find the instructions
+%     \item The instructions look quite intimidating, due to being a large block of text
+%     \item The instructions also look quite intimidating due to the unusual/unfamiliar pieces of syntax. This was in reference to the `Language Specification' section, and the `Types' section.
+% \end{itemize}
+% The first point did not provide any opportunity for further analysis, but the other points convinced me that a significant rework was needed to the UI and to the instructions menu. 
+
+% I asked people needed further elaboration why they needed elaboration, and their answers centred around the following points:
+% \begin{itemize}
+%     \item The instructions contained quite a lot of `technical' language.
+%     \item The instructions were not very good, and were incomplete, and often did not include new language features.
+% \end{itemize}
+
+% I could not gather data about other parts of the system, as I needed to explain the system in detail to everyone in turn, which did not allow me time to ask the questions I wanted to ask before people got bored and moved on. 
+
+\subsubsection{Key Takeaways} The findings from the testathon informed my future testing strategy:
 \begin{itemize}
     \item The `Think aloud' method of watching people interact with this version of the system and asking them to narrate what they are doing is ineffective, as the UI is not `self-explanatory' enough for people to be able to use it without help 
     \item People do not want to read things. 
 \end{itemize}
 
-My future testing 
+Certain visual glitches were also identified and fixed in phase 2. 
 
 \section{The Advanced Focus Group: Evaluation and Next Steps}
 \label{ref:afg_figma}

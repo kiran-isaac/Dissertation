@@ -19,3 +19,4 @@
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qcreates a type \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q with two data constructors, \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q and \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
 {"rule":"ID_CASING","sentence":"^\\QAfter running the algorithm by hand to convince myself the algorithm works on checking id (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q) against type \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, I modified their algorithm to add my extra types (The inbuilt types \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, as well as the and types) and my extra expression syntax structures (literals, match, pairs).\\E$"}
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qhaving the type alias Card for (Suit, Rank) allows us to very easily, and more readably, create functions on Cards, as well as values with that type.\\E$"}
+{"rule":"ENGLISH_WORD_REPEAT_BEGINNING_RULE","sentence":"^\\QParticipants liked the language\\E$"}
