@@ -473,7 +473,7 @@ This was my first of three focus groups, the most advanced of the three. As the 
 
 The transcript from this focus group is included in the additional submitted materials (see \ref{appx:additional_mats})
 
-\subsection{Selection}
+\subsection{Selection and Format}
 
 For this focus group, I recruited four students in their fourth year of studies here at the University of Bristol. They had all taken \hyperref[COMS10016]{the first-year FP unit} 3 years prior, and they had all taken units specializing in programming language theory since, including:
 
@@ -492,46 +492,81 @@ For this focus group, I recruited four students in their fourth year of studies 
 \end{itemize}
 
 These people I selected for this focus group were the closest to `subject experts' that I could find while still being students. 
-
-\subsection{Format}
 This focus group started with me briefly presenting SFL explorer. \ref{fig:screenshot_c2_end} shows how the system looked at this stage of the project. We also discussed the next UI iteration (see \ref{c2:next_ui}). 
 
 \subsection{Outcomes}
 Below is the summary of outcomes from the discussion with this focus group. The assertions about what they thought are backed up with quotes, marked with timestamps of where these quotes can be found in the transcript. 
 
-\subsubsection{The Existing Language}
+\subsubsection{The Existing Language and Reductions}
 \paragraph{Positives:}
 \begin{itemize}
-    \item They liked the explicit match statements, and did not want me to change to more Haskell-like pattern match syntax: `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [24:11]
-    \item They liked that \sflinline{Cons} was a prefix constructor rather than infix: ` I think it's good that Cons is a prefix, like a normal constructor, and not a colon or
-    something like that' [17:41]. Similarly, they liked the limited set of operators, and the fact that you cannot define your own: `I think if I was learning functional programming for the first time, I would really hope there aren't custom operators' [15:56]
+    \item They liked the explicit match statements, and did not want me to change to more Haskell-like pattern match syntax: 
+    
+    `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [24:11]
+    \item They liked that \sflinline{Cons} was a prefix constructor rather than infix: 
+    
+    `I think it's good that Cons is a prefix, like a normal constructor, and not a colon or
+    something like that' [17:41]. 
+    \item Similarly, they liked the limited set of operators, and the fact that you cannot define your own: 
+    
+    `I think if I was learning functional programming for the first time, I would really hope there aren't custom operators' [15:56]
+    
+    `if I'm trying to learn functional programming, I don't think it helps me to be able to define, like, things that have different precedents. I think that distracts from learning how programs are reduced' [16:42]
 \end{itemize}
 
 \paragraph{Negatives/Potential Improvements:}
 \begin{itemize}
-    \item \label{ref:afg_ite} They were confused about if-then-else syntax. They said it could be confusing to have the parser act differently for one specific function type. `The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct' [42.55]
-    \item 
+    \item \label{ref:afg_ite} They were confused about if-then-else syntax. They said it could be confusing to have the parser act differently for one specific function type. 
+    
+    `The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct' [42.55]
+    \item They were confused as to why, in free choice mode, some reduction options included each other: 
+    
+    `The first one is a chain of reductions that contains the second one. I think it's fine to display that as long as you make it visually distinct that these two are related in that way and the other reductions are just independent' [12:57]
+
+    This could be implemented by having a dropdown where the highest level one shows all the ones below it. 
+
+    `You could put a number next to the reduction and say, you know, this is four steps. And then \ldots make a drop-down. Yeah. So if someone wants to see what steps are going on inside there, then they could see' [08:57]
 \end{itemize}
 
 \subsubsection{The Existing User Interface, and the System as a Whole}
 \paragraph{Positives:}
 \begin{itemize}
-    \item They really appreciated its utility for what it was designed for. `I think this is very good \ldots\ I wish I'd had this in the functional labs' [1:00:09]
+    \item They really appreciated its utility for what it was designed for. 
+    
+    `I think this is very good \ldots\ I wish I'd had this in the functional labs' [1:00:09]
 \end{itemize}
 
 \paragraph{Negatives/Potential Improvements:}
 \begin{itemize}
-    \item They wanted an indication of which direction evaluation was going so I added numbers: `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in'. This was already in the new UI, which that had not seen by this point in the transcript.
     \item `Syntax highlighting would obviously help' [21:45]
-    \item They wanted an indication of which direction evaluation was going: `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in'. This was already in the new UI, which that had not seen by this point in the transcript.
+    \item They wanted an indication of which direction evaluation was going: 
+    
+    `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in' [28:12]. This was already in the new UI, which had not seen by this point in the transcript.
+
+    \item They wanted to be able to hover over an option and have it highlight what would change: 
+    
+    `I think one thing that is not immediately clear is how the different reductions you see are related to the main program. If there was some way that like if you hovered over one, you could highlight the portion of the program that it corresponds to' [10:28]
 \end{itemize}
 
 \subsubsection{The Next Iteration UI Design}
 \paragraph{Positives:}
 \begin{itemize}
-    \item They liked the ability to go revert: `Something I had not thought of, very good' [54:59]
-    \item They liked the horizontal split: ` It's easier to have everything on screen and it's more akin to what people may have experienced' `Its like compiler explorer'. [52:38] `I think immediately not having to scroll is a massive plus' [52:58]
-    \item 
+    % Make sure this stays with the prev one about reduction steps
+    \item The new UI included indication of which direction evaluation was going, see above. 
+    \item They liked the ability to go revert: 
+    
+    `Something I had not thought of, very good' [54:59]
+    \item They liked the horizontal split: 
+    
+    `It's easier to have everything on screen and it's more akin to what people may have experienced' `Its like compiler explorer'. [52:38] `I think immediately not having to scroll is a massive plus' [52:58]
 \end{itemize}
 
 \paragraph{Negatives/Potential Improvements:}
+No improvements were discussed for the next UI specifically, but most of the potential improvements for the current UI apply. 
+
+\section{Phase 2 Conclusion}
+Phase 2 resulted in a good programming language which has syntax, semantics and a type system that are fit for purpose. The language was very popular with the Testathon users as well as the Advanced Focus Group. There were no specific complaints about the language, 
+
+The proof of concept UI had mixed feedback. During the Testathon, people cited its `cleanness' i.e. lack of overcomplicating buttons. However, people did not like having to scroll to refer to the original program, and the confusing nature of the way the history was generated bottom up. 
+
+The new UI as designed at the beginning of phase 2 \ref{c2:next_ui} was popular with the Advanced Focus Group. They had no specific tho
