@@ -135,12 +135,12 @@ We must make some changes to the parser to include these new features.
 
 \subsubsection{Parsing Match Statements}
 An example of using a match statement follows:
-\begin{verbatim}
+\begin{lstlisting}[language=SFL]
 lengthIsAtLeast2 list = match list {
   | Cons x (Cons y xs) -> true
   | _ => false
 }
-\end{verbatim}
+\end{lstlisting}
 
 The algorithm used for parsing match statements is:
 \begin{enumerate}
@@ -163,7 +163,7 @@ A pattern must not contain anything that can be reduced. It would be nonsensical
 
 To parse a pattern, we may use the same techniques as parsing an expression, with a few differences:
 \begin{itemize}
-    \item Disallowing abstractions
+    \item Disallowing abstractions and match statements
     \item Identifiers must be either
     \begin{itemize}
         \item Unbound lowercase variables
@@ -346,17 +346,10 @@ The prelude is listed in the appendix: \ref{appx:prelude}.
     \label{fig:screenshot_c2_end}
 \end{figure}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=1\linewidth]{images/phase-2-end3.png} 
-    \captionsetup{justification=centering}
-    \caption{The product at the end of phase two during free choice evaluation of the `sum of squares' sample program, with the prelude dropdown contracted}
-    \label{fig:screenshot_c2_end_free}
-\end{figure}
 
 \subsection{Changes to the Proof of Concept UI}
 \label{c2_poc_ui_impl}
-In this phase, I made some changes to the proof of concept web UI. See \ref{fig:screenshot_c2_end}, and for a screenshot. 
+In this phase, I made some changes to the proof of concept web UI. See \ref{fig:screenshot_c2_end} and \ref{fig:screenshot_c2_end_free} for the desktop UIs, and \ref{fig:screenshot_phase2_mobile} for the mobile UI. 
 
 \paragraph{Lazy Mode}
 Added a separate `Lazy mode' which would only offer one button labelled `Progress Lazily'. The original functionality was included in `Free Choice' mode
@@ -370,59 +363,39 @@ The history of the main expression is listed. The top two rows shows the most re
     \item The prelude was offered as a dropdown.
     \item Some example programs can be loaded from a dropdown.  
     \item The program is saved in the browsers `localStorage' as it is edited
-    \item A help menu was offered when the page was loaded, or when the `?' button in the top left corner was pressed: \ref{fig:screenshot_testathon_help}
+    \item A help menu was offered when the page was loaded, or when the `?' button in the top left corner was pressed: \ref{fig:screenshot_phase2_help}
 \end{itemize}
 
 \subsection{Testathon}
-The testathon was a valuable opportunity to test my system at the midpoint of the project. At this point, I had implemented the following features:
-
-\begin{itemize}
-    \item Parsing and type checking for the following language features
-    \begin{itemize}
-        \item Literals
-        \item Variables
-        \item Abstraction 
-        \item Application
-        \item Some inbuilt binary operators 
-        \item The inbuilt \verb|if|
-        \item Polymorphism
-    \end{itemize}
-\item A basic react frontend (see \ref{fig:screenshot_testathon}, \ref{fig:screenshot_testathon_mobile}) with the following features
-\begin{itemize}
-    \item Beginning evaluation in `lazy' mode, or `free choice' mode. These were labelled unhelpfully as `Run 1' and `Run *' respectively, representing how it would either run in the mode where you get one option, or the mode where you get many `*'.
-    \item Spawning a help menu. (see \ref{fig:screenshot_testathon_help})
-\end{itemize}
-\end{itemize}
-\subsubsection{Think Aloud}
-During the testathon, I encouraged people to test the system on my laptop, as well as providing a QR code for them to be able to access it on their phone. I initially wanted to adopt a `think aloud' method for usability testing, which is ``a method for studying mental process in which participants are asked to make spoken comment as they work on a task''\cite{thinkaloud}
+The testathon was a valuable opportunity to test my system at the midpoint of the project. During the testathon, I encouraged people to test the system on my laptop, as well as providing a QR code for them to be able to access it on their phone. I initially wanted to adopt a `think aloud' method for usability testing, which is ``a method for studying mental process in which participants are asked to make spoken comment as they work on a task''\cite{thinkaloud}
 
 The plan was to implement this, and passively watch them interact with the system and not give them any extra instruction. However, I found that people required significant instruction. I attempted to delegate any instruction to the `help menu', but this did not solve the problem for the following reasons: people do not naturally want to read instructions, and my instructions were insufficient for people asked to interact with the system without any guidance to be able to effectively use it. Many people couldn't find the instructions, or were confused by the notation.
 
 \subsubsection{Data Gathering}
 After I explained the system and participants engaged with the system, participants were asked to fill out a survey. There were 15 participants, who were a mixture of undergraduate and postgraduate computer scientists, all of whom had taken the first year \ac{FP} unit. 
 
-In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
+% In one section of the survey, they were presented with a series of statements designed to gauge their feelings towards functional and imperative languages. A Likert scale\cite{likert1932technique} was used to measure the attitudes of participants towards the statements. See \ref{fig:imp_is_easy} for imperative results, and \ref{fig:fp_is_hard} for functional results. 
 
-\begin{figure*}[ht]
-    \begin{subfigure}{\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{images/imperative_likert.png}
-        \caption{}
-        \label{fig:imp_is_easy}
-    \end{subfigure}
+% \begin{figure*}[ht]
+%     \begin{subfigure}{\textwidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{images/imperative_likert.png}
+%         \caption{}
+%         \label{fig:imp_is_easy}
+%     \end{subfigure}
     
-    \begin{subfigure}{\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{images/fp_likert.png}
-        \caption{}
-        \label{fig:fp_is_hard}
-    \end{subfigure}
-    \caption{The results of a survey performed during the testathon, where a Likert scale was used to gauge 15 participants feelings towards imperative (a) and functional (b) programming languages}
-\end{figure*}
+%     \begin{subfigure}{\textwidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{images/fp_likert.png}
+%         \caption{}
+%         \label{fig:fp_is_hard}
+%     \end{subfigure}
+%     \caption{The results of a survey performed during the testathon, where a Likert scale was used to gauge 15 participants feelings towards imperative (a) and functional (b) programming languages}
+% \end{figure*}
 
-For imperative languages, $80\%$ of respondents agreed/strongly agreed that they can program in them, similarly $80\%$ of respondents agreed/strongly agreed that they had an intuitive understanding of them. For functional languages, $66.7\%$ of respondents strongly/agreed that they knew them, but only $47.6\%$ of respondents would agree/strongly agree that they had an intuitive understanding of them. The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
+% For imperative languages, $80\%$ of respondents agreed/strongly agreed that they can program in them, similarly $80\%$ of respondents agreed/strongly agreed that they had an intuitive understanding of them. For functional languages, $66.7\%$ of respondents strongly/agreed that they knew them, but only $47.6\%$ of respondents would agree/strongly agree that they had an intuitive understanding of them. The number of people who claim to know how to program in functional languages is less than imperative, but more striking is the difference in reported `intuition'. 
 
-Participants were also given some more free-form questions:
+Participants were given some free-form questions:
 \begin{itemize}
     \item `What do you like about the interface'
     \item `Do you have any things I can improve about the interface'
@@ -497,7 +470,7 @@ This focus group started with me briefly presenting SFL explorer. \ref{fig:scree
 \subsection{Outcomes}
 Below is the summary of outcomes from the discussion with this focus group. The assertions about what they thought are backed up with quotes, marked with timestamps of where these quotes can be found in the transcript. 
 
-\subsubsection{The Existing Language and Reductions}
+\subsubsection{The Existing Language}
 \paragraph{Positives:}
 \begin{itemize}
     \item They liked the explicit match statements, and did not want me to change to more Haskell-like pattern match syntax: 
@@ -515,18 +488,10 @@ Below is the summary of outcomes from the discussion with this focus group. The 
 \end{itemize}
 
 \paragraph{Negatives/Potential Improvements:}
-\begin{itemize}
-    \item \label{ref:afg_ite} They were confused about if-then-else syntax. They said it could be confusing to have the parser act differently for one specific function type. 
-    
-    `The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct' [42.55]
-    \item They were confused as to why, in free choice mode, some reduction options included each other: 
-    
-    `The first one is a chain of reductions that contains the second one. I think it's fine to display that as long as you make it visually distinct that these two are related in that way and the other reductions are just independent' [12:57]
+\label{ref:afg_ite} 
+Sentiment about the language was good, the only language specific issue was that they were confused about if-then-else syntax. They said it could be confusing to have the parser act differently for one specific function type. 
 
-    This could be implemented by having a dropdown where the highest level one shows all the ones below it. 
-
-    `You could put a number next to the reduction and say, you know, this is four steps. And then \ldots make a drop-down. Yeah. So if someone wants to see what steps are going on inside there, then they could see' [08:57]
-\end{itemize}
+`The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct' [42.55]
 
 \subsubsection{The Existing User Interface, and the System as a Whole}
 \paragraph{Positives:}
@@ -539,6 +504,13 @@ Below is the summary of outcomes from the discussion with this focus group. The 
 \paragraph{Negatives/Potential Improvements:}
 \begin{itemize}
     \item `Syntax highlighting would obviously help' [21:45]
+    \item They were confused as to why, in free choice mode, some reduction options included each other: 
+    
+    `The first one is a chain of reductions that contains the second one. I think it's fine to display that as long as you make it visually distinct that these two are related in that way and the other reductions are just independent' [12:57]
+
+    This could be implemented by having a dropdown where the highest level one shows all the ones below it. 
+
+    `You could put a number next to the reduction and say, you know, this is four steps. And then \ldots make a drop-down. Yeah. So if someone wants to see what steps are going on inside there, then they could see' [08:57]
     \item They wanted an indication of which direction evaluation was going: 
     
     `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in' [28:12]. This was already in the new UI, which had not seen by this point in the transcript.
@@ -565,8 +537,12 @@ Below is the summary of outcomes from the discussion with this focus group. The 
 No improvements were discussed for the next UI specifically, but most of the potential improvements for the current UI apply. 
 
 \section{Phase 2 Conclusion}
-Phase 2 resulted in a good programming language which has syntax, semantics and a type system that are fit for purpose. The language was very popular with the Testathon users as well as the Advanced Focus Group. There were no specific complaints about the language, 
+Phase 2 resulted in a good programming language which has syntax, semantics and a type system that are fit for purpose. The language was very popular with the Testathon users as well as the Advanced Focus Group. There were no specific complaints about the language from either group. 
 
-The proof of concept UI had mixed feedback. During the Testathon, people cited its `cleanness' i.e. lack of overcomplicating buttons. However, people did not like having to scroll to refer to the original program, and the confusing nature of the way the history was generated bottom up. 
+The proof of concept UI had mixed feedback. During the Testathon, people cited its `cleanness' i.e. lack of overcomplicating buttons. However, people did not like having to scroll to refer to the original program, and the confusing nature of the way the history was generated bottom up. The advanced focus group also had a lot of feedback on how to
 
-The new UI as designed at the beginning of phase 2 \ref{c2:next_ui} was popular with the Advanced Focus Group. They had no specific tho
+The new UI as designed at the beginning of phase 2 \ref{c2:next_ui} was popular with the Advanced Focus Group. They had no specific thoughts on how to improve it, however they had many thoughts on features that could be added to the UI and the system as a whole on how to make reduction clearer. 
+
+By the end of the project, I implemented the new UI along with syntax highlighting, and many other clarifying features. 
+
+However, I unfortunately did not have time to work on grouping related reductions together or highlighting in source code when a progress option is hovered over what it would change, or improving the help menu. See the `future work' section \ref{conc:future_work} for more detail. 

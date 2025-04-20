@@ -3,11 +3,14 @@
 \begin{figure}[h]
     \centering
     \begin{tabular}{|m{4cm}|p{5cm}|>{\raggedright\arraybackslash}p{5.5cm}|}
-        \hline \textbf{File Name} & \textbf{Description} & \textbf{How to Open} \\ \hline
-        \verb|Figma_Design.fig| & The Figma Prototype of the design & Using Figma Desktop or Web\\ \hline
-        \verb|afg_transcript.pdf| & The AI transcript from the audio recording of the advanced focus group & Using a PDF viewer\\ \hline
+        \hline\textbf{File Name} & \textbf{Description} & \textbf{How to Open} \\[1ex] \hline\vspace{1ex}
+        \verb|Figma_Design.fig| & The Figma Prototype of the design & Using Figma Desktop or Web\\[1ex] \hline\vspace{1ex}
+        \verb|afg_transcript.pdf| & The AI transcript from the audio recording of the advanced focus group & Using a PDF editor \\[1ex] \cline{1-2}\vspace{1ex}
+        \verb|bfg_transcript.pdf| & The AI transcript from the audio recording of the beginner focus group & \ \\[1ex] \hline\vspace{1ex}
 
-        \verb|phase[2, 3, 4]_end.zip| & The built application as it was at the end of phases 2, 3, 4 respectively & Unzip, and then serve the `list' folder. \newline An easy way is to run \verb|python3 -m http.server 3000| in the `list' folder to serve on port 3000, and then go to \verb|localhost:3000| in the browser. Unfortunately, I was not able to package the end of phase 1 product in a way that was as simple to serve, however \ref{fig:screenshot_phase_1_end} shows what it looked like\\ \hline
+        \verb|phase[2, 3, 4]_end.zip| & The ready-to-serve built application as it was at the end of phases 2, 3, 4 respectively. & Unzip, and then serve the `dist' folder. An easy way is to run \verb|python3 -m http.server 3000| in the `dist' folder to serve on port 3000, and then go to \verb|localhost:3000| in the browser. Unfortunately, I was not able to package the end of phase 1 product in a way that was as simple to serve, however \ref{fig:screenshot_phase_1_end} shows what it looked like\\[1ex]\hline\vspace{1ex}
+
+        \verb|source.zip| & The final source code for the project & Unzip. To build, follow instructions in \verb|README.md| \\[1ex] \hline\vspace{1ex}
 
         \verb|testathon_form.xlsx| & The results of the testathon survey & \ \\ \hline
     \end{tabular}
