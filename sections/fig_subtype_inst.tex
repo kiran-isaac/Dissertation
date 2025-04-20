@@ -1,5 +1,5 @@
-\begin{figure*}[ht]
-  \begin{subfigure}
+\begin{figure*}[!h]
+  \vspace{1cm}
     \judgbox{\subjudg{\Gamma}{A}{B}{\Delta}}%
      {Under input context $\Gamma$,
        type $A$ is a subtype of $B$, with output context $\Delta$}
@@ -75,11 +75,10 @@
   \end{mathpar}  
   \caption{Algorithmic subtyping. The rules with highlighted names are my additions, the rest are unchanged from \cite{completebidir}}
   \FLabel{fig:alg-subtyping}
-
+  \vspace{0.5cm}
   \vspace{1ex}\noindent\hrulefill\newline
-  \end{subfigure}
+  \vspace{0.5cm}
 
-  \begin{subfigure}
     \judgbox{\instjudg{\Gamma}{\ahat}{A}{\Delta}}%
     {Under input context $\Gamma$,
       instantiate $\ahat$ such that $\ahat \subtype A$, 
@@ -162,6 +161,4 @@
 
 \caption{Instantiation. These rules are unmodified from \cite{completebidir}}
 \FLabel{fig:instantiation}
-  \end{subfigure}
-
 \end{figure*}
