@@ -176,10 +176,10 @@ To parse a pattern, we may use the same techniques as parsing an expression, wit
 Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system), quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
 
 \begin{figure}[ht]
-    \centering
-    \begin{tabular}{c}
-    \hline
-    \begin{lstlisting}[language=Rust]
+    % \centering
+    % \begin{tabular}{c}
+    % \hline
+    \begin{lstlisting}[language=Rust_boxed]
 pub enum Primitive {
     Int64,
     Bool,
@@ -198,8 +198,8 @@ pub enum Type {
     Existential(usize),
 }
 \end{lstlisting}
-    \\\hline
-    \end{tabular}
+    % \\\hline
+    % \end{tabular}
     \caption{The Rust code listing for the definition of types. Existential and Alias are separated as they are more of an implementation detail than a part of the type system}
     \label{fig:type_lst}
 \end{figure}
@@ -222,20 +222,64 @@ The type checker will be bidirectional, and will follow and algorithm largely ba
 \begin{quote}
 `Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability \ldots its error reporting, and its relative ease of implementation' \cite{completebidir}
 \end{quote}
-\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking \sflinline{id} ($\lambda x. x$) against type $\forall a.a\fto a$, I modified their algorithm to add my extra types (the inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs). This does not include assignment and modules as these are not part of expression syntax. \ref{fig:tc_types} shows the type system, including the typechecker implementation details, as well as the unmodified context structure, which keeps track of the state of the typechecker as it progresses recursively through the type system. \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. \ref{fig:ctx_subst} shows the modified algorithm for substituting all of the information in a context into a type. 
+\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking ($\lambda x. x$) against type $\forall a.a\fto a$, I modified their algorithm to add my extra types (the inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs). This does not include assignment and modules as these are not part of expression syntax. \ref{fig:tc_types} shows the type system, including the typechecker implementation details, as well as the unmodified context structure, which keeps track of the state of the typechecker as it progresses recursively through the type system. \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. \ref{fig:ctx_subst} shows the modified algorithm for substituting all the information in a context into a type. 
 
 \input{sections/fig_types_ctx}
 
-The full typechecking algorithm is listed in figures \ref{fig:alg-subtyping}, \ref{fig:instantiation}, \ref{fig:alg-typing}. \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. 
+% The full typechecking algorithm is listed in figures \ref{fig:alg-subtyping}, \ref{fig:instantiation}, \ref{fig:alg-typing}. 
 
-Most of these rules are untouched, the ones that I added or modified are \colorbox{myTcRuleColour}{highlighted}.
+\paragraph{Algorithmic Type Checking and Synthesis} Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. The rule I added are:
+\begin{itemize}
+    \item Checking and synthesizing rules for $Int$s and $Bool$s: An int literal synthesizes the type $Int$, and checks against the type $Int$ etc.
+    \item Checking and synthesis rules for pairs
+    \begin{itemize}
+        \item A pair $(e_1, e_2) \chk (A, B)$ if $e_1 \chk A$ and $e_2 \chk B$
+        \item If $e_1 \syn A$ and $e_2 \syn B$ then $(e_1, e_2) \syn (A, B)$
+    \end{itemize}
+    \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$. We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression.
+\end{itemize}
 
+Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm
 
-\input{sections/fig_subtype}
-\input{sections/fig_ctx_instance}
+\pagebreak
 \input{sections/fig_tc_rules}
 
-\pagebreak % To force the typing stuff to be on the same page
+\paragraph{Algorithmic Subtyping} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added rules for
+\begin{itemize}
+    \item $Int \subtype Int$ and $Bool \subtype Bool$ trivially. 
+    \item $(A_1, B_1) \subtype (A_2, B_2)$ if $A_1 \subtype A_2$ and $B_1 \subtype B_2$.
+    \item The union with name $N_1$ and arguments $A_1 \dots A_n$ is a subtype of a union with name $N_2$ and arguments $B_1 \dots B_n$ is a subtype, if the names are the same as the names uniquely identify these types, as well as all the constituent types being subtypes of each other. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression.
+\end{itemize}
+
+\paragraph{Context Instantiation} 
+The subtyping rule $\SubInstL$ allows us to derive that the existential type variable $\ahat$ is a subtype of the type $A$ under the context $\Gamma$ if
+
+\pagebreak
+\input{sections/fig_subtype}
+% \input{sections/fig_ctx_instance}
+
+
+\paragraph{Hole notation}
+Below is a paragraph from \cite{completebidir} explaining a piece of notation that 
+\begin{quote}
+`Since we will manipulate contexts not only by appending declarations (as in the declarative
+system) but by inserting and replacing declarations in the middle,
+a notation for contexts with a hole is useful:
+\vspace{-4pt}
+\begin{displ}
+  $\Gamma = \Gamma_0[\Theta]$~~~means $\Gamma$ has the form $(\Gamma_L, \Theta, \Gamma_R)$
+\end{displ}
+For example, if $\Gamma = \Gamma_0[\bhat] = (\ahat, \bhat, x : \bhat)$,
+then $\Gamma_0[\hypeq{\bhat}{\ahat}] = (\ahat, \hypeq{\bhat}{\ahat}, x : \bhat)$\newline\dots\newline
+Occasionally, we also need contexts with \emph{two} ordered holes:
+\begin{displ}
+  $\Gamma = \Gamma_0[\Theta_1][\Theta_2]$
+  ~~~means
+  $\Gamma$ has the form $(\Gamma_L, \Theta_1, \Gamma_M, \Theta_2, \Gamma_R)$' \cite{completebidir}
+\end{displ}
+\end{quote}
+
+% \pagebreak % To encourage the typing stuff to be on the same page
 
 \subsection{Pattern Matching}
 We must update the redex finding system with the ability to match patterns. 

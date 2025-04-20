@@ -1,5 +1,6 @@
-\begin{figure*}[htbp]
-  \judgbox{\subjudg{\Gamma}{A}{B}{\Delta}}%
+\begin{figure*}[ht]
+  \begin{subfigure}
+    \judgbox{\subjudg{\Gamma}{A}{B}{\Delta}}%
      {Under input context $\Gamma$,
        type $A$ is a subtype of $B$, with output context $\Delta$}
   \begin{mathpar}
@@ -74,4 +75,93 @@
   \end{mathpar}  
   \caption{Algorithmic subtyping. The rules with highlighted names are my additions, the rest are unchanged from \cite{completebidir}}
   \FLabel{fig:alg-subtyping}
+
+  \vspace{1ex}\noindent\hrulefill\newline
+  \end{subfigure}
+
+  \begin{subfigure}
+    \judgbox{\instjudg{\Gamma}{\ahat}{A}{\Delta}}%
+    {Under input context $\Gamma$,
+      instantiate $\ahat$ such that $\ahat \subtype A$, 
+      with output context $\Delta$}
+ \begin{mathpar}
+   \Infer{\InstLSolve}
+           { \Gamma \entails \tau} %
+           { \instjudg{\Gamma, \ahat, \Gamma'}
+                       {\ahat}
+                       {\tau}
+                       {\Gamma, \hypeq{\ahat}{\tau}, \Gamma'}
+            }
+   \and
+   \Infer{\InstLReach}
+           { }
+           {\instjudg{\Gamma[\ahat][\bhat]}
+                       {\ahat}
+                       {\bhat}
+                       {\Gamma[\ahat][\hypeq{\bhat}{\ahat}]}}
+   \and
+   \Infer{\InstLArr}
+           {\instjudgr{\Gamma[\ahat_2, \ahat_1, \hypeq{\ahat}{\ahat_1 \arr \ahat_2}]}
+                       {\ahat_1}
+                       {A_1}
+                       {\Theta} \\
+            \instjudg{\Theta}
+                       {\ahat_2}
+                       {[\Theta]A_2}
+                       {\Delta}}
+           {\instjudg{\Gamma[\ahat]}
+                       {\ahat}
+                       {A_1 \arr A_2}
+                       {\Delta}}
+   \and
+   \Infer{\InstLAllR}
+         {\instjudg{\Gamma[\ahat], \beta}{\ahat}{B}{\Delta, \beta, \Delta'}}
+         {\instjudg{\Gamma[\ahat]}{\ahat}{\alltype{\beta}{B}}{\Delta}}
+ \end{mathpar}    
+%
+\\[-1.5ex]
+%
+ \judgbox{\instjudgr{\Gamma}{\ahat}{A}{\Delta}}
+    {Under input context $\Gamma$,
+      instantiate $\ahat$ such that $A \subtype \ahat$,
+      with output context $\Delta$}
+ \small\begin{mathpar}
+   \Infer{\InstRSolve}
+           { \Gamma \entails \tau}
+           { \instjudgr{\Gamma, \ahat, \Gamma'}
+                       {\ahat}
+                       {\tau}
+                       {\Gamma, \hypeq{\ahat}{\tau}, \Gamma'}
+            }
+   \and
+   \Infer{\InstRReach}
+           { }
+           {\instjudgr{\Gamma[\ahat][\bhat]}
+                      {\ahat}
+                      {\bhat}
+                      {\Gamma[\ahat][\hypeq{\bhat}{\ahat}]}}
+   \and
+   \Infer{\InstRArr}
+         {\instjudg{\Gamma[\ahat_2, \ahat_1, \hypeq{\ahat}{\ahat_1 \arr \ahat_2}]}
+                   {\ahat_1}
+                   {A_1}
+                   {\Theta} \\
+            \instjudgr{\Theta}
+                      {\ahat_2}
+                      {[\Theta]A_2}
+                      {\Delta}}
+         {\instjudgr{\Gamma[\ahat]}
+                    {\ahat}
+                    {A_1 \arr A_2}
+                    {\Delta}}
+   \and 
+   \Infer{\InstRAllL}
+         {\instjudgr{\Gamma[\ahat], \MonnierComma{\bhat}, \bhat}{\ahat}{[\bhat/\beta]B}{\Delta, \MonnierComma{\bhat}, \Delta'}}
+         {\instjudgr{\Gamma[\ahat]}{\ahat}{\alltype{\beta}{B}}{\Delta}}
+ \end{mathpar}
+
+\caption{Instantiation. These rules are unmodified from \cite{completebidir}}
+\FLabel{fig:instantiation}
+  \end{subfigure}
+
 \end{figure*}

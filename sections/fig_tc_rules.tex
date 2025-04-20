@@ -1,4 +1,4 @@
-\begin{figure*}[htbp]
+\begin{figure*}[ht]
   \judgbox{\chkjudg{\Gamma}{e}{A}{\Delta}}%
      {Under input context $\Gamma$, $e$ checks against input type $A$, 
      with output context $\Delta$} \\[1ex]
@@ -99,6 +99,7 @@
             {\synjudg{\Gamma}{\text{match e \{} c_1 \rightarrow e_1 \mid c_2 \rightarrow e_2 \mid \dots \mid c_n \rightarrow e_n \}}{\ahat}{\Delta_{n+1}}}
     
   \end{mathpar}
-  \caption{Algorithmic typing. The rules with highlighted names are my additions, the rest are unchanged from \cite{completebidir}. Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm}
+  \caption{Algorithmic typing. The rules with highlighted names are my additions, the rest are unchanged from \cite{completebidir}. }
   \FLabel{fig:alg-typing}
+  \noindent\hrulefill\newline
 \end{figure*}
