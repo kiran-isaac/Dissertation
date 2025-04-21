@@ -251,10 +251,20 @@ Below are the most relevant existing systems
 \subsection{$\lambda$-Lessons}
 \newcommand{\llessons}{$\lambda$-Lessons}
 
-\llessons is:
+\llessons\ is:
 
 \begin{quotation}
 `A short, interactive lesson that teaches core functional programming concepts. It was designed to transform the way you think about performing operations on lists of things, by showing you how functions are executed' \cite{lambdalessons}
 \end{quotation}
+
+\noindent\llessons\ is a very effective demonstration of `map', `foldr' and `foldl'. It is unfortunate I only found out about it at the end of phase 4 of the project, otherwise this project would have potentially gone in a different direction in terms of UI. Despite the fact that my project did not take inspiration from this system, it would be remiss not to mention it. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{images/LLessonsMap.png}
+    \caption{Evaluation of `\sflinline{map addOne [1, 2, 3, 4, 5]}' with \llessons}
+\end{figure}
+
+However, my SFL Explorer is very different to \llessons. 
 
 % https://stevekrouse.github.io/hs.js/
