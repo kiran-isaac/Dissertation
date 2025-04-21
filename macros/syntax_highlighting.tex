@@ -29,6 +29,24 @@
   morecomment=[s]{/*}{*/},
 }
 
+\lstdefinelanguage{nolang_numbers}{
+  sensitive=true,
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{orange},
+  commentstyle=\color{commentgray},
+  showstringspaces=false,
+  tabsize=2,
+  breaklines=true,
+  numbers=left,
+  numberstyle=\scriptsize,
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  keepspaces=true,
+}
+
+
 \lstdefinelanguage{Rust_boxed}{
   morekeywords={
     as, break, const, continue, crate, else, enum, extern, false, fn,
@@ -209,6 +227,37 @@
       % numbersep=8pt,
       % showstringspaces=false,
       % breaklines=true,
+      % frame=lines,
+      comment=[l]//,
+      keepspaces=true,
+      morecomment=[s]{/*}{*/},   
+      commentstyle=\color{commentgray}   
+      % commentstyle=\color{purple}\ttfamily,
+} %
+
+\lstdefinelanguage{SFL_noprelude_numbers}{
+      sensitive = true,
+      keywords={},
+      otherkeywords={<=, >=, ::, ==, *, +, -, ->, \$},
+      keywords = [2]{
+        % if, map, foldr, filter, repeat, length, take, range, infiniteFrom, sum, Cons, Nil, Just, Nothing, Left, Right
+      },
+      keywords = [3]{
+        % Int, Bool, List, Maybe, Either
+      },
+      keywords = [4]{
+        match, data, type, _,
+      },
+      keywordstyle=\color{blue},
+      keywordstyle=[2]\color{teal},
+      keywordstyle=[3]\color{teal},
+      keywordstyle=[4]\color{red},
+      numbers=left,
+      numberstyle=\scriptsize,
+      stepnumber=1,
+      numbersep=8pt,
+      showstringspaces=false,
+      breaklines=true,
       % frame=lines,
       comment=[l]//,
       keepspaces=true,

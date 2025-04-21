@@ -248,6 +248,81 @@ Below are the most relevant existing systems
 
 \subsection{Duet, and Duet Delta}
 \label{bg:duet}
+Duet is:
+
+\begin{quotation}
+`A tiny language, a subset of Haskell (with type classes) aimed at aiding teachers teach Haskell' \cite{duet_hackage}
+\end{quotation}
+
+\begin{figure}[h]
+    \centering
+    \begin{tabular}{c}
+    \hline
+    \begin{lstlisting}[language=SFL_noprelude_numbers]
+data List a = Nil | Cons a (List a)
+foldr = \f z l ->
+  case l of
+    Nil -> z
+    Cons x xs -> f x (foldr f z xs)
+foldl = \f z l ->
+  case l of
+    Nil -> z
+    Cons x xs -> foldl f (f z x) xs
+list = (Cons True (Cons False Nil))
+
+main = foldr _f _nil list
+\end{lstlisting}\\ \hline
+
+    \end{tabular}
+    \caption{An example Duet program provided in the repository. \_f and \_nil are not defined, but the underscore indicates that this is fine and they should just be left unchanged}
+    \label{bg:duet_foldr}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \begin{tabular}{c}
+    \hline
+    \begin{lstlisting}[language=SFL_noprelude_numbers]
+foldr _f _nil list
+(\f z l ->
+    case l of
+        Nil -> z
+        Cons x xs -> f x (foldr f z xs))
+    _f
+    _nil
+    list
+(\z l ->
+    case l of
+        Nil -> z
+        Cons x xs -> _f x (foldr _f z xs))
+    _nil
+    list
+
+... 
+
+_f True
+  (_f False
+     ((\l ->
+         case l of
+           Nil -> _nil
+           Cons x xs -> _f x (foldr _f _nil xs))
+        Nil))
+_f True
+  (_f False
+     (case Nil of
+        Nil -> _nil
+        Cons x xs -> _f x (foldr _f _nil xs)))
+_f True (_f False _nil)
+\end{lstlisting}\\ \hline
+
+    \end{tabular}
+    \caption{The output of evaluating the program shown \ref{bg:duet_foldr}. The beginning and end are shown, with the middle removed. }
+    \label{bg:duet_foldr_eval}
+\end{figure}
+
+\noindent When running Duet \cite{duet_hackage} on the program shown \ref{bg:duet_foldr}, we get a large block of text as output that shows the reduction or this program. This all happens at once, and we do not get the chance to pick reduction order. It is also quite hard to tell what is going on, as it is dumped as one block of text. The author, Chris Done, also hosts a website where one can try it out without installing it c \cite{duet_delta}. The website does not provide much in the way of a UI, it is a text box input and a text box output for running Duet programs.
+
+The main strong point of this project is the language. It is a solid subset of Haskell that includes many similar features to SFL. For this project, I did not draw direct inspiration from Duet or 
 
 \subsection{$\lambda$-Lessons}
 \newcommand{\llessons}{$\lambda$-Lessons}
@@ -279,7 +354,7 @@ My particular favorite features of \llessons's UI are:
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.75\linewidth]{images/LLessonsGoingWrong.png}
-    \caption{Evaluation of `\sflinline{map (plus 1) [1, 2, 3, 4, 5]}' with \llessons. It gets confused. }
+    \caption{Evaluation of `\sflinline{map (plus 1) [1, 2, 3, 4, 5]}' with \llessons. It gets confused by currying and partial application}
     \label{bg:llessons_gets_confused}
 \end{figure}
 
