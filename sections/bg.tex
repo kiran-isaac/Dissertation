@@ -247,24 +247,54 @@ Below are the most relevant existing systems
 % https://dl.acm.org/doi/pdf/10.1145/1273039.1273042
 
 \subsection{Duet, and Duet Delta}
+\label{bg:duet}
 
 \subsection{$\lambda$-Lessons}
 \newcommand{\llessons}{$\lambda$-Lessons}
 
-\llessons\ is:
+\llessons\ is a website created by Jan Paul Posma and Steve Krouse at YC Hacks '14 \cite{lambdalessons}. It is a very effective demonstration of `map', `foldr' and `foldl:
 
 \begin{quotation}
 `A short, interactive lesson that teaches core functional programming concepts. It was designed to transform the way you think about performing operations on lists of things, by showing you how functions are executed' \cite{lambdalessons}
 \end{quotation}
 
-\noindent\llessons\ is a very effective demonstration of `map', `foldr' and `foldl'. It is unfortunate I only found out about it at the end of phase 4 of the project, otherwise this project would have potentially gone in a different direction in terms of UI. Despite the fact that my project did not take inspiration from this system, it would be remiss not to mention it. 
+\noindent It is unfortunate I only found out about it at the end of phase 4 of the project, otherwise my project could have drawn inspiration in terms of UI for free choice evaluation. Indeed, I only discovered this project through correspondence with Chris Done, the author of Duet \ref{bg:duet}. Despite the fact that my project did not take inspiration from this system, it would be remiss not to mention it. 
+
+My particular favorite features of \llessons's UI are:
+
+\begin{itemize}
+    \item It allows the user to select in the code what part they want to reduce next by clicking on it. 
+    \item It also shows informations about functions when you hover over them. 
+    \item The language looks like Haskell. However, I had many problems with the functionaltiy of the language that will be discussed later. 
+\end{itemize}
+
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{images/LLessonsMap.png}
+    \includegraphics[width=0.75\linewidth]{images/LLessonsMap.png}
     \caption{Evaluation of `\sflinline{map addOne [1, 2, 3, 4, 5]}' with \llessons}
+    \label{bg:llessons_ui}
 \end{figure}
 
-However, my SFL Explorer is very different to \llessons. 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{images/LLessonsGoingWrong.png}
+    \caption{Evaluation of `\sflinline{map (plus 1) [1, 2, 3, 4, 5]}' with \llessons. It gets confused. }
+    \label{bg:llessons_gets_confused}
+\end{figure}
+
+The UX/UI is the definite strong point of \llessons (see \ref{bg:llessons_ui}).  However, there are a few things that I would identify as weaknesses that make it not useful for what SFL explorer is useful for. 
+
+\begin{itemize}
+    \item The language is not typechecked. There are type assignments, but upon testing and inspection of the source code \cite{lambdalessonsgithub}, type assignments are ignored. 
+    \item The language does not allow for user defined algebraic data types, but it has \sflinline{List} built in. 
+    \item As can be seen in \ref{bg:llessons_ui}, it seems to imply that \sflinline{((x : y : []))} reduces to \sflinline{[x, y]} which is misleading. 
+    \item The language does not support lambda functions
+    \item The language does not support currying (\ref{bg:llessons_gets_confused})
+    \item The program states are not saved between refreshes.
+\end{itemize} 
+
+In summary, \llessons\ is designed for a different purpose than SFL Explorer. It describes itself as a `document' \cite{lambdalessons} rather than a tool, which is an apt description as it is a document meant to teach one specific thing rather than to be an all around teaching tool for functional languages. It does not provide much of a capability to experiment yourself as the language is not very extensive. However, the ability to reduce an expression by clicking on the bit of the expression you want to reduce is very good, and inspiration should definitely be drawn for future work for SFL Explorer.  
+
 
 % https://stevekrouse.github.io/hs.js/
