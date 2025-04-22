@@ -77,6 +77,9 @@
 \RequirePackage{xcolor}
 \RequirePackage{}
 
+\RequirePackage{titlesec}
+\titleformat*{\subsubsection}{\large\bfseries}
+
 % =============================================================================
 
 \makeatletter
@@ -132,6 +135,7 @@
 }
 
 \pagestyle{plain}
+
 
 % -----------------------------------------------------------------------------
 

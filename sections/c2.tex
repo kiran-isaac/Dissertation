@@ -57,7 +57,7 @@ As an example, the SFL (and Haskell) data declaration:
 \begin{lstlisting}[language=SFL_unboxed_noprelude]
 data Either a b = Left a | Right b
 \end{lstlisting}
-\sam{breaking sentences up with code or pictures is a huge formatting bug bear for me. I won't comment on this again, and it can stay if you don't have time, but if you do have time it will add a more polished and professional feel. The change needed would be something along the lines of. "As an example, we seek to support the following data declaration, exactly copying Haskell's syntax: ~code~ This declaration creates ..."}
+% \sam{breaking sentences up with code or pictures is a huge formatting bug bear for me. I won't comment on this again, and it can stay if you don't have time, but if you do have time it will add a more polished and professional feel. The change needed would be something along the lines of. "As an example, we seek to support the following data declaration, exactly copying Haskell's syntax: ~code~ This declaration creates ..."}
 \noindent creates a tagged union type called $Either$ with two constituent type parameters $a$ and $b$. In our type system (\ref{sec:type_system_design}) this would be represented as $Either[a, b]$. The \Unionname 
  \ \verb|Either| uniquely identifies this type, this must be enforced by the parser. It also creates two data constructors: \verb|Left| which has the type $\forall a\;b. a \fto Either[a,b]$, and \verb|Right| which has the type $\forall a\;b. b \fto Either[a,b]$. 
 
@@ -70,7 +70,7 @@ type Card = (Suit, Rank)
 
 \noindent having the type alias \sflinline{Card} for \sflinline{(Suit, Rank)} allows us to very easily, and more readably, create functions on Cards, as well as values with that type. 
 
-To summarize, we will implement type aliases and algebraic data types to work similarly to Haskell with similar syntax. \sam{type aliases feel out of the blue}
+To summarize, we will implement type aliases and algebraic data types to work similarly to Haskell with similar syntax. % \sam{type aliases feel out of the blue}
 
 \subsubsection{Match}
 \label{c2_design_match}
@@ -489,9 +489,9 @@ These people I selected for this focus group were the closest to `subject expert
 This focus group started with me briefly presenting SFL explorer. \ref{fig:screenshot_c2_end} shows how the system looked at this stage of the project. We also discussed the next UI iteration (see \ref{c2:next_ui}). 
 
 \subsection{Outcomes}
-Below is the summary of outcomes from the discussion with this focus group. The assertions about what they thought are backed up with quotes, marked with timestamps of where these quotes can be found in the transcript. 
+Below is the summary of outcomes from the discussion with this focus group, along with timestamped quotes where appropriate. 
 
-\subsubsection{The Existing Language}
+\subsubsection{The Language}
 \paragraph{Positives:}
 \begin{itemize}
     \item They liked the explicit match statements, and did not want me to change to more Haskell-like pattern match syntax: 

@@ -15,9 +15,13 @@ The prototype for the new UI also included the functionality to `undo progress',
 % \todo{there was no design here? the advanced focus group liked the protype a lot and did not have any }
 
 \section{Implementation}
-Implementing the new UI mostly consisted of time-consuming React and CSS tweaks which are not worth mentioning here. However, there were some more challenging aspects that required some more interesting considerations and changes to be made. 
+Implementing the new UI mostly consisted of time-consuming React and CSS tweaks which are not worth mentioning here. However, there were some more challenging aspects that required some more interesting considerations and changes to be made. Screenshots of the result of implementing the new UI with these features is shown in \ref{screenshot:phase3_end_lazy}, with another example showing free choice evaluation in the appendix \ref{screenshot:phase3_end_free}. 
+
 
 \subsubsection{Diff}
+
+\label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. \ref{fig:diff_list} shows a subsection of this algorithm, showing how it works for IDs, Literals and Pairs.
+
 \begin{figure}[t]
     \begin{tabular}{c}
     \begin{lstlisting}[language=Rust_boxed]
@@ -69,8 +73,6 @@ fn diff(ast1, ast2, expr1, expr2) -> Diff {
     \label{fig:diff_list}
 \end{figure}
 
-\label{paragraph:diff} Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. \ref{fig:diff_list} shows a subsection of this algorithm, showing how it works for IDs, Literals and Pairs.
-
 % Move to c4
 % \subsubsection{Syntax Highlighting}
 % \subsubsection{Display RC history}
@@ -96,10 +98,102 @@ The issue with dynamic allocation of memory for the \ac{AST}s as they are added 
 
 In our JavaScript module, we can then store a stack of pointers to the \ac{AST}s, and display the options for reducing the one at the top. When an option is selected, we can apply the reduction and then store the new \ac{AST} on the top of our stack and recalculate reduction options. If the user decides to start evaluating a new program, all the \ac{AST}s with pointers in this list are freed to avoid memory leaks.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{images/phase-3-end.png}
+    \caption{The new UI implemented, during lazy evaluation of the provided `sum of squares' example program}
+    \label{screenshot:phase3_end_lazy}
+\end{figure}
+
 \section{The Intermediate Focus Group: Evaluation and Next Steps}
 \label{eval:IFG}
-The Intermediate focus group happened at the end of 
-Evaluation:
-- They liked explicit match: they liked it more than haskell for learning about how pattern matching works
-- Really Really needed light mode
-- Horizontal overflow bug
+The Intermediate focus group happened at the end of phase 3 of the project. An entirely different structure was employed for this focus group than the Advanced Focus Group \ref{ref:afg}, as the aims of this focus group were different. Rather than just evaluating the language, I wanted to evaluate the system in the setting that I expected it to be used in: a lecture setting. 
+
+To act as a lecturer, I employed Amos Holland, a fourth year undergraduate student. I considered doing it myself, but I decided that it would be better to employ an undergraduate who was more experienced in teaching functional programming. Amos was selected as he had taken all of the functional programming units that were available in his degree so far: the same ones that the participants of the Advanced Focus Group had taken, for details of these units, see \ref{ref:afg}. Furthermore, Amos had acted as a teaching assistant on one of these units, Types and Lambda Calculus, where he ran weekly problem classes, where he would walk students through difficult problems from the lectures or worksheets. 
+
+\subsection{Selection and Format}
+For this focus, to evaluate SFL explorer as a teaching tool and get feedback, I selected people 
+
+\subsection{Bugs}
+There were numerous bugs that Amos and I identified during the lecture phase of this focus group:
+\begin{itemize}
+    \item The editor would sometimes add tab spaces randomly
+    \item Sometimes, the site 
+\end{itemize}
+
+\subsection{Outcomes}
+Due to technical issues, I was only able to get a transcript of the interview portion of the intermediate focus group; I made the mistake of holding this focus group in a room where there was too much background noise to get a high quality recording during this part of the session. However, during the interview, I set up multiple microphones, and was able to combine the AI transcripts from each of them into one transcript. 
+
+Below is the summary of outcomes from the discussion with this focus group, along with timestamped quotes in some cases. The first phase of this interview was conducted with Amos, followed by an interview with each participant in turn. 
+
+In the Advanced Focus Group outcomes section \ref{ref:afg}, I split the focus group's thoughts into positives and negatives. However, in this focus group opinions were more split between participants, as well as participants being more frequently in two minds, so I did not do this. Instead, I have grouped by topic rather than by positivity and negativity, so one bullet point may have both positive and negative thoughts towards the same issue. 
+
+\subsubsection{The Language}
+Below is the summary of Amos's and the participants' thoughts about \ac{SFL}, along with timestamped quotes where appropriate.
+\paragraph{Amos}
+\begin{itemize}
+
+    \item Amos liked the explicit match statement:
+    
+    `I quite like match, because I think it gets a bit more directly at what pattern matching is doing, like that it's a specific operation' [03:36]
+\end{itemize}
+
+\paragraph{The Participants}\begin{itemize}
+    \item They had mixed opinions on whether I should add the usual syntax sugar for lists. Below are two quotes from two participants, showing their split minds on this topic:
+    
+    `I both love and hate the list, the lack of syntactic sugar for list, \ldots it makes literal lists really hard to read, but it makes the types so much clearer. Having to interact with that rather than just going, that's kind of an array \ldots It really explicitly forces you to think in the Haskell
+    way' [Participant 1, 14:47]
+    
+    `I really liked that, like, well, because we don't have the constructor we had in Haskell
+    for, like, lists. Abundantly much clearer to me what was going on \ldots I prefer it with this list, this cons and the nil. But also you have to write it out for five hours as the teacher' [Participant 3, 22:52]
+
+    \item They liked the explicit match statements. 
+    
+    `I honestly really liked the match being, like, write match. Yeah. So the
+    explicitness was good. I really liked that. It made it obvious to me in a way that it wasn't
+    necessarily before' [Participant 3, 19:03]
+\end{itemize}
+
+\subsubsection{The User Interface, and the System as a Whole}
+An absolutely critical issue that became obvious during the focus group was the need for a light mode. The room was very bright, and it was barely visible in dark mode. This was resolved with a high priority in the next phase. Apart from that, all four participants, and Amos, liked SFL explorer as a whole. 
+\noindent\begin{quotation}
+\noindent`I think it was good, other than the few bugs' [Amos, 00:04]
+\end{quotation}
+\noindent\begin{quotation}
+\noindent`Yeah, I liked it; this is what I do in my head basically when I'm looking at Haskell, it [the lecture using the tool] was good' [Participant 1, 06:44]
+\end{quotation}
+\noindent\begin{quotation}
+\noindent`I really like what the tool does, like it
+shows like what you can see because that's basically what I do when I'm like debugging code but
+um it takes like a long time to do it like by hand and to go through everything and sometimes it's
+like wrong if you do it yourself so this is like a good way to automate it' [Participant 2, 15:20]
+\end{quotation}
+\noindent\begin{quotation}
+\noindent`I liked it' [Participant 3, 19:07]
+\end{quotation}
+\noindent\begin{quotation}
+\noindent`I actually really love the functionality of this app' [Participant 4, 24:44]
+\end{quotation}
+
+Below a more detailed summary of their thoughts about SFL Explorer as a whole, and the UI/UX:
+
+\paragraph{Amos}\begin{itemize}
+    \item A `step to the end' options would be good, allowing the user to complete evaluation without having to click on the button many times.
+    
+    `It would have been nice to have a button that says steps to the end,
+    because there were some cases where I would have liked to just see if it evaluated correctly, but
+    instead you had to click through a lot of times' [00:04]
+\end{itemize}
+
+\paragraph{The Participants}\begin{itemize}
+    \item They wanted syntax highlighting, indeed 3 out of four explicitly asked for it. 
+    \item Two of the participants agreed that it should be reversed
+\end{itemize}
+
+
+% The aims of this focus group were to use the system and attempt to recap functional programming concepts 
+
+% Evaluation:
+% - They liked explicit match: they liked it more than haskell for learning about how pattern matching works
+% - Really Really needed light mode
+% - Horizontal overflow bug
