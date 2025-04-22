@@ -1,6 +1,8 @@
 \chapter{Phase 2 --- Types and Pattern Matching}
 In this phase, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated client-led approach. 
 
+\sam{dont bother changing this for this project, this is just advice for future: this section would read much better if for each proposed change you did: motivation for change, details of change, implementation of change, eval of change. Each per change. It reduces what the reader has to remember and stops you need to repeat yourself so much}
+
 At the end of this phase, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the phase, 
 
 \section{Requirements Analysis}
@@ -15,11 +17,13 @@ This definition of lists is as example of a polymorphic data type. It also impli
 The focus of this project phase is mainly to upgrade the language SFL. We have already identified what features we would like to add the language. This section will go into detail about the design for the extension for the language enabling these new features. 
 \subsubsection{Type System}
 \label{sec:type_system_design}
+\sam{ive thought further about this, i still agree with what i said, but i think the reason this section suffers is that updates to the types needs to come LAST}
+\sam{this para could be much cleaner. If I am right, by this point we have established what is going to be added in this phase and why, this is just about noting how that will effect the type system. (if you want to keep your prose that reminds the reader what if being added and why, that is fine, but put it BEFORE you start talking about types) So the para could run: the extensions to the language, naturally led to extensions of the type system. Here is how each language extension needs supported by extensions to the type system: (use bullets if each extension only takes one or two lines, use paragaph formatting if its more like para) adding bools and ints - clearly Int and Bool types must also be added ...}
 If we are to effectively represent the type of expression containing integers and booleans, we must have types $Int$ and $Bool$. We also want our type system to be able to express functions, as our language support functions. 
-
+\sam{no new line}
 We also want polymorphism in our type system, as rewriting functions many times for different data types makes programs more verbose.  
 
-Allowing for algebraic user defined data types similarly to Haskell would make the language much more expressive and much more powerful, as well as bringing it closer to Haskell. Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
+\sam{clunky sentence}Allowing for algebraic user defined data types similarly to Haskell would make the language much more expressive and much more powerful, as well as bringing it closer to Haskell. Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
 
 Type names, as well as constructor names,  start with uppercase letters in Haskell. This allows them to be easily differentiated from type variables, as well as regular variables.
 
@@ -47,13 +51,15 @@ Figure \ref{fig:tc_types} shows the type system in SFL. Note that the definition
 % Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type, which can check that it is saturated before 
 
 \subsubsection{User Definable Algebraic Data Types}
-In Haskell, we can create algebraic types using the \sflinline{data} keyword (see \ref{bg:haskell_udt}). Replicating this syntax for \ac{SFL}'s user defined data types would be good, allowing people already familiar with Haskell to use the system, as well as viva versa. 
+In Haskell, we can create algebraic types using the \sflinline{data} keyword (see \ref{bg:haskell_udt}). Replicating this syntax for \ac{SFL}'s user defined data types would be good\sam{is desirable because}, allowing people already familiar with Haskell to use the system, as well as viva versa. 
 
 As an example, the SFL (and Haskell) data declaration:
 \begin{lstlisting}[language=SFL_unboxed_noprelude]
 data Either a b = Left a | Right b
 \end{lstlisting}
-\noindent creates a tagged union type called $Either$ with two constituent type parameters $a$ and $b$. In our type system (\ref{sec:type_system_design}) this would be represented as $Either[a, b]$. The \Unionname \verb|Either| uniquely identifies this type, this must be enforced by the parser. It also creates two data constructors: \verb|Left| which has the type $\forall a\;b. a \fto Either[a,b]$, and \verb|Right| which has the type $\forall a\;b. b \fto Either[a,b]$. 
+\sam{breaking sentences up with code or pictures is a huge formatting bug bear for me. I won't comment on this again, and it can stay if you don't have time, but if you do have time it will add a more polished and professional feel. The change needed would be something along the lines of. "As an example, we seek to support the following data declaration, exactly copying Haskell's syntax: ~code~ This declaration creates ..."}
+\noindent creates a tagged union type called $Either$ with two constituent type parameters $a$ and $b$. In our type system (\ref{sec:type_system_design}) this would be represented as $Either[a, b]$. The \Unionname 
+ \ \verb|Either| uniquely identifies this type, this must be enforced by the parser. It also creates two data constructors: \verb|Left| which has the type $\forall a\;b. a \fto Either[a,b]$, and \verb|Right| which has the type $\forall a\;b. b \fto Either[a,b]$. 
 
 Type aliases allow us to make code more readable and expressive. For instance, if we were to define playing cards like this:
 \begin{lstlisting}[language=SFL_unboxed]
@@ -64,11 +70,12 @@ type Card = (Suit, Rank)
 
 \noindent having the type alias \sflinline{Card} for \sflinline{(Suit, Rank)} allows us to very easily, and more readably, create functions on Cards, as well as values with that type. 
 
-To summarize, we will implement type aliases and algebraic data types to work similarly to Haskell with similar syntax. 
+To summarize, we will implement type aliases and algebraic data types to work similarly to Haskell with similar syntax. \sam{type aliases feel out of the blue}
 
 \subsubsection{Match}
 \label{c2_design_match}
-See \ref{bg:haskell_pattern_match} for more information about Haskell pattern matching. A basic example of pattern matching in Haskell:
+\sam{one sentence reminder to reader of what patternmatching is: "Pattern matching is an elegant form of branching used in many functional languages." (this just sets the scene better)}
+See \ref{bg:haskell_pattern_match} for more information about Haskell pattern matching. A basic example of pattern matching in Haskell: \sam{the preceeding sentence sounds very weird because it has no subject. You either want to say "fac is a basic example" or "here is a basic example"}
 
 \begin{lstlisting}[language=SFL]
 fac :: Int -> Int
@@ -87,9 +94,9 @@ fac n = match n {
     | _ -> n * (fac (n - 1))
 }
 \end{lstlisting}
-This syntax was fairly arbitrary, as syntax is quite easy to change. However, this syntax proved to be fairly popular with all three focus groups, so it did not change between this stage and the end of the project.
+This syntax was fairly arbitrary, as syntax is quite easy to change. However, this syntax proved to be fairly popular with all three focus groups, so it did not change between this stage and the end of the project. \sam{the last code sandwich is your best yet! More lik this please! It is clear and to the point}
 
-The `fac' function takes an $Int$ n, and proceeds differently with different values of n. If the value is 0, the value of the whole expression becomes 0, otherwise it becomes \lstinline[language=SFL]!n * (fac (n - 1))!. We can use literals in our pattern to differentiate between different values of literals. Inspired by Haskell, we can use a variable (which is a lowercase identifier) to match anything, a `wildcard' pattern. All instances of the variable in the pattern's corresponding expression with the term that the variable matches. `\_' is a special case wildcard, where no variable is bound, but it still matches anything, 
+\sam{no need to repeat yourself. Just say something like this does the same as the Haskell fac, just with different syntax. Here you are not explaining the code, but the difference between this code and the previous version}The `fac' function takes an $Int$ n, and proceeds differently with different values of n. If the value is 0, the value of the whole expression becomes 0, otherwise it becomes \lstinline[language=SFL]!n * (fac (n - 1))!. We can use literals in our pattern to differentiate between different values of literals. Inspired by Haskell, we can use a variable (which is a lowercase identifier) to match anything, a `wildcard' pattern. All instances of the variable in the pattern's corresponding expression with the term that the variable matches. `\_' is a special case wildcard, where no variable is bound, but it still matches anything, 
 
 We should also be able to match more complex structures including Algebraic Data Types. For instance, we can write the following function to figure out whether a list has length 2 or grater
 
@@ -105,15 +112,15 @@ lenIsAtLeastTwo list = match list {
 
 \subsection{Next UI Iteration}
 \label{c2:next_ui}
-At this phase of the project, the current version of the web UI is a proof of concept. See \ref{fig:screenshot_phase_1_end} for the current state. The UI requires a total redesign
+At this phase of the project, the current version of the web UI is a proof of concept. See \ref{fig:screenshot_phase_1_end} for the current state. The UI requires a total redesign \sam{end of sentence? why does it need a redesign?}
 
-I completely redesigned the UI based on the clients' feedback, as well as based on other requiremenets identified during the \hyperref[sec:c1_autoethnography]{autoethnographic} phase of the project.  See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. These designs were done using \href{https://figma.com}{Figma}. 
+I completely redesigned the UI based on the clients' feedback, as well as based on other requiremenets identified during the \hyperref[sec:c1_autoethnography]{autoethnographic} phase of the project.  See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. \sam{talk about these designs! This section is very thin, you just say heres what im aiming for, totally chatted to focus group, but the reader will be interested in why you went this way and what the focus group said. This is more reason I suggested at the top to tackle each change one by one cos you're always leaving the reader hanging and pointing else where in the document, but it is not dramatic suspense, I'm just opening more tabs in my brain than I can cope with}These designs were done using \href{https://figma.com}{Figma}. 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{images/figma_1.png} 
     \captionsetup{justification=centering}
-    \caption{Screenshot 1 of the Figma design of the web UI}
+    \caption{Screenshot 1 of the Figma design of the web UI\sam{formatting bug bear: put full stops at the end of captions}}
     \label{fig:screenshot_figma1}
 \end{figure}
 
@@ -121,7 +128,7 @@ I completely redesigned the UI based on the clients' feedback, as well as based 
     \centering
     \includegraphics[width=1\linewidth]{images/figma_2.png}
     \captionsetup{justification=centering}
-    \caption{Screenshot 2 of the Figma design of the web UI. This version shows the prelude extended}
+    \caption{Screenshot 2 of the Figma design of the web UI. This version shows the prelude extended \sam{here is motivation as to why, it looks like somethign following extended has been cut off}}
     \label{fig:screenshot_figma2}
 \end{figure}
 
@@ -135,6 +142,8 @@ We must make some changes to the parser to include these new features.
 
 \subsubsection{Parsing Match Statements}
 An example of using a match statement follows:
+\sam{here it feels like you are trying to mix up the way you introduce code so it is not always the same, but instead you have just ended up with a weird sounding sentence. It doesnt matter if introducing code uses the same phrasing, as long as it is clear.}
+\sam{more writing advice: only spend effort on nice writing for what is important. Introducing code not important, just do the basic thing. Biggest most complicated thing in your thesis is what deserves all your word choice and imagery. If you do this, it is also clear to the reader what is important: it is what you have spent your time on}
 \begin{lstlisting}[language=SFL]
 lengthIsAtLeast2 list = match list {
   | Cons x (Cons y xs) -> true
@@ -144,7 +153,7 @@ lengthIsAtLeast2 list = match list {
 
 The algorithm used for parsing match statements is:
 \begin{enumerate}
-    \item Consume the `match' keyword
+    \item Consume the `match' keyword \sam{formatting bug bear: full stops at the end of bullets (all my bug bears are for things that make your work look unfinished / rushed)}
     \item Parse the expression matched over
     \item Consume an open brace
     \item While the next token isn't a close brace: \begin{enumerate}
@@ -153,9 +162,10 @@ The algorithm used for parsing match statements is:
         \item Consume a right arrow
         \item Parse an expression
     \end{enumerate}
-    \item Consume a close brace
+    \item Consume a close brace \sam{make this list a figure so it doesnt get interupted}
 \end{enumerate}
 Following this, a match node is created, where the \verb|children| vector is set appropriately with the pattern and expressions.
+\sam{here is an example of what I'm going to call a ghost sentence: one with no subject. "is created" by who? who is the subject of the sentence? Potential fixes: "This creates a match node...", "Using this algorithm, the parser creates..."}
 
 \paragraph{Patterns}
 \label{impl:parsing_patterns}
@@ -174,7 +184,7 @@ To parse a pattern, we may use the same techniques as parsing an expression, wit
 
 \subsection{Types}
 
-Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system), quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
+Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system) quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
 
 \begin{figure}[ht]
     % \centering
@@ -213,26 +223,31 @@ Aliases are defined here with their name, and the type they are an alias for. Al
 
 \subsubsection{Methods on Types}
 Below are a selection of the more important or interesting methods implemented on Types.
+\sam{didn't we have similar before?}
 
-\paragraph{Substitution of type variables} We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
+\paragraph{Substitution of type variables} \sam{it is annoying that para has the same formatting as subsubsection, if you have spare time, id change that as it makes reading harder}We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
 
 \paragraph{To String} We will frequently wish to display types as strings for debugging purposes. 
 
 \newpage
 \subsection{The Type Checker}
-The type checker will be bidirectional, and will follow and algorithm largely based on the one described by Dunfield and Krishnaswami \cite{completebidir}. The quote that follows from this paper, describes bidirectional type checking and its merits:
+The type checker will be bidirectional, and will follow an algorithm largely based on the one described by Dunfield and Krishnaswami \cite{completebidir}. The quote that follows from this paper, describes bidirectional type checking and its merits: \sam{another weird intro}
 \begin{quote}
 `Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability \ldots its error reporting, and its relative ease of implementation' \cite{completebidir}
 \end{quote}
-\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking ($\lambda x. x$) against type $\forall a.a\fto a$, I modified their algorithm to add my extra types (the inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs). This does not include assignment and modules as these are not part of expression syntax. 
+\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking ($\lambda x. x$) \sam{this is not interesting. Remember atm we are reporting about the work, not you doing the work. What you can do is run through that example now with the reader, now that would be relevant and helpful} against type $\forall a.a\fto a$, I modified their algorithm to add my extra types (the inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs). This does not include assignment and modules as these are not part of expression syntax. 
 
 \input{sections/fig_types_ctx}
 
 % The full typechecking algorithm is listed in figures \ref{fig:alg-subtyping}, \ref{fig:instantiation}, \ref{fig:alg-typing}. 
 
 \noindent Below I will describe the typechecking algorithm, focusing on my additions/changes. Appendix \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. 
+\sam{please run a small example inline here}
+\sam{you cannot rely on readers looking at your appendix}
+\sam{now i have read the appendix, It is excellent!!! just move that. Its so much clearer and its not dry cos we gave a goal and it nicely guides me through}
 
 \paragraph{Hole notation}
+\sam{you have not prepared the reader for this extract, I'll inline my questions to illustrate}
 Below is a paragraph from the original paper \cite{completebidir} explaining `hole notation' in contexts, which is used throughout the algorithm descriptions in \ref{fig:alg-typing}, \ref{fig:alg-subtyping} and \ref{fig:instantiation}. 
 \begin{quote}
 `Since we will manipulate contexts not only by appending declarations \dots but by inserting and replacing declarations in the middle, a notation for contexts with a hole is useful:
@@ -240,8 +255,14 @@ Below is a paragraph from the original paper \cite{completebidir} explaining `ho
 \begin{displ}
   `$\Gamma = \Gamma_0[\Theta]$~~~means $\Gamma$ has the form $(\Gamma_L, \Theta, \Gamma_R)$
 \end{displ}
+\sam{where does $\Gamma_0$ go? where do $\Gamma_L$ and $\Gamma_R$ come from?}
 For example, if $\Gamma = \Gamma_0[\bhat] = (\ahat, \bhat, x : \bhat)$,
-then $\Gamma_0[\hypeq{\bhat}{\ahat}] = (\ahat, \hypeq{\bhat}{\ahat}, x : \bhat)$\newline\dots\newline
+then $\Gamma_0[\hypeq{\bhat}{\ahat}] = (\ahat, \hypeq{\bhat}{\ahat}, x : \bhat)$
+\sam{what is $\hypeq{\bhat}{\ahat}$ why are there two $\bhat$}
+\newline\dots\newline
+\sam{...?}
+\sam{this is the most complex thing so far, here is where you need to spend your time, and start with an example}
+\sam{yes you are building on prev work, so your extensions are of most interest, but i cant appreciate them if i dont understand the base algo, also you must demo that you know the base algo}
 Occasionally, we also need contexts with \emph{two} ordered holes:
 \begin{displ}
   $\Gamma = \Gamma_0[\Theta_1][\Theta_2]$
@@ -253,25 +274,25 @@ Occasionally, we also need contexts with \emph{two} ordered holes:
 \pagebreak
 \input{sections/fig_tc_rules}
 
-\paragraph{Algorithmic Type Checking and Synthesis} Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. The rule I added are:
+\paragraph{Algorithmic Type Checking and Synthesis} Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. \sam{questions the reader might have: but how is this an algo? they are sequences of steps? What is all this notation? I've never seen the backwards turnstyle before or the backward implication. This should be walked thorugh in prose, you should not expect me to spend ages looking at the figure figuring it out. You are the writer, guide me}The rule I added are: \sam{say in the prose that they are highlighted. I think the way you use captions is weird. It reads as if your expectation upon someone reading "figure bla" is that they immediately read the caption of figure  bla, but i dont. I stick with the prose hoping to be guided through my viewing of the figure, especially such a complex one.}
 \begin{itemize}
-    \item Checking and synthesizing rules for $Int$s and $Bool$s: An int literal synthesizes the type $Int$, and checks against the type $Int$ etc.
+    \item Checking and synthesizing rules for $Int$s and $Bool$s: An int literal synthesizes the type $Int$, and checks against the type $Int$ etc. \sam{there is a way to reference rules, which might be nice here}
     \item Checking and synthesis rules for pairs
     \begin{itemize}
         \item A pair $(e_1, e_2) \chk (A, B)$ if $e_1 \chk A$ and $e_2 \chk B$
-        \item If $e_1 \syn A$ and $e_2 \syn B$ then $(e_1, e_2) \syn (A, B)$
+        \item If $e_1 \syn A$ and $e_2 \syn B$ then $(e_1, e_2) \syn (A, B)$ \sam{use prose not the notation that ive just met}
     \end{itemize}
-    \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$. We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression.
+    \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$ \sam{{( gamma turnstyle e => A backwards-turnstyle pokeball)}}. We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression. \sam{this is better, but match each sentence to the symbols you are describing, I've inlined an example}
 \end{itemize}
 
-Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm
+Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm \sam{.?}
 
 \newpage
 \input{sections/fig_subtype_inst}
 \newpage
 % \input{sections/fig_ctx_instance}
 
-\paragraph{Algorithmic Subtyping} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added rules for
+\paragraph{Algorithmic Subtyping} \sam{you need an example} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added rules for
 \begin{itemize}
     \item $Int \subtype Int$ and $Bool \subtype Bool$ trivially. 
     \item $(A_1, B_1) \subtype (A_2, B_2)$ if $A_1 \subtype A_2$ and $B_1 \subtype B_2$.
