@@ -5,78 +5,99 @@
 \newcommand{\lcalc}{$\lambda$-calculus}
 \newcommand{\lCalc}{$\lambda$-Calculus}
 \newcommand{\fto}{\rightarrow}
-The lambda calculus (\lcalc) was described by Alonzo Church in 1936~\cite{church1936unsolvable}. 
-\sam{too terse: what is the lamda calc? (model of computation). Why is it important / interesting to this project?}
-Below is a definition of the \lcalc~\cite{barendregt2013lambda}.
+The lambda calculus (\lcalc) was described by Alonzo Church in 1936~\cite{church1936unsolvable}. It is a universal model of computation, meaning we can implement any Turing machine using it, meaning we can compute any computable function using it \cite{Turing_1937}. The \lcalc\ is important because it provides a foundation for functional programming languages. Understanding the \lcalc\ is essential for understanding the principles behind these languages and how they evaluate expressions.
 
-\sam{you can't jump straight into this} 
-\begin{definition}[The \lcalc]
-    The set of $\lambda$-terms, notation $\Lambda$, is built up from an infinite set of variables $V={v,v',v'',...}$ \sam{here you say v, but below you use x} using application and (function) abstraction: \sam{functions? application? abstraction? what are these? I recommend getting Sarah to have a look a this BG to see what a non-PL person needs to know}
-    \begin{alignat*}{3}
-    &x \in V                 \quad && \implies \quad && x \in \Lambda\\
-    &M,N \in \Lambda         \quad && \implies \quad && (M N) \in \Lambda\\
-    &M \in \Lambda, x\in V   \quad && \implies \quad && (\lambda x. M) \in \Lambda 
-    \end{alignat*}
-    Using abstract syntax one may write the following:
-    
-    \begin{alignat*}{3}
-    &V       && ::= \; && v \mid V'\\
-    &\Lambda && ::= \; && V \mid (\Lambda\Lambda) \mid (\lambda V\Lambda)
-    \end{alignat*}
-    \sam{I dont think the way you have done variables is standard, i know you dont wanna plagurise, but this is such a basic thing that its better to cite where you got the AST from than tweek to get your own}
-\end{definition}
+The set of all lambda terms is $\Lambda$. Lambda calculus is built from three syntax structures:
+\begin{itemize}
+    \item Variables, selected from an infinite set of variables $V=\{x,y,z,\dots\}$
+    \item Abstractions, $\lambda x. M$ which are functions, where we `bind' a variable $x$ for use in the term $M$ such that when we apply our function to a term $N$, all instances of $x$ in $M$ are substituted with $N$.
+    \item Applications $M N$ where we apply a term $M$ to an argument $N$. 
+\end{itemize}
 
-We shall also use the following conventions:
+\noindent Below is a more formal definition of the \lcalc~\cite{barendregt2013lambda}.
+\begin{alignat*}{3}
+&x \in V                 \quad && \implies \quad && x \in \Lambda               \\
+&M,N \in \Lambda         \quad && \implies \quad && (M N) \in \Lambda           \\
+&M \in \Lambda, x\in V   \quad && \implies \quad && (\lambda x. M) \in \Lambda  
+\end{alignat*}
 
-\begin{definition}[The \lCalc\ Conventions]$\ $\vspace{-0.5cm}
-    \begin{enumerate}
-        \item \(x, y, z,...\) denote arbitrary variables.
-        \item We may omit outermost parenthesis.
-        \item Nested abstractions can be grouped. For instance, if we were to write the term $\lambda x \;y. M$, we would mean $(\lambda x . (\lambda\;y. M))$.
-        \item We assume that the body of an abstraction extends as far to the right as possible. For instance, the term $\lambda x. M\;N$ means $(\lambda x. (M\;N))$ and not $((\lambda x. M)\;N)$. \sam{is this case you have used the standard thing, but I'd cite where you got these conventions from}
-    \end{enumerate}
-\end{definition}
+\noindent We shall also use the following fairly standard conventions:
 
-\newcommand{\BetaReduce}{\rightarrow_\beta}
+\begin{enumerate}
+    \item Application is left associative. The term $M_1\,M_2\,M_3$ means $(M_1\,M_2)\,M_3$ and not $M_1\,(M_2\,M_3)$
+    \item Nested abstractions can be grouped: the term $\lambda x \;y. M$ means $(\lambda x . (\lambda\;y. M))$.
+    \item Outermost parenthesis are omitted.
+    \item The body of an abstraction extends as far to the right as possible: the term $\lambda x. M\,N$ means $(\lambda x. (M\;N))$ and not $((\lambda x. M)\,N)$. 
+\end{enumerate}
+
+\subsection{Free variables}
+\begin{quotation}
+\noindent`An occurrence of $x$ is free if it appears in a position where it is not bound by an enclosing abstraction on $x$' \cite{pierce2002types}
+\end{quotation}
+
+\noindent Free variables are a useful concept to express which variables are `ready for substitution' in a term. Formally, the function $FV(M)$ is the set of free variables in the term $M$ \cite{barendregt2013lambda}:
+\begin{alignat*}{3}
+FV(x)              \quad && = \quad && &\{x\}               \\
+FV(M\,N)           \quad && = \quad && &FV(M)\union FV(N)   \\
+FV(\lambda x. M)   \quad && = \quad && &FV(M)-\{x\}         \\
+\end{alignat*}
+
+\noindent A term is \textit{closed} if it has no free variables, and \textit{open} if it does. 
+
 \subsection{Reduction}
-The \lcalc\ is evaluated by $\beta$-reduction. This is where an abstraction is applied to a value. The result of applying an abstraction to a term is the body of the abstraction, with the all free \sam{what do you mean by free?} instances of the abstracted variable are substituted with the term the abstraction was applied to. Below is the definition of how this substitution works, followed by the definition of $\beta$-reduction. 
+\begin{quotation}
+\noindent`The sole means by which terms `compute' is the application of functions to arguments (which themselves are functions). Each step in the computation consists of rewriting an application whose left-hand component is an abstraction, by substituting the right-hand component for the bound variable in the abstraction's body' \cite{pierce2002types} 
+\end{quotation}
 
-\begin{definition}[Substitution of free variables in terms of the \lcalc]$\ $\vspace{-0.5cm}
-\begin{alignat*}{3}
-&x[x::=N]                           \quad && \equiv \quad && N\\
-&y[x::=N] \text{ where } y \ne x    \quad && \equiv \quad && y\\
-&(M_1 M_2)[x::=N]                   \quad && \equiv \quad && (M_1[x::=N]) (M_2[x::=N])\\
-&(\lambda y.M)[x::=N]                \quad && \equiv \quad && \lambda y.(M[x::=N])
+\noindent The \lcalc\ is evaluated by $\beta$-reduction. This is where an abstraction is applied to a value. The result of applying an abstraction to a term is the body of the abstraction, with the all free instances of the abstracted variable are substituted with the term the abstraction was applied to. Below is the definition of substitution within a term formally \cite{barendregt2013lambda}. 
+\noindent\begin{alignat*}{3}
+x[x:=N]                        \quad && \equiv \quad && &N                       \\
+y[x:=N] \text{ where } y \ne x \quad && \equiv \quad && &y                       \\
+(M_1 M_2)[x:=N]                \quad && \equiv \quad && &(M_1[x:=N]) (M_2[x:=N]) \\
+(\lambda y.M)[x:=N]            \quad && \equiv \quad && &\lambda y.(M[x:=N])     
 \end{alignat*}  
-\end{definition}
-
-\begin{definition}[$\beta$-Reduction of the \lcalc]$\ $\vspace{-0.5cm}
+\noindent The definition of $\beta$-reduction \cite{barendregt2013lambda}:
 \begin{alignat*}{3}
-&x                 \quad && \BetaReduce \quad &&        x\\
-&\lambda x.M       \quad && \BetaReduce \quad &&        \lambda x.M\\
-&(\lambda x.M) N   \quad && \BetaReduce \quad &&        M[x::=N]
-\end{alignat*}    
-\end{definition}
+x                 \quad && \BetaReduce \quad &&        &x           \\
+\lambda x.M       \quad && \BetaReduce \quad &&        &\lambda x.M \\
+(\lambda x.M) N   \quad && \BetaReduce \quad &&        &M[x:=N]
+\end{alignat*}
+A term is said to be in normal form if it cannot be $\beta$-reduced. A term that can be beta reduced can be said to be a \textit{redex} - reducible expression. The resulting term from reducing a redex is often called a contraction.
 
-\begin{definition}[Normal Form]
-A term is said to be in normal form if it cannot be $\beta$-reduced
-\end{definition}
+\subsection{Evaluation Strategies and Values}
+We often have a term where we have multiple options for $\beta$-reduction. In this section, we will briefly discuss three different strategies that inform which option is selected when evaluation: call-by-value (a.k.a. strict), call-by-name and call-by-need (a.k.a. lazy). I have used the same examples as Pierce \cite{pierce2002types}. For instance, the closed term 
+\[(\lam{x} x)\,((\lam{x} x)\,(\lam{z} (\lam{x}. x) z))\] has three redexes ($id$ is shorthand for $\lam{x} x$):
+\[\underline{id\,(id\,(\lam{z} (\lam{x}. x) z))}\]
+\[id\,\underline{(id\,(\lam{z} (\lam{x}. x) z))}\]
+\[id\,(id\,(\lam{z} \underline{(\lam{x}. x) z}))\]
 
-\sam{these are all standard, so you should cite where they come from and explain them. Spend more time on reduction, because that will be key later}
-\sam{this section is very dry. why do we want to learn about lambda calc? well we are writing an evaluator, so to understand what that means we need to understand syntax and evaluation, so lets looks at the lambda calc as a small example. It makes the intro of lambda calc more active and motivated, rather than a bunch of dry definitions, instead its a small example of what we will do later, that is background cos its pre-defined and not implemented we are just exploring the ideas we will implement}
+\noindent Most languages use the call-by-value evaluation strategy, where `only the outermost redexes are reduced and a redex is reduced only when its right-hand side has already been reduced to a value' \cite{pierce2002types}. This reduction strategy is also known as `strict'. Our chosen redex here would be number 2. 
+
+The call-by-name strategy is less restrictive. `The leftomost outermost redex is always reduced first \ldots and allows no reductions inside abstractions'. Our reduction sequence would look like this:
+
+% \sam{these are all standard, so you should cite where they come from and explain them. Spend more time on reduction, because that will be key later}
+% \sam{this section is very dry. why do we want to learn about lambda calc? well we are writing an evaluator, so to understand what that means we need to understand syntax and evaluation, so lets looks at the lambda calc as a small example. It makes the intro of lambda calc more active and motivated, rather than a bunch of dry definitions, instead its a small example of what we will do later, that is background cos its pre-defined and not implemented we are just exploring the ideas we will implement}
 
 \subsection{Types}
-\sam{para generally motivating types}
+If we were to extend our \lcalc\ with a new sort of term, an integer literal (something commonly done, especially when building up to discussing practical functional languages) \[\dots, -2, -1, 0, 1, 2, \dots\] we could say that these values are members of a set of values $Int$. 
 
-The \lcalc\ that we have discussed so far is untyped. This means that any $\lambda$ term can be applied to any other term. When a term can no longer be $\beta$-reduced (i.e. no further reductions are possible), we say it is a value. This is why $\beta$-reduction is often referred to as \textit{evaluation} — it is the process by which terms are reduced to their final, fully evaluated form (i.e. values).
+In this extended value of the lambda calculus, the set of valid values $V$ is:
+\[
+V ::= \lambda x. M \mid \dots \mid -2\mid -1\mid 0\mid 1\mid 2\mid \dots 
+\]
 
-\sam{i havent read further of lambda calc, cos i think my above advise applies here too. 1. you are burdened with too much knowledge so you keep jumping into the middle of an explanation 2. it is unclear why we are learning about types 3. remember lambda calc is a whole 3rd year course, and you've seen how long stevens notes are, we cannot replicate that so we need to highlight to the user what is important to understand about the lambda calc for just this project}
 
-If we were to extend our \lcalc\ with a new sort of term, an integer literal (something commonly done, especially when building up to discussing practical functional languages) \[\dots, -2, -1, 0, 1, 2, \dots\] we could say that these values are members of a set of values $Int$. It would be useful for us to be able to assert that a term eventually evaluates to one of these $Int$s. The \lcalc\ terms that evaluate to a value in the set of $Int$s can all be said to have `type' $Int$. More generally: 
 
+It would be useful for us to be able to assert that a term eventually evaluates to one of these $Int$s. The \lcalc\ terms that evaluate to a value in the set of $Int$s can all be said to have `type' $Int$. More generally: 
 \begin{quote}
-`Saying that `a term $t$ has type $T$' (or `$t$ belongs to $T$,' or `$t$ is an element of $T$') means that $t$ `obviously' evaluates to a value of the appropriate form - where by `obviously' we mean that we can see this statically, without doing any evaluation of $t$' \cite{pierce2002types}
+`Saying that `a term $t$ has type $T$' (or `$t$ belongs to $T$' or `$t$ is an element of $T$') means that $t$ `obviously' evaluates to a value of the appropriate form - where by `obviously' we mean that we can see this statically, without doing any evaluation of $t$' \cite{pierce2002types}
 \end{quote}
+
+The \lcalc\ that we have discussed so far is untyped. This means that any $\lambda$ term can be applied to any other term. 
+
+\noindent When a term can no longer be $\beta$-reduced (i.e. no further reductions are possible), we say it is a value. This is why $\beta$-reduction is often referred to as \textit{evaluation} — it is the process by which terms are reduced to their final, fully evaluated form (i.e. values).
+
+% \sam{i havent read further of lambda calc, cos i think my above advise applies here too. 1. you are burdened with too much knowledge so you keep jumping into the middle of an explanation 2. it is unclear why we are learning about types 3. remember lambda calc is a whole 3rd year course, and you've seen how long stevens notes are, we cannot replicate that so we need to highlight to the user what is important to understand about the lambda calc for just this project}
 
 \subsubsection{Functions}
 We want to be able to express the types of functions. The term \(\lambda x. x\) can be said to have type \(T \fto T\), as it takes in a term of type $T$ and returns the same term, which still has type $T$.
@@ -107,7 +128,7 @@ In general, \textbf{well typed programs do not go wrong} \cite{MILNER1978348}. T
 The system that looks at a program to decide whether it is well typed is called the \textbf{typechecker}. Types can often also be inferred without specific assignments, which is called \textbf{type inference}.
 
 \section{Haskell: A Functional Programming Language}
-\sam{why are we talking about Haskell? we need to talk about SFL!}
+\todo{Reduction in Haskell}
 Functional programming languages are programming languages where `computation is carried out entirely through the evaluation of expressions' \cite{hudak1989conceptionfunctionalprogranning}. Functional programming languages are based on the lambda calculus. In this section, we will only discuss one example: Haskell. 
 
 Haskell is a very prominent functional programming language that is widely taught. It is a programming language specifically designed to be suitable for teaching \cite{hudak2007history}. This dissertation involves the development of a programming language with some similar features to Haskell, so the corresponding Haskell features and ideas will be introduced here. 
@@ -240,7 +261,7 @@ Fortunately, the rust crate \verb|wasm-bindgen| provides macros that generate a 
 \label{bg:wasm-pack}
 
 \section{Existing systems}
-Below are the most relevant existing systems 
+Below are the most relevant existing systems for SFL explorer. 
 % https://dl.acm.org/doi/pdf/10.1145/1480828.1480845
 % lit review  in previous diss: https://research.ou.nl/ws/portalfiles/portal/31271878/Nicasi_K_IM9906_AF_SE_scriptie_PURE.pdf
 % \subsection{WinHIPE}
@@ -316,13 +337,13 @@ _f True (_f False _nil)
 \end{lstlisting}\\ \hline
 
     \end{tabular}
-    \caption{The output of evaluating the program shown \ref{bg:duet_foldr}. The beginning and end are shown, with the middle removed. }
+    \caption{The output of evaluating the program shown in Figure \ref{bg:duet_foldr}. The beginning and end are shown, with the middle removed. }
     \label{bg:duet_foldr_eval}
 \end{figure}
 
 \noindent When running Duet \cite{duet_hackage} on the program shown \ref{bg:duet_foldr}, we get a large block of text as output that shows the reduction or this program. This all happens at once, and we do not get the chance to pick reduction order. It is also quite hard to tell what is going on, as it is dumped as one block of text. The author, Chris Done, also hosts a website where one can try it out without installing it c \cite{duet_delta}. The website does not provide much in the way of a UI, it is a text box input and a text box output for running Duet programs.
 
-The main strong point of this project is the language. It is a solid subset of Haskell that includes many similar features to SFL. For this project, I did not draw direct inspiration from Duet or 
+The main strong point of this project is the language. It is a solid subset of Haskell that includes many similar features to SFL. For this project, I did not draw direct inspiration from Duet or Duet Delta. This was because even though I liked the subset of Haskell selected for Duet, I wanted to attempt to design a clearer language, and potentially break away from being a Haskell subset. Furthermore, Duet and Duet Delta focus on the language, not the UX/UI, whereas I wanted SFL explorer to be strong in both regards. 
 
 \subsection{$\lambda$-Lessons}
 \newcommand{\llessons}{$\lambda$-Lessons}
@@ -344,14 +365,14 @@ My particular favorite features of \llessons's UI are:
 \end{itemize}
 
 
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
     \includegraphics[width=0.75\linewidth]{images/LLessonsMap.png}
-    \caption{Evaluation of `\sflinline{map addOne [1, 2, 3, 4, 5]}' with \llessons}
+    \caption{Evaluation of\ `\sflinline{map addOne [1, 2, 3, 4, 5]}'\ with \llessons}
     \label{bg:llessons_ui}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[t]
     \centering
     \includegraphics[width=0.75\linewidth]{images/LLessonsGoingWrong.png}
     \caption{Evaluation of `\sflinline{map (plus 1) [1, 2, 3, 4, 5]}' with \llessons. It gets confused by currying and partial application}
@@ -370,6 +391,15 @@ The UX/UI is the definite strong point of \llessons (see \ref{bg:llessons_ui}). 
 \end{itemize} 
 
 In summary, \llessons\ is designed for a different purpose than SFL Explorer. It describes itself as a `document' \cite{lambdalessons} rather than a tool, which is an apt description as it is a document meant to teach one specific thing rather than to be an all around teaching tool for functional languages. It does not provide much of a capability to experiment yourself as the language is not very extensive. However, the ability to reduce an expression by clicking on the bit of the expression you want to reduce is very good, and inspiration should definitely be drawn for future work for SFL Explorer.  
+
+% \subsection{Other Notable Mentions}
+% Unfortunately, I do not have the page count to spare to go into detail about some of the other existing systems identified. Here are some of my favorites, along with a brief summary of their achievements. 
+
+% \begin{itemize}
+%     \item WinHIPE \cite{WinHIPE}
+% \end{itemize}
+
+% \subsection{Conclusion of Research on Existing Systems}
 
 
 % https://stevekrouse.github.io/hs.js/

@@ -27,3 +27,4 @@ redex-contraction
 zero-ary
 thoguhrougly
 fac
+WinHIPE

@@ -4,7 +4,7 @@ The main focus of this phase is to implement the next UI iteration, as well as t
 \section{Requirements Analysis}
 The motivations for this phase come mainly from the advanced focus group, however requirements from the \hyperref[sec:c1_autoethnography]{autoethnographic phase} of the project, as well as the \hyperref[eval:c1]{proof of concept client meeting} continue to be relevant. 
 
-The advanced focus group was generally very positive about the language, but they had many thought about the Proof of Concept UI they were presented with. During phase 2, I created a Figma prototype for the next UI (see \ref{c2:next_ui}). Many of their thoughts about the Proof of Concept UI were things that were already addressed with the new design. This prototype was presented to the advanced focus group, who much preferred it. The advanced focus group had no criticism of the new UI, so it should be implemented as designed for now. 
+The advanced focus group was generally very positive about the language, but they had many thoughts about the Proof of Concept UI they were presented with. During phase 2, I created a Figma prototype for the next UI (see \ref{c2:next_ui}). Many of their thoughts about the Proof of Concept UI were things that were already addressed with the new design. This prototype was presented to the advanced focus group, who much preferred it. The advanced focus group had no criticism of the new UI, so it should be implemented as designed for now. 
 
 The prototype for the new UI also included the functionality to `undo progress', by clicking on a previous program state in the table to make this the current version of the program. The advanced focus group appreciated this functionality. 
 
@@ -95,13 +95,10 @@ Undoing progress requires that previous \ac{AST} states must be stored. Before n
 The issue with dynamic allocation of memory for the \ac{AST}s as they are added to our history is that we no longer know exactly where they will be located, meaning this information must be stored such that it will not be erased between calls to \ac{WASM} library functions. One method of doing this is passing a pointer to where in memory the \ac{AST} is located to the JavaScript module so that it can refer to it later, and use library functions on it. At first glance, this sounds like a bad idea, as when pointers are returned from a function for which wasm-bindgen (see~\ref{bg:wasm-bindgen}) is used to make a JavaScript binding, the pointer is represented as a JavaScript $number$ type~\cite{wasm_bindgen_guide}, which is a double-precision IEEE-754 value~\cite{ecma262number}. Storing pointers as floating point values, and then attempting to dereference them, sounds like a recipe for memory mismanagement. However, this is safe because WebAssembly 2.0 has 32 (see~\ref{bg:wasm}), and thus has 32 bit pointers, and a double precision floating point number has a 52 bit~\cite{ieee754} mantissa meaning it can safely store the 32-bit memory location without issue. 
 
 In our JavaScript module, we can then store a stack of pointers to the \ac{AST}s, and display the options for reducing the one at the top. When an option is selected, we can apply the reduction and then store the new \ac{AST} on the top of our stack and recalculate reduction options. If the user decides to start evaluating a new program, all the \ac{AST}s with pointers in this list are freed to avoid memory leaks.
-\subsection{Major Bugfixes}
-\begin{itemize}
-    \item Typechecker
-\end{itemize}
 
 \section{The Intermediate Focus Group: Evaluation and Next Steps}
 \label{eval:IFG}
+The Intermediate focus group happened at the end of 
 Evaluation:
 - They liked explicit match: they liked it more than haskell for learning about how pattern matching works
 - Really Really needed light mode
