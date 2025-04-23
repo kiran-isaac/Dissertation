@@ -1,1 +1,20 @@
 \chapter{Phase 4 --- Further UI/UX Iteration}
+Phase 4 was the second shorter phase focusing on UI iteration. 
+
+\section{Requirements Analysis}
+This phase was limited by time, as the project was nearing its end. For this reason, this phase was mostly focused on fixing the high priority issues identified in the previous phase. This included adding a light mode, adding syntax highlighting, as well as fixing language and typechecker bugs. 
+
+At the end of this phase, I wanted to hold another focus group where Amos would give a lecture on functional programming, but this time to complete beginners. After a planning conversation with Amos at the beginning of Phase 4, we identified that it would be useful to add an `untyped mode' so the beginners could be taught the basics of \lcalc\ before trying to explain types, as they can be initially confusing. 
+
+\section{Design and Implementation}
+\subsection{Syntax Highlighting}
+In order to implement syntax highlighting, I found the source code for the `Haskell' syntax highlighting supported by the library I was using for my editor (\href{https://codemirror.net/5/}{CodeMirror 5}). I edited this with SFL's syntax and keywords. 
+
+\subsection{Light Mode, and the Settings Menu}
+The `light mode' colour scheme was designed by returning to the room where the Intermediate Focus Group was held on a day with similar amounts of sunshine, and testing different colours for visibility. The light mode scheme also had different syntax highlighting from dark mode. 
+
+To implement it, I added a floating settings menu with a button that would toggle from light mode to dark mode. This worked by adding or removing the class `light' from the top level HTML element, where all elements descending from this node would be in `light' mode if it was set. 
+
+A/B testing different schemes with some of my fellow undergraduates, as 
+
+The changes to the UI were time-consuming but not worth mentioning here. 
