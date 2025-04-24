@@ -13,12 +13,51 @@ In order to implement syntax highlighting, I found the source code for the `Hask
 \subsection{Light Mode, and the Settings Menu}
 The `light mode' colour scheme was designed by returning to the room where the Intermediate Focus Group was held on a day with similar amounts of sunshine, and testing different colours for visibility. The light mode scheme also had different syntax highlighting from dark mode. 
 
-To implement it, I added a floating settings menu with a button that would toggle from light mode to dark mode. This worked by adding or removing the class `light' from the top level HTML element, where all elements descending from this node would be in `light' mode if it was set. I also added a button for toggling `untyped mode', as well as toggling whether the prelude was included. These settings would be saved in the user's browser.
+To implement it, I added a floating settings menu with a button that would toggle from light mode to dark mode. This worked by adding or removing the class `light' from the top level HTML element, where all elements descending from this node would be in light mode if it was set. I also added a button for toggling `untyped mode', as well as toggling whether the prelude was included. These settings would be saved in the user's browser.
 
 Using CSS media queries, I was also able to tell the user's preference for light or dark mode from their browser, and use this by default unless the user chose otherwise. 
 
 \subsection{Bugfixes}
 \subsubsection{Frontend}
+
+\section{The Beginner Focus Group: Evaluation and Next Steps}
+\label{eval:BFG}
+\subsection{Selection and Format}
+This focus group had the same format as the intermediate focus group \ref{eval:IFG}; Amos was employed once more to give a 45-minute lecture, followed by a 45-minute interview. The full transcript of the lecture and interview is available in the additional materials \ref{appx:additional_mats}.
+
+The goals of this focus group was to evaluate the use of SFL explorer in a lecture setting with complete beginners, with a wide variety of different experiences and perspectives on programming. Crucially, I wanted none of them to have learnt about or used functional languages before. As such, I decided to recruit non Computer Scientists. Hoping to get a mix of more `practical' and more `theoretical' students, the four students I recruited were from the following disciplines:
+
+\begin{itemize}
+    \item A second year undergraduate Aerospace Engineer, with experience in Python
+    \item A third year undergraduate Mechanical Engineer, with experience in Python and C/C++
+    \item Two third year undergraduate Maths students, with experience in mostly Python and R
+\end{itemize}
+
+\subsection{Bugs}
+There was a bug where the type checker would not correctly follow type aliases, causing crashes in a program with type aliases. This was fixed afterwards. 
+
+\subsection{Outcomes}
+
+\subsubsection{The Language}
+Below is the summary of Amos's and the participants' thoughts about \ac{SFL}, along with timestamped quotes where appropriate.
+\paragraph{Amos}
+
+
+\paragraph{The Participants}
+
+\subsubsection{The User Interface, and the System as a Whole}
+
+\paragraph{Amos}
+
+\paragraph{The Participants}
+
+
+% The aims of this focus group were to use the system and attempt to recap functional programming concepts 
+
+% Evaluation:
+% - They liked explicit match: they liked it more than haskell for learning about how pattern matching works
+% - Really Really needed light mode
+% - Horizontal overflow bug
 
 % A/B testing different schemes with some of my fellow undergraduates, as 
 
