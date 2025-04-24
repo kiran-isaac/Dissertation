@@ -8,13 +8,18 @@ At the end of this phase, I wanted to hold another focus group where Amos would 
 
 \section{Design and Implementation}
 \subsection{Syntax Highlighting}
-In order to implement syntax highlighting, I found the source code for the `Haskell' syntax highlighting supported by the library I was using for my editor (\href{https://codemirror.net/5/}{CodeMirror 5}). I edited this with SFL's syntax and keywords. 
+In order to implement syntax highlighting, I found the source code for the `Haskell' syntax highlighting supported by the library I was using for my editor (\href{https://codemirror.net/5/}{CodeMirror 5}). I edited this with SFL's syntax and keywords. Syntax highlighting was also applied to the prelude to make it easier to read. 
 
 \subsection{Light Mode, and the Settings Menu}
 The `light mode' colour scheme was designed by returning to the room where the Intermediate Focus Group was held on a day with similar amounts of sunshine, and testing different colours for visibility. The light mode scheme also had different syntax highlighting from dark mode. 
 
-To implement it, I added a floating settings menu with a button that would toggle from light mode to dark mode. This worked by adding or removing the class `light' from the top level HTML element, where all elements descending from this node would be in `light' mode if it was set. 
+To implement it, I added a floating settings menu with a button that would toggle from light mode to dark mode. This worked by adding or removing the class `light' from the top level HTML element, where all elements descending from this node would be in `light' mode if it was set. I also added a button for toggling `untyped mode', as well as toggling whether the prelude was included. These settings would be saved in the user's browser.
 
-A/B testing different schemes with some of my fellow undergraduates, as 
+Using CSS media queries, I was also able to tell the user's preference for light or dark mode from their browser, and use this by default unless the user chose otherwise. 
 
-The changes to the UI were time-consuming but not worth mentioning here. 
+\subsection{Bugfixes}
+\subsubsection{Frontend}
+
+% A/B testing different schemes with some of my fellow undergraduates, as 
+
+% The changes to the UI were time-consuming but not worth mentioning here. 
