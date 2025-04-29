@@ -2,16 +2,29 @@
 \label{chap:conclusion}
 The aims of this project were to create a system to help to build an intuitive understanding of functional programming languages
 
+
 \section{Strengths}
+\subsection{The System is Useful, and Will be Used}
+As discussed previously \ref{c4:client}, my client will use this project in future in teaching \hyperref[COMS10016]{COMS10016}. Furthermore, she shared it with a teaching fellow who teaches Haskell at Imperial, who agreed that it is useful. 
+
 \subsection{The Language Achieves Its Design Aims}
-To remind the reader, the design aims for the language were:
+See \ref{design:goals} for the initial discussion of the design goals. 
 
-\begin{enumerate}
-    \item \textbf{It should be simple and easy to understand}. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand why they work. 
-    \item \textbf{It should be similar to existing functional languages}. This would allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work similarly). 
-    \item \textbf{It should be powerful enough to explain key concepts.}
-\end{enumerate}
+\paragraph{Design Aim 1: `It Should be Simple and Easy to Understand'}
+All three focus groups have supported the conclusion that the language is easy to understand. The advanced and intermediate focus groups appreciated the relatively small deviations from Haskell such as the explicit match expressions, and the small set of inbuilts. Indeed, one participant in the intermediate focus group said that they thought the explicit matching syntax was much easier to understand than Haskell's pattern matching, saying it was better for learning \ref{eval:IFG}. The beginner focus group also had little difficulty grasping the syntax and semantics of the language in a lecture context, however they would have found it harder without guidance. Sentiment was more divided about the fact that \sflinline{Cons} is not an infix operator
 
+
+\paragraph{Design Aim 2: `It Should be Similar to Existing Functional Languages'}
+Both the advanced and intermediate focus groups, both with participants that had been formally taught Haskell, had very little trouble understanding the language. 
+
+\paragraph{Design Aim 3: `It Should be Powerful Enough to Explain Key \ac{FP} Concepts'}
+Amos Holland used SFL explorer to explain key concepts to the intermediate \ref{eval:IFG} and beginner \ref{eval:BFG} focus groups. 
+
+\begin{quotation}
+\noindent `There are features of Haskell it doesn't have, but Haskell is a very advanced language. For teaching functional programming, I think it's got the right range of features'. Amos, During an interview after lecturing in the intermediate focus group
+\end{quotation}
+
+\noindent The language is also capable of doing everything that my client mentioned that she wanted to use such a system for (\ref{eval:c1_client}).
 
 
 \section{Limitations}
@@ -49,54 +62,44 @@ match (match (match (infiniteFrom 1) {
 \end{lstlisting}
 % \end{figure}
 
-The outer one comes from `sum', the middle one comes from `map', and the inner one comes from `range', all prelude functions. Unfortunately, this is only really solvable to an extent, as pattern matching is a key concept in functional programming languages. Furthermore, a conclusion of the intermediate focus group was that the explicit match syntax, where it was obvious where/how pattern matching was occurring, made understanding pattern matching much easier. Indeed, they agreed that they would have liked to have SFL to learn about pattern matching rather than Haskell (see \ref{eval:IFG}). 
+The outer one comes from `sum', the middle one comes from `map', and the inner one comes from `range', all prelude functions. Unfortunately, this is hard to avoid, as pattern matching is a key concept in functional programming languages. Furthermore, a conclusion of the intermediate focus group was that the explicit match syntax, where it was obvious where/how pattern matching was occurring, made understanding pattern matching much easier. Indeed, they agreed that they would have liked to have SFL to learn about pattern matching rather than Haskell (see \ref{eval:IFG}). 
 
 This situation could be improved by being able to select which functions we are interested in seeing the expansion of, and which ones we are not. See \ref{fw:function_checkboxes}
 
-\subsection{Further UI Iteration}
+\subsection{There is No Documentation}
+When designing the new UI (\ref{c2:next_ui}), I included buttons that would create help menus, and more information about the project, as well as instructions. However, these are time-consuming to write,
 
 \section{Future Work}
 \label{conc:future_work}
-\subsection{Add a New Help Menu}
-\subsection{Other Reduction Strategies}
-\subsection{Make Reduction Clearer in Free Choice Mode}
-\subsection{Selective Skipping}
+\paragraph{Add More Documentation to the Website} As the language is quite similar to Haskell, an advanced user would not have much trouble figuring out how the website works. This works fine for a lecture tool as the lecturer would be able to figure it out, the lack of documentation is detrimental to other users. 
+\paragraph{Other Evaluation Strategies}
+Users could have the option to pick the evaluation strategy (\ref{bg:eval_strategies}). 
+\paragraph{Improve Free Choice Mode}
+Inspiration could be taken from the UI used by \llessons\ (\ref{bg:llessons_ui}) where the expression to be evaluated could be selected by clicking on the input text itself. 
+\paragraph{Selective Skipping}
 \label{fw:function_checkboxes}
-We are not always interested in all the functions involved in our program. For instance, if a lecturer is attempting to demonstrate \verb|foldr| over a list, they may not be interested in the expansion of how \verb|range| works in order to generate their list they are going to fold over. They may want the evaluation of some things to be skipped over. This is something that I have considered doing from the start, however I have not had time to properly investigate how this could be done. 
+We are not always interested in all the functions involved in our program. For instance, if a lecturer is attempting to demonstrate \verb|foldr| over a list, they may not be interested in the expansion of how \verb|range| works in order to generate their list they are going to fold over. They may want the evaluation of some things to be `skipped'. 
 
-We could mark certain expressions as `uninteresting', and evaluate them as much as we can immediately. For instance, if the syntax for an uninteresting expression looked like `[e]':
+We could mark certain expressions as uninteresting, and evaluate them as much as we can immediately. For instance, if the syntax for an uninteresting expression looked like `[e]':
 
 \begin{lstlisting}[language=SFL]
 main :: Int 
 main = sum $ [range 1 4]
 \end{lstlisting}
 
-\noindent We could immediately evaluate `\lstinline[language=SFL]|range 1 4|' to `\lstinline[language=SFL]|Cons 1 (Cons 2 (Cons 3 Nil))|'. However, consider:
+\noindent We could fully evaluate `\lstinline[language=SFL]|range 1 4|' to `\lstinline[language=SFL]|Cons 1 (Cons 2 (Cons 3 Nil))|'. However, this could cause issues if the term does not evaluate. 
 
-\begin{lstlisting}[language=SFL]
-fix f = f $ fix f
+% \begin{lstlisting}[language=SFL]
+% fix f = f $ fix f
 
-id x = x
+% id x = x
 
-main = if true 1 [fix id]
-\end{lstlisting}
+% main = if true 1 [fix id]
+% \end{lstlisting}
 
-The evaluation of `\lstinline[language=SFL]|fix id|' will never terminate. If we were to attempt to evaluate this, it would run forever. If we were to provide a mechanism that forces full evaluation of a term, we would be providing functionality that the user could use to `shoot themselves in the foot'. This would need to be clearly communicated to the user, and a mechanism of stopping this evaluation should be provided if the user judges it has been too long. 
-
-\subsection{More Extensive User Testing}
-The agile approach taken during this project allowed for 5 different testing opportunities:
-\begin{itemize}
-    \item The Proof of Concept client meeting
-    \item The Advanced Focus group
-    \item The Intermediate Focus Group
-    \item The Beginner Focus Group
-    \item The final client meeting
-\end{itemize}
-
-However, the 
-
-\subsection{Extensions to the language}
+% The evaluation of `\lstinline[language=SFL]|fix id|' will never terminate. If we were to attempt to evaluate this, it would run forever. If we were to provide a mechanism that forces full evaluation of a term, we would be providing functionality that the user could use to `shoot themselves in the foot'. This would need to be clearly communicated to the user, and a mechanism of stopping this evaluation should be provided if the user judges it has been too long. 
 
 
 
-\subsection{Improvements to the UI}
+\paragraph{Extensions to the language}
+As suggested by Amos during the intermediate focus group (\ref{eval:IFG}) the language could be extended with typeclasses. 

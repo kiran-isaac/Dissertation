@@ -1,6 +1,4 @@
 \chapter{Phase 4 --- Further UI/UX Iteration}
-Phase 4 was the second shorter phase focusing on UI iteration. 
-
 \section{Requirements Analysis}
 This phase was limited by time, as the project was nearing its end. For this reason, this phase was mostly focused on fixing the high priority issues identified in the previous phase. This included adding a light mode, adding syntax highlighting, as well as fixing language and typechecker bugs. 
 
@@ -8,7 +6,7 @@ At the end of this phase, I wanted to hold another focus group where Amos would 
 
 \section{Design and Implementation}
 \subsection{Syntax Highlighting}
-In order to implement syntax highlighting, I found the source code for the `Haskell' syntax highlighting supported by the library I was using for my editor (\href{https://codemirror.net/5/}{CodeMirror 5}). I edited this with SFL's syntax and keywords. Syntax highlighting was also applied to the prelude to make it easier to read. 
+In order to implement syntax highlighting, I found the source code for the Haskell syntax highlighting supported by the library I was using for my editor (\href{https://codemirror.net/5/}{CodeMirror 5}). I edited this with SFL's syntax and keywords. Syntax highlighting was also applied to the prelude to make it easier to read. 
 
 \subsection{Light Mode, and the Settings Menu}
 The `light mode' colour scheme was designed by returning to the room where the Intermediate Focus Group was held on a day with similar amounts of sunshine, and testing different colours for visibility. The light mode scheme also had different syntax highlighting from dark mode. 
@@ -28,9 +26,9 @@ This focus group had the same format as the intermediate focus group \ref{eval:I
 The goals of this focus group was to evaluate the use of SFL explorer in a lecture setting with complete beginners, with a wide variety of different experiences and perspectives on programming. Crucially, I wanted none of them to have learnt about or used functional languages before. As such, I decided to recruit non Computer Scientists. Hoping to get a mix of more `practical' and more `theoretical' students, the four students I recruited were from the following disciplines:
 
 \begin{itemize}
-    \item A second year undergraduate Aerospace Engineer, with experience in Python
-    \item A third year undergraduate Mechanical Engineer, with experience in Python and C/C++
-    \item Two third year undergraduate Maths students, with experience in mostly Python and R
+    \item A second year undergraduate Mechanical and Aerospace Engineer from the University of Cambridge, with experience in Python
+    \item A third year undergraduate Mechanical Engineer from the University of Bristol, with experience in Python and C/C++
+    \item Two third year undergraduate Maths students from the University of Bristol, with experience in mostly Python and R
 \end{itemize}
 
 \subsection{Bugs}
@@ -39,18 +37,47 @@ There was a bug where the type checker would not correctly follow type aliases, 
 \subsection{Outcomes}
 
 \subsubsection{The Language}
-Below is the summary of Amos's and the participants' thoughts about \ac{SFL}, along with timestamped quotes where appropriate.
-\paragraph{Amos}
+Participant's did not have many comments on the language, as they had never seen a functional language before, so they couldn't really compare. 
 
+However, Participant 2, a Maths student, in particular seemed excited about functional programming as a concept:
+\begin{quotation}
+\noindent `It's cool to see a language that's like, I don't know, I feel like if I was going to do some maths in my head, this is how I'd actually do it' [Participant 2, 01:05:22]. 
+\end{quotation}
+\noindent Participant 2 also asked several questions about the history of functional programming, showing their engagement. 
 
-\paragraph{The Participants}
+Participant 1 was confused about the bar character used to separate cases in a match statement, as it was the same as the character used to separate tagged union variants. 
 
 \subsubsection{The User Interface, and the System as a Whole}
+Most of the feedback was positive, and users had no specific feedback on what they would like to see be changed in the system. 
 
-\paragraph{Amos}
+\begin{itemize}
+    \item Two participants said they preferred dark mode, but both agreed light mode is important to have.
+    
+    \item Free choice mode was very popular, with two participants specifically mentioning when asked for things they liked in the system. 
 
-\paragraph{The Participants}
+    \item Participant 3 really liked the interface, and found the session particularly interesting:
+    
+    `I really like the coding part and the sections on the right, in terms of seeing how it goes from one to another. I think that was really useful. In terms of learning it. Yeah. And the free choice variation. I also agree that it shows nicely what the functions are actually doing' [Participant 3, 01:03:11]
 
+    \item Participant 2, a Maths student, was very positive about the UI and the tool:
+    
+    `I think you've done a really good job of making it quite beginner-friendly because it's all quite easy to read' [Participant 2, 01:06:05]
+
+    \item `UX is very intuitive' [Participant 1, 01:12:07]
+\end{itemize}
+
+\section{The Final Client Meeting}
+\label{c4:client}
+\todo{This bit}
+After the beginner focus group, I met my client. This was at the end of the project
+
+My client liked my project, and shared it with Jamie Willis, a teaching fellow at Imperial College London, who is involved in their first year unit which includes functional programming \cite{imperialFP}. When my client asked about whether he would use it, he responded:
+
+\begin{quotation}
+\noindent `I could see it being useful for sure, a lot of the time I end up writing out these step-by-step reductions by hand in my notes, but it would be nice for them to have access to a tool they could use to explore for themselves'
+\end{quotation}
+
+% `Wait, is SFL your language? It was so good that i just assumed you had grabbed it from somewhere'
 
 % The aims of this focus group were to use the system and attempt to recap functional programming concepts 
 

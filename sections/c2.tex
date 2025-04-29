@@ -1,7 +1,7 @@
 \chapter{Phase 2 --- Types and Pattern Matching}
 In this phase, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated client-led approach. 
 
-\sam{dont bother changing this for this project, this is just advice for future: this section would read much better if for each proposed change you did: motivation for change, details of change, implementation of change, eval of change. Each per change. It reduces what the reader has to remember and stops you need to repeat yourself so much}
+% \sam{dont bother changing this for this project, this is just advice for future: this section would read much better if for each proposed change you did: motivation for change, details of change, implementation of change, eval of change. Each per change. It reduces what the reader has to remember and stops you need to repeat yourself so much}
 
 At the end of this phase, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the phase, 
 
@@ -17,13 +17,12 @@ This definition of lists is as example of a polymorphic data type. It also impli
 The focus of this project phase is mainly to upgrade the language SFL. We have already identified what features we would like to add the language. This section will go into detail about the design for the extension for the language enabling these new features. 
 \subsubsection{Type System}
 \label{sec:type_system_design}
-\sam{ive thought further about this, i still agree with what i said, but i think the reason this section suffers is that updates to the types needs to come LAST}
-\sam{this para could be much cleaner. If I am right, by this point we have established what is going to be added in this phase and why, this is just about noting how that will effect the type system. (if you want to keep your prose that reminds the reader what if being added and why, that is fine, but put it BEFORE you start talking about types) So the para could run: the extensions to the language, naturally led to extensions of the type system. Here is how each language extension needs supported by extensions to the type system: (use bullets if each extension only takes one or two lines, use paragaph formatting if its more like para) adding bools and ints - clearly Int and Bool types must also be added ...}
-If we are to effectively represent the type of expression containing integers and booleans, we must have types $Int$ and $Bool$. We also want our type system to be able to express functions, as our language support functions. 
-\sam{no new line}
-We also want polymorphism in our type system, as rewriting functions many times for different data types makes programs more verbose.  
+% \sam{ive thought further about this, i still agree with what i said, but i think the reason this section suffers is that updates to the types needs to come LAST}
+% \sam{this para could be much cleaner. If I am right, by this point we have established what is going to be added in this phase and why, this is just about noting how that will effect the type system. (if you want to keep your prose that reminds the reader what if being added and why, that is fine, but put it BEFORE you start talking about types) So the para could run: the extensions to the language, naturally led to extensions of the type system. Here is how each language extension needs supported by extensions to the type system: (use bullets if each extension only takes one or two lines, use paragaph formatting if its more like para) adding bools and ints - clearly Int and Bool types must also be added ...}
+If we are to effectively represent the type of expression containing integers and booleans, we must have types $Int$ and $Bool$. We also want our type system to be able to express functions, as our language support functions. We also want polymorphism in our type system, as rewriting functions many times for different data types makes programs more verbose.  
 
-\sam{clunky sentence}Allowing for algebraic user defined data types similarly to Haskell would make the language much more expressive and much more powerful, as well as bringing it closer to Haskell. Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
+% \sam{clunky sentence}
+Allowing for algebraic user defined data types similarly to Haskell would make the language much more expressive and much more powerful, as well as bringing it closer to Haskell. Supporting tagged unions and tuples in the \ac{SFL} type system would massively increase the ease of writing complex programs. It would also allow for complex data structures such as trees and lists. 
 
 Type names, as well as constructor names,  start with uppercase letters in Haskell. This allows them to be easily differentiated from type variables, as well as regular variables.
 
@@ -51,7 +50,7 @@ Figure \ref{fig:tc_types} shows the type system in SFL. Note that the definition
 % Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type, which can check that it is saturated before 
 
 \subsubsection{User Definable Algebraic Data Types}
-In Haskell, we can create algebraic types using the \sflinline{data} keyword (see \ref{bg:haskell_udt}). Replicating this syntax for \ac{SFL}'s user defined data types would be good\sam{is desirable because}, allowing people already familiar with Haskell to use the system, as well as viva versa. 
+In Haskell, we can create algebraic types using the \sflinline{data} keyword (see \ref{bg:haskell_udt}). Replicating this syntax for \ac{SFL}'s user defined data types is desirable because it would allow people already familiar with Haskell to use the system, as well as viva versa. 
 
 As an example, the SFL (and Haskell) data declaration:
 \begin{lstlisting}[language=SFL_unboxed_noprelude]
@@ -489,38 +488,38 @@ These people I selected for this focus group were the closest to `subject expert
 This focus group started with me briefly presenting SFL explorer. \ref{fig:screenshot_c2_end} shows how the system looked at this stage of the project. We also discussed the next UI iteration (see \ref{c2:next_ui}). 
 
 \subsection{Outcomes}
-Below is the summary of outcomes from the discussion with this focus group, along with timestamped quotes where appropriate. 
+Below is the summary of outcomes from the discussion with this focus groups. 
 
 \subsubsection{The Language}
 \paragraph{Positives:}
 \begin{itemize}
     \item They liked the explicit match statements, and did not want me to change to more Haskell-like pattern match syntax: 
     
-    `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [24:11]
+    `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [Participant 2, 24:11]
     \item They liked that \sflinline{Cons} was a prefix constructor rather than infix: 
     
     `I think it's good that Cons is a prefix, like a normal constructor, and not a colon or
-    something like that' [17:41]. 
+    something like that' [Participant 4, 17:41]. 
     \item Similarly, they liked the limited set of operators, and the fact that you cannot define your own: 
     
-    `I think if I was learning functional programming for the first time, I would really hope there aren't custom operators' [15:56]
+    `I think if I was learning functional programming for the first time, I would really hope there aren't custom operators' [Participant 3, 15:56]
     
-    `if I'm trying to learn functional programming, I don't think it helps me to be able to define, like, things that have different precedents. I think that distracts from learning how programs are reduced' [16:42]
+    `If I'm trying to learn functional programming, I don't think it helps me to be able to define, like, things that have different precedents. I think that distracts from learning how programs are reduced' [Participant 4, 16:42]
 \end{itemize}
 
 \paragraph{Negatives/Potential Improvements:}
 \label{ref:afg_ite} 
 Sentiment about the language was good, the only language specific issue was that they were confused about if-then-else syntax. They said it could be confusing to have the parser act differently for one specific function type. 
 
-`The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct' [42.55]
+`The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct' [Participant 2, 42.55]
 
 \subsubsection{The Existing User Interface, and the System as a Whole}
-\paragraph{Positives:}
-\begin{itemize}
-    \item They really appreciated its utility for what it was designed for. 
+\paragraph{Positives}
+They really appreciated its utility for what it was designed for. Most of what we discussed was potential improvements rather than positives of the proof of concept system, however they seemed engaged and excited despite not being explicitly positive about it, beyond this one comment:
     
-    `I think this is very good \ldots\ I wish I'd had this in the functional labs' [1:00:09]
-\end{itemize}
+\begin{quotation}
+\noindent `I think this is very good \ldots\ I wish I'd had this in the functional labs' [Participant 3, 1:00:09]
+\end{quotation} 
 
 \paragraph{Negatives/Potential Improvements:}
 \begin{itemize}

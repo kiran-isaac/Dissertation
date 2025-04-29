@@ -65,6 +65,7 @@ FV(\lambda x. M)   \quad && = \quad && &FV(M)-\{x\}         \\
 A term is said to be in \textbf{normal form} if it cannot be $\beta$-reduced. A term that can be beta reduced can be said to be a \textbf{redex} - reducible expression. The resulting term from reducing a redex is often called a \textbf{contraction}.
 
 \subsection{Evaluation Strategies and Values}
+\label{bg:eval_strategies}
 We often have a term where we have multiple options for $\beta$-reduction. In this section, we will briefly discuss three different evaluation strategies that inform which option is selected when evaluation: call-by-value (a.k.a. strict), call-by-name and call-by-need (a.k.a. lazy). When a term is fully reduced under a given evaluation strategy, we say it is a value. I have used the same examples as Pierce \cite{pierce2002types}. For instance, the closed term 
 \[(\lam{x} x)\,((\lam{x} x)\,(\lam{z} (\lam{x}. x) z))\] has three redexes ($id$ is shorthand for $\lam{x} x$):
 \[\underline{id\,(id\,(\lam{z} id\,z))}\]
@@ -343,6 +344,7 @@ The main strong point of this project is the language. It is a solid subset of H
 
 \subsection{$\lambda$-Lessons}
 \newcommand{\llessons}{$\lambda$-Lessons}
+\label{bg:llessons}
 
 \llessons\ is a website created by Jan Paul Posma and Steve Krouse at YC Hacks '14 \cite{lambdalessons}. It is a very effective demonstration of `map', `foldr' and `foldl:
 
