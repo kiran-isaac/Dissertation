@@ -41,76 +41,7 @@ To parse a pattern, we may use the same techniques as parsing an expression, wit
     \end{itemize}
 \end{itemize}
 
-\subsection{Type Assignment and Definition Parsing}
-We must also be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a|, or \verb|data a|). Parsing both of these things require the ability to parse type expressions. 
 
-\subsubsection{Parsing Type Expressions}
-Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. The algorithm for parsing a primary is as follows:
-
-\paragraph{Parsing Type Expression Primaries}
-\begin{verbatim}
-function parse_type_expression_primary(bound_type_variables, type_table) {
-    next_token = consume()
-    match (next_token) {
-        case lowercase_id {
-            name = next_token.value
-            if bound_type_variables exists {
-                if !bound_type_variables.contains(name) {Error}
-            }
-            return TypeVariable(name)
-        }
-        case uppercase_id {
-            name = next_token.value
-            if type_table.contains(name) {
-                return type_table.get(name)
-            } else {Error}
-        }
-        case left_paren {
-            return parse_type_expression(bound_type_variables, type_table)
-        }
-        otherwise Error
-    }
-}
-\end{verbatim}
-\paragraph{Parsing Type Expressions}
-
-\subsubsection{Parsing Type Alias Definitions} 
-We may wish to add another name that a type can be known by. For instance, we may wish to define `\verb|String|' as a list of characters, so that we may reference it easier. A type alias declaration consists of:
-\begin{itemize}
-    \item The `\verb|type|' keyword
-    \item The name of the alias
-    \item The assignment operator ($=$)
-    \item The type expression
-\end{itemize}
-The function that produces type aliases returns a `\verb|Type::Alias(String, Box<Type>)|'. The reason we do not want to simply rename all references to the alias name to the type in question is that this would make type errors more obscure, and harder for users to understand the error with reference to the original program.
-
-\subsubsection{Parsing Data Declaration} 
-As discussed in [REFHERE: Language Design], we want to be able to define and parse \verb|data| declarations. A \verb|data| deceleration consists of: 
-\begin{itemize}
-    \item The `\verb|data|' keyword
-    \item The name of the type (uppercase ID)
-    \item The assignment operator (=)
-    \item A set of constructors separated by \(\mid\). Constructor definitions consist of the following. 
-        \begin{itemize}
-            \item The name of the constructor
-            \item Zero or more type expressions, representing what types the constructor can be applied to.
-        \end{itemize}
-\end{itemize}
-
-An example definition is: `\verb!data Either a b = Left a | Right b!'. The information that should be extracted from here is:
-\begin{itemize}
-    \item `\verb|Either|' is a type constructor with a kind of \(*\rightarrow* \rightarrow *\). As we have no higher kinded types, this can simply be stored as a number representing the arity of the type constructor. In this case, the arity is 2.
-    \item The constructors and their types are:
-    \begin{itemize}
-        \item `\verb|Left|': \(\forall a\;b.a\rightarrow Either\;a\;b\)
-        \item `\verb|Nil|': \(\forall a\;b.b\rightarrow Either\;a\;b\)
-    \end{itemize}
-\end{itemize}
-We must store the type name and its arity in the `Type Table', and all constructors in the `Label Table'. 
-
-In order to parse the type constructor definition, we continually expect a lowercase identifier token until we reach the assignment operator `\verb|=|'. The lowercase identifiers declared are passed to the functions that parse constructors so that we can enforce that all of the type variables used in the constructor parsing are `in scope'. We also do this to make sure that the variables are correct, and in the correct order in the constructor definitions. 
-
-Parsing constructors is not complex, as we have already implemented the mechanism for parsing type expressions. We simply keep parsing expressions until either the constructor separator ($\mid$) or a newline is reached. When parsing the type expression, we expect only valid concrete types in the Type Table, or valid in scope type variables from the type constructor definition. We then produce a type from the types of the arguments in order, so `\verb|ConstructorName expr1 expr2 expr3|' results in the type `\(expr1  \rightarrow expr2 \rightarrow expr3 \rightarrow  TypeName\)', with all of the free type variables lifted to the start of the type into a series of nested `\verb|Type::Forall|'s.
 
 \subsection{Module Parsing}
 

@@ -18,7 +18,7 @@ The prototype for the new UI also included the functionality to `undo progress',
 Implementing the new UI mostly consisted of time-consuming React and CSS tweaks which are not worth mentioning here. However, there were some more challenging aspects that required some more interesting considerations and changes to be made. Screenshots of the result of implementing the new UI with these features is shown in \ref{screenshot:phase3_end_lazy}, with another example showing free choice evaluation in the appendix \ref{screenshot:phase3_end_free}. 
 
 
-\subsubsection{Diff}
+\subsection{Diff}
 \label{paragraph:diff} 
 Our frontend requires the ability to see what has changed between two program states. Highlighting these changes make understanding the changes in the users program in the frontend easier. This function generates the strings for the two trees simultaneously, producing the similarities and differences. If two nodes are different structures, then we turn them into strings and regard them as differences. However, if two nodes are the same structure, we identify what parts of that structure are similarities and what parts are differences. For instance, if the algorithm is called on an application, we generate the diff for the function and for the argument separately, and then concatenate the diffs. \ref{fig:diff_list} shows a subsection of this algorithm, showing how it works for IDs, Literals and Pairs. 
 
@@ -27,7 +27,7 @@ Our frontend requires the ability to see what has changed between two program st
 % \subsubsection{Display RC history}
 % We also wish to         
 
-\subsubsection{Reduction Messages}
+\subsection{Reduction Messages}
 Rather than presenting the user with simply the before and after of the reduction, this design calls for presenting the user with a message describing what will happen. While generating the options for reduction (see \ref{c1_design_reduction_progress}), we can keep track of information relevant to how it was generated to inform the message displayed. For instance, if a reduction is generated from the application of a named function with name A to two arguments B, C, we can convert those arguments to strings and then broadcast the message `Applied function A to B and C'. 
 
 If B or C are large pieces of syntax, this may generate a very large unintelligible string. To solve this, we can modify our stringification algorithm to do certain things different to normal:
@@ -38,7 +38,7 @@ If B or C are large pieces of syntax, this may generate a very large unintelligi
 
 In past iterations, redex-contraction pairs were passed to the front end as two strings. We can make it three strings instead, where one of the strings is the reduction message which can be displayed before the reduction. The other two strings, the redex and contraction, can be displayed after the reduction in the history. 
 
-\subsubsection{Revert Progress Functionality}
+\subsection{Revert Progress Functionality}
 We may wish to undo progress. This was functionality designed into the new UI that the advanced focus group specifically mentioned liking. 
 
 Undoing progress requires that previous \ac{AST} states must be stored. Before now, the most recent \ac{AST} state was stored at a known memory address so any of the functions in the binary could know where to find it. This was done to avoid having to pass the \ac{AST} to the JavaScript module. If we wanted to store the history of all \ac{AST}s, one approach could be to store all the \ac{AST}s in a pre-allocated memory region in a stack, and then allow the JavaScript module to refer to each of the \ac{AST}s in the history by their stack index. However, pre-allocating enough memory for any potential program execution logs would be misguided, as it would cause accessibility problems for computers with less memory. Instead, we should employ dynamic allocation. 

@@ -62,9 +62,9 @@ FV(\lambda x. M)   \quad && = \quad && &FV(M)-\{x\}         \\
 &\lambda x.M       \quad && \BetaReduce \quad &&        \lambda x.M \\
 &(\lambda x.M) N   \quad && \BetaReduce \quad &&        M[x:=N]
 \end{alignat*}
-A term is said to be in \textbf{normal form} if it cannot be $\beta$-reduced. A term that can be beta reduced can be said to be a \textbf{redex} - reducible expression. The resulting term from reducing a redex is often called a \textbf{contraction}.
+A term is said to be in \textbf{normal form} if it cannot be $\beta$-reduced. A term that can be beta reduced can be said to be a \textbf{redex}; a reducible expression. The resulting term from reducing a redex is often called a \textbf{contraction}.
 
-\subsection{Evaluation Strategies and Values}
+\subsection{Reduction, Evaluation Strategies and Values}
 \label{bg:eval_strategies}
 We often have a term where we have multiple options for $\beta$-reduction. In this section, we will briefly discuss three different evaluation strategies that inform which option is selected when evaluation: call-by-value (a.k.a. strict), call-by-name and call-by-need (a.k.a. lazy). When a term is fully reduced under a given evaluation strategy, we say it is a value. I have used the same examples as Pierce \cite{pierce2002types}. For instance, the closed term 
 \[(\lam{x} x)\,((\lam{x} x)\,(\lam{z} (\lam{x}. x) z))\] has three redexes ($id$ is shorthand for $\lam{x} x$):
@@ -85,7 +85,7 @@ id\,\underline{(id\,(\lam{z} id z))}  && \;\;\arr\\
 (\underline{id\,(\lam{z} id z)})      && \;\;\arr\\ 
 (\lam{z} id z)                        && \;\;\\ 
 \end{alignat*}
-\noindent \textbf{Call-by-need} is similar to call by name but with sharing. This means we `overwrite all occurrences of an argument with the value the first time it is evaluated' \cite{pierce2002types}. Only abstractions are valid values once again. This is an optimization of call-by-name that is known as lazy evaluation. It is used by many functional languages including Haskell, and is of particular importance to SFL explorer. 
+\noindent \textbf{Call-by-need} is similar to call by name but with sharing. This means we `overwrite all occurrences of an argument with the value the first time it is evaluated' \cite{pierce2002types}. Only abstractions are valid values once again. This is an optimization of call-by-name that is known as lazy evaluation. It is used by many functional languages including Haskell, and is of particular importance to SFL explorer. In this case, our reduction order would be the same as \textbf{call-by-name}. 
 
 % \sam{these are all standard, so you should cite where they come from and explain them. Spend more time on reduction, because that will be key later}
 % \sam{this section is very dry. why do we want to learn about lambda calc? well we are writing an evaluator, so to understand what that means we need to understand syntax and evaluation, so lets looks at the lambda calc as a small example. It makes the intro of lambda calc more active and motivated, rather than a bunch of dry definitions, instead its a small example of what we will do later, that is background cos its pre-defined and not implemented we are just exploring the ideas we will implement}

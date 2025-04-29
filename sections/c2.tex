@@ -136,50 +136,6 @@ This design was meant to be a work in progress, but it looks quite similar to th
 \todo{Design principle: simplicity, speed, minimalism, feeling like vscode.}
 
 \section{Implementation}
-\subsection{Parser Changes}
-We must make some changes to the parser to include these new features.
-
-\subsubsection{Parsing Match Statements}
-An example of using a match statement follows:
-\sam{here it feels like you are trying to mix up the way you introduce code so it is not always the same, but instead you have just ended up with a weird sounding sentence. It doesnt matter if introducing code uses the same phrasing, as long as it is clear.}
-\sam{more writing advice: only spend effort on nice writing for what is important. Introducing code not important, just do the basic thing. Biggest most complicated thing in your thesis is what deserves all your word choice and imagery. If you do this, it is also clear to the reader what is important: it is what you have spent your time on}
-\begin{lstlisting}[language=SFL]
-lengthIsAtLeast2 list = match list {
-  | Cons x (Cons y xs) -> true
-  | _ => false
-}
-\end{lstlisting}
-
-The algorithm used for parsing match statements is:
-\begin{enumerate}
-    \item Consume the `match' keyword \sam{formatting bug bear: full stops at the end of bullets (all my bug bears are for things that make your work look unfinished / rushed)}
-    \item Parse the expression matched over
-    \item Consume an open brace
-    \item While the next token isn't a close brace: \begin{enumerate}
-        \item Consume bar `|' 
-        \item Parse a pattern (\ref{impl:parsing_patterns})
-        \item Consume a right arrow
-        \item Parse an expression
-    \end{enumerate}
-    \item Consume a close brace \sam{make this list a figure so it doesnt get interupted}
-\end{enumerate}
-Following this, a match node is created, where the \verb|children| vector is set appropriately with the pattern and expressions.
-\sam{here is an example of what I'm going to call a ghost sentence: one with no subject. "is created" by who? who is the subject of the sentence? Potential fixes: "This creates a match node...", "Using this algorithm, the parser creates..."}
-
-\paragraph{Patterns}
-\label{impl:parsing_patterns}
-A pattern must not contain anything that can be reduced. It would be nonsensical to have a situation where we had a pattern not in normal form such as \verb|1 + 1| and the expression to be matched was \verb|2|. 
-
-To parse a pattern, we may use the same techniques as parsing an expression, with a few differences:
-\begin{itemize}
-    \item Disallowing abstractions and match statements
-    \item Identifiers must be either
-    \begin{itemize}
-        \item Unbound lowercase variables
-        \item Underscore (\verb|_|) representing a wildcard pattern
-        \item A bound uppercase variable (a constructor)
-    \end{itemize}
-\end{itemize}
 
 \subsection{Types}
 
@@ -227,6 +183,75 @@ Below are a selection of the more important or interesting methods implemented o
 \paragraph{Substitution of type variables} \sam{it is annoying that para has the same formatting as subsubsection, if you have spare time, id change that as it makes reading harder}We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
 
 \paragraph{To String} We will frequently wish to display types as strings for debugging purposes. 
+\subsection{Type Assignment and Definition Parsing}
+We must also be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a|, or \verb|data a|). Parsing both of these things require the ability to parse type expressions. 
+
+\subsubsection{Parsing Type Expressions}
+Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. The algorithm for parsing a primary is as follows:
+
+\paragraph{Parsing Type Expression Primaries}
+\begin{verbatim}
+function parse_type_expression_primary(bound_type_variables, type_table) {
+    next_token = consume()
+    match (next_token) {
+        case lowercase_id {
+            name = next_token.value
+            if bound_type_variables exists {
+                if !bound_type_variables.contains(name) {Error}
+            }
+            return TypeVariable(name)
+        }
+        case uppercase_id {
+            name = next_token.value
+            if type_table.contains(name) {
+                return type_table.get(name)
+            } else {Error}
+        }
+        case left_paren {
+            return parse_type_expression(bound_type_variables, type_table)
+        }
+        otherwise Error
+    }
+}
+\end{verbatim}
+
+\subsubsection{Parsing Type Alias Definitions} 
+We may wish to add another name that a type can be known by. For instance, we may wish to define `\verb|String|' as a list of characters, so that we may reference it easier. A type alias declaration consists of:
+\begin{itemize}
+    \item The `\verb|type|' keyword
+    \item The name of the alias
+    \item The assignment operator ($=$)
+    \item The type expression
+\end{itemize}
+The function that produces type aliases returns a `\verb|Type::Alias(String, Box<Type>)|'. The reason we do not want to simply rename all references to the alias name to the type in question is that this would make type errors more obscure, and harder for users to understand the error with reference to the original program.
+
+\subsubsection{Parsing Data Declaration} 
+As discussed in [REFHERE: Language Design], we want to be able to define and parse \verb|data| declarations. A \verb|data| deceleration consists of: 
+\begin{itemize}
+    \item The `\verb|data|' keyword
+    \item The name of the type (uppercase ID)
+    \item The assignment operator (=)
+    \item A set of constructors separated by \(\mid\). Constructor definitions consist of the following. 
+        \begin{itemize}
+            \item The name of the constructor
+            \item Zero or more type expressions, representing what types the constructor can be applied to.
+        \end{itemize}
+\end{itemize}
+
+An example definition is: `\verb!data Either a b = Left a | Right b!'. The information that should be extracted from here is:
+\begin{itemize}
+    \item `\verb|Either|' is a type constructor with a kind of \(*\rightarrow* \rightarrow *\). As we have no higher kinded types, this can simply be stored as a number representing the arity of the type constructor. In this case, the arity is 2.
+    \item The constructors and their types are:
+    \begin{itemize}
+        \item `\verb|Left|': \(\forall a\;b.a\rightarrow Either\;a\;b\)
+        \item `\verb|Nil|': \(\forall a\;b.b\rightarrow Either\;a\;b\)
+    \end{itemize}
+\end{itemize}
+We must store the type name and its arity in the `Type Table', and all constructors in the `Label Table'. 
+
+In order to parse the type constructor definition, we continually expect a lowercase identifier token until we reach the assignment operator `\verb|=|'. The lowercase identifiers declared are passed to the functions that parse constructors so that we can enforce that all of the type variables used in the constructor parsing are `in scope'. We also do this to make sure that the variables are correct, and in the correct order in the constructor definitions. 
+
+Parsing constructors is not complex, as we have already implemented the mechanism for parsing type expressions. We simply keep parsing expressions until either the constructor separator ($\mid$) or a newline is reached. When parsing the type expression, we expect only valid concrete types in the Type Table, or valid in scope type variables from the type constructor definition. We then produce a type from the types of the arguments in order, so `\verb|ConstructorName expr1 expr2 expr3|' results in the type `\(expr1  \rightarrow expr2 \rightarrow expr3 \rightarrow  TypeName\)', with all of the free type variables lifted to the start of the type into a series of nested `\verb|Type::Forall|'s.
 
 \newpage
 \subsection{The Type Checker}
@@ -234,19 +259,15 @@ The type checker will be bidirectional, and will follow an algorithm largely bas
 \begin{quote}
 `Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability \ldots its error reporting, and its relative ease of implementation' \cite{completebidir}
 \end{quote}
-\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. After running the algorithm by hand to convince myself the algorithm works on checking ($\lambda x. x$) \sam{this is not interesting. Remember atm we are reporting about the work, not you doing the work. What you can do is run through that example now with the reader, now that would be relevant and helpful} against type $\forall a.a\fto a$, I modified their algorithm to add my extra types (the inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs). This does not include assignment and modules as these are not part of expression syntax. 
+\noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. I modified their algorithm to add my extra types (the inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs). This does not include assignment and modules as these are not part of expression syntax. 
 
 \input{sections/fig_types_ctx}
 
 % The full typechecking algorithm is listed in figures \ref{fig:alg-subtyping}, \ref{fig:instantiation}, \ref{fig:alg-typing}. 
 
-\noindent Below I will describe the typechecking algorithm, focusing on my additions/changes. Appendix \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. 
-\sam{please run a small example inline here}
-\sam{you cannot rely on readers looking at your appendix}
-\sam{now i have read the appendix, It is excellent!!! just move that. Its so much clearer and its not dry cos we gave a goal and it nicely guides me through}
 
 \paragraph{Hole notation}
-\sam{you have not prepared the reader for this extract, I'll inline my questions to illustrate}
+% \sam{you have not prepared the reader for this extract, I'll inline my questions to illustrate}
 Below is a paragraph from the original paper \cite{completebidir} explaining `hole notation' in contexts, which is used throughout the algorithm descriptions in \ref{fig:alg-typing}, \ref{fig:alg-subtyping} and \ref{fig:instantiation}. 
 \begin{quote}
 `Since we will manipulate contexts not only by appending declarations \dots but by inserting and replacing declarations in the middle, a notation for contexts with a hole is useful:
@@ -254,14 +275,14 @@ Below is a paragraph from the original paper \cite{completebidir} explaining `ho
 \begin{displ}
   `$\Gamma = \Gamma_0[\Theta]$~~~means $\Gamma$ has the form $(\Gamma_L, \Theta, \Gamma_R)$
 \end{displ}
-\sam{where does $\Gamma_0$ go? where do $\Gamma_L$ and $\Gamma_R$ come from?}
+% \sam{where does $\Gamma_0$ go? where do $\Gamma_L$ and $\Gamma_R$ come from?}
 For example, if $\Gamma = \Gamma_0[\bhat] = (\ahat, \bhat, x : \bhat)$,
 then $\Gamma_0[\hypeq{\bhat}{\ahat}] = (\ahat, \hypeq{\bhat}{\ahat}, x : \bhat)$
-\sam{what is $\hypeq{\bhat}{\ahat}$ why are there two $\bhat$}
+% \sam{what is $\hypeq{\bhat}{\ahat}$ why are there two $\bhat$}
 \newline\dots\newline
-\sam{...?}
-\sam{this is the most complex thing so far, here is where you need to spend your time, and start with an example}
-\sam{yes you are building on prev work, so your extensions are of most interest, but i cant appreciate them if i dont understand the base algo, also you must demo that you know the base algo}
+% \sam{...?}
+% \sam{this is the most complex thing so far, here is where you need to spend your time, and start with an example}
+% \sam{yes you are building on prev work, so your extensions are of most interest, but i cant appreciate them if i dont understand the base algo, also you must demo that you know the base algo}
 Occasionally, we also need contexts with \emph{two} ordered holes:
 \begin{displ}
   $\Gamma = \Gamma_0[\Theta_1][\Theta_2]$
@@ -270,44 +291,232 @@ Occasionally, we also need contexts with \emph{two} ordered holes:
 \end{displ}
 \end{quote}
 
-\pagebreak
-\input{sections/fig_tc_rules}
+\noindent Below I will describe the typechecking algorithm, focusing on my additions/changes. Appendix \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. 
+% \sam{please run a small example inline here}
+% \sam{you cannot rely on readers looking at your appendix}
+% \sam{now i have read the appendix, It is excellent!!! just move that. Its so much clearer and its not dry cos we gave a goal and it nicely guides me through}
 
-\paragraph{Algorithmic Type Checking and Synthesis} Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. \sam{questions the reader might have: but how is this an algo? they are sequences of steps? What is all this notation? I've never seen the backwards turnstyle before or the backward implication. This should be walked thorugh in prose, you should not expect me to spend ages looking at the figure figuring it out. You are the writer, guide me}The rule I added are: \sam{say in the prose that they are highlighted. I think the way you use captions is weird. It reads as if your expectation upon someone reading "figure bla" is that they immediately read the caption of figure  bla, but i dont. I stick with the prose hoping to be guided through my viewing of the figure, especially such a complex one.}
+\subsubsection{Algorithmic Type Checking and Synthesis}
+\begin{figure*}[t]
+    \begin{minipage}{1\textwidth}
+    \judgbox{\chkjudg{\Gamma}{e}{A}{\Delta}}%
+    {Under input context $\Gamma$, $e$ checks against input type $A$, 
+    with output context $\Delta$} \\[1ex]
+ \judgbox{\synjudg{\Gamma}{e}{A}{\Delta}}%
+    {Under input context $\Gamma$, $e$ synthesizes output type $A$,
+      with output context $\Delta$} \\[0.5ex]
+ \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
+    {Under input context $\Gamma$, applying a function of type $A$ to $e$ synthesizes type $C$, \\ with output context $\Delta$} \\
+    \end{minipage}
+    \noindent\rule{\textwidth}{0.4pt}
+    \caption{Checking and Synthesis rule formatting as described by Dunfield and Krishnaswami \cite{completebidir}}
+\end{figure*}
+
+Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. The rule I added are: 
+%\sam{questions the reader might have: but how is this an algo? they are sequences of steps? What is all this notation? I've never seen the backwards turnstyle before or the backward implication. This should be walked thorugh in prose, you should not expect me to spend ages looking at the figure figuring it out. You are the writer, guide me}
+%\sam{say in the prose that they are highlighted. I think the way you use captions is weird. It reads as if your expectation upon someone reading "figure bla" is that they immediately read the caption of figure  bla, but i dont. I stick with the prose hoping to be guided through my viewing of the figure, especially such a complex one.}
 \begin{itemize}
-    \item Checking and synthesizing rules for $Int$s and $Bool$s: An int literal synthesizes the type $Int$, and checks against the type $Int$ etc. \sam{there is a way to reference rules, which might be nice here}
+    \item Checking and synthesizing rules for $Int$s and $Bool$s: An int literal synthesizes the type $Int$, and checks against the type $Int$ etc. 
+    %\sam{there is a way to reference rules, which might be nice here}
     \item Checking and synthesis rules for pairs
     \begin{itemize}
-        \item A pair $(e_1, e_2) \chk (A, B)$ if $e_1 \chk A$ and $e_2 \chk B$
-        \item If $e_1 \syn A$ and $e_2 \syn B$ then $(e_1, e_2) \syn (A, B)$ \sam{use prose not the notation that ive just met}
+        \item A pair $(e_1, e_2)$ checks against type $(A, B)$ if $e_1$ checks against $A$ and $e_2$ checks against $B$. 
+        \item If $e_1$ synthesizes type $A$ and $e_2$ synthesizes type $B$ then $(e_1, e_2)$ synthesises $(A, B)$
     \end{itemize}
-    \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$ \sam{{( gamma turnstyle e => A backwards-turnstyle pokeball)}}. We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression. \sam{this is better, but match each sentence to the symbols you are describing, I've inlined an example}
+    \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$ (\synjudg{\Gamma}{e}{A}{\Delta}). We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression. 
+    % \sam{this is better, but match each sentence to the symbols you are describing, I've inlined an example}
 \end{itemize}
 
-Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm \sam{.?}
+Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm.
 
-\newpage
-\input{sections/fig_subtype_inst}
-\newpage
-% \input{sections/fig_ctx_instance}
-
-\paragraph{Algorithmic Subtyping} \sam{you need an example} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added rules for
+\subsubsection{Algorithmic Subtyping} \sam{you need an example} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added rules for
 \begin{itemize}
     \item $Int \subtype Int$ and $Bool \subtype Bool$ trivially. 
     \item $(A_1, B_1) \subtype (A_2, B_2)$ if $A_1 \subtype A_2$ and $B_1 \subtype B_2$.
     \item The union with name $N_1$ and arguments $A_1 \dots A_n$ is a subtype of a union with name $N_2$ and arguments $B_1 \dots B_n$ is a subtype, if the names are the same as the names uniquely identify these types, as well as all the constituent types being subtypes of each other. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression.
 \end{itemize}
 
-\paragraph{Context Instantiation} 
+\subsubsection{Context Instantiation} 
 Figure \ref{fig:instantiation} shows the special subtyping rules for existential type variables that also instantiates the variable within the context. The subtyping rule $\SubInstL$ allows us to derive that the existential type variable $\ahat$ is a subtype of the type $A$. It requires that we instantiate $\ahat$ to the value of $A$ in our context. $\SubInstR$ does the opposite. Both add to the context all the information we gain about $\ahat$ by saying that it is a subtype of $A$, or that $A$ is a subtype of it. 
 
 For instance, the rule $\InstLArr$ instantiates $\ahat$ such that $\ahat \subtype A_1 \arr A_2$ by adding to our context $\ahat_1, \ahat_2$, and setting $\ahat = \ahat_1 \fto \ahat_2$ in the context. We then instantiate $\ahat_1 \instsymlop A_1$ and $\ahat_2 \instsymrop A_2$.
 
-% \pagebreak % To encourage the typing stuff to be on the same page
+\subsubsection{Typechecking the Pair Function}
+This is an example of the algorithm in action. The pair function $\lam{x\;y} (x, y)$ takes two arguments, and returns a pair of the two values. Here, we type check it against its correct type $\alltype{\alpha\;\beta}{\alpha \fto \beta \fto (\alpha, \beta)}$. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
+
+\begin{mathpar}
+\Gamma = \alpha,\beta,x : \alpha,y : \beta\\
+\Delta = \alpha\\
+
+\Infer{\Sub[6]}
+  {\Infer{\Var[8]}
+      {(x : \alpha) \in \{\Gamma\}}
+      {\synjudg{\Gamma}{x}{\alpha}{\Gamma}}
+    \\
+  \Infer{\SubVar[9]}
+      { }
+      {\subjudg{\Gamma[\alpha]}{\alpha}{\alpha}{\Gamma[\alpha]}}
+  }
+  {\chkjudg{\Gamma}{x}{\alpha}{\Gamma}}
+\\
+
+\Infer{\Sub[7]}
+  {\Infer{\Var[10]}
+      {(y : \beta) \in \{\Gamma\}}
+      {\synjudg{\Gamma}{y}{\beta}{\Gamma}}
+    \\
+  \Infer{\SubVar[11]}
+      { }
+      {\subjudg{\Gamma[\beta]}{\beta}{\beta}{\Gamma[\beta]}}
+  }
+  {\chkjudg{\Gamma}{y}{\beta}{\Gamma}}
+
+ \Infer{\AllIntro[1]}
+   {\Infer{\AllIntro[2]}
+   {
+    \Infer{\!\ArrIntro[3]}
+      {
+       \Infer{\!\ArrIntro[4]}
+          {
+          \Infer{\MyTCRule{\Paircheckrulename}[5]}
+            {[6]\chkjudg{\Gamma}{x}{\alpha}{\Gamma} \\ [7]\chkjudg{\Gamma}{y}{\beta}{\Gamma}}
+            {\chkjudg{\Gamma}{(x, y)}{(\alpha, \beta)}{\Gamma}}
+          }
+          {\chkjudg{\alpha,\beta,x : \alpha}{\lam{y} (x, y)}{\beta \fto (\alpha, \beta)}{\Gamma}}
+          }
+      {{\chkjudg{\alpha,\beta}{\lam{x\; y} (x, y)}{\alpha \fto \beta \fto (\alpha, \beta)}{\Delta, \beta, \{x : \alpha, y : \beta\}}} \\ (= \Gamma)}
+   }
+   {{\chkjudg{\alpha}{\lam{x\;y} (x, y)}{\alltype{\beta}{\alpha \fto \beta \fto (\alpha, \beta)}}{\{.\}, \alpha, \{.\}}} \\ (= \Delta)}
+   }
+   {\chkjudg{.}{\lam{x\;y} (x, y)}{\alltype{\alpha\;\beta}{\alpha \fto \beta \fto (\alpha, \beta)}}{.}}\\
+
+\end{mathpar}
+
+\begin{enumerate}
+    \item Here, we begin typechecking with the \AllIntro rule to introduce $\forall \alpha$. We do this by adding $\alpha$ to the initially empty context. We then check the function against the type without the $\forall \alpha$: $\alltype{\beta}{\alpha \fto \beta \fto (\alpha, \beta)}$. The output of this checking is then split into 3 parts: everything before the $\alpha$, the $\alpha$ itself, and the bits after the $\alpha$. Our output context is everything in $\Delta$ before the alpha, which is nothing. 
+    \item We apply the same rule as above, but we are introducing $\forall \beta$. We then check the function against ${\alpha \fto \beta \fto (\alpha, \beta)}$
+    Our output context for this rule is everything in $\Gamma$ before the $\beta$: only $\alpha$.
+    \item We then start to unwrap the abstractions. We strip the abstraction over $x$ from the expression, leaving us with ($\lam{y} (x, y)$). We then add $(x:\alpha)$ to our context, and then progress by checking the remaining part of the expression against ${\beta \fto (\alpha, \beta)}$. Our output context is $\Gamma$. 
+    \item Same as above, with $y$ against $\beta$. We unwrap the abstraction over $y$ to give us $(x, y)$. We then check this against ${(\alpha, \beta)}$. The output context is $\Gamma$.
+    \item We check $(x, y)$ against the type $(\alpha, \beta)$. To check this, we check $x$ against $\alpha$ and $y$ against $\beta$. The output context is $\Gamma$.
+    \item To check $x$ against type $\alpha$ we synthesise the type of $x$ ([9]: trivial, as its in the context). We then check this against $\alpha$, and a check of $\alpha$ against $\alpha$ ([10]) trivially passes.
+    \item Same as above with $y$ against $\beta$. The output context is $\Gamma$
+\end{enumerate}
+
+
+\subsection{Synthesizing Example}
+We have a function \sflinline{f x = inc x} (desugared: \sflinline{f = (\x. inc x)}) that we want to synthesize the type of. \sflinline{inc} is a previously defined function with a type of $Int \arr Int$. 
+
+\begin{mathpar}
+\Gamma_0 = \text{inc}: Int \arr Int\\
+\Gamma_1 = \Gamma_0, \ahat, \bhat, x : \ahat\\
+
+
+\Infer{%
+        {\!\ArrIntroSyn[1]}
+         }
+           { \chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{inc x}}{\bhat}{\Delta, x : \ahat, \Theta}
+           }
+           {{\synjudg{\Gamma_0}{\lam{x} \text{inc x}}{\ahat \arr \bhat}{\Delta}}}
+
+        \Infer{\Sub[2]}
+            {
+                \synjudg{\Gamma_1}{\text{inc x}}{A}{\Theta}[3]
+                \\
+                \subjudg{\Theta}{[\Theta]A}{[\Theta]\bhat}{\Delta}
+            }
+            {\chkjudg{\Gamma_1}{\text{inc x}}{\bhat}{\Delta}}
+
+        \Infer{\!\ArrElim[3]}
+            {\Infer{\Var}
+                {(\text{inc} : Int \arr Int) \in \Gamma_1}
+                {\synjudg{\Gamma_1}{x}{A}{\Gamma_1}}
+                \\
+                \Infer{\ArrApp}
+                    {\chkjudg{\Gamma_1}{x}{Int}{\Delta} [4]}
+                    {\appjudg{\Gamma_1}{x}{[\Gamma_1] (Int \arr Int)}{Int}{\Delta}}
+            }
+           {\synjudg{\Gamma_1}{\text{inc x}}{\bhat}{\Delta}}
+
+        \Infer{\Sub[4]}
+            {
+                \Infer{\Var}
+                    {(\text{x} : \ahat) \in \Gamma_1}
+                    {\synjudg{\Gamma_1}{x}{\ahat}{\Gamma_1}}
+                \\
+                \subjudg{\Gamma_1}{[\Gamma_1]\ahat}{[\Theta]Int}{\Delta}
+            }
+            {\chkjudg{\Gamma_1}{x}{Int}{\Delta}}
+
+
+
+\end{mathpar}
+
+
+Below I give an example of a situation that could occur during typechecking. We have a function we are typechecking that negates 
+
+
+\subsection{Pairs}
+To support pairs, we must first add `Pair' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A `Pair' node has \verb|ASTNodeType| of `Pair', and two children.
+
+\subsubsection{Parsing Pairs}
+Parsing pairs is trivial:
+\begin{itemize}
+    \item Expect an open parenthesis \verb|(|.
+    \item Parse an expression.
+    \item Expect a comma.
+    \item Parse a second expression.
+    \item Expect a closing parenthesis \verb|)|.
+\end{itemize}
+\noindent We then produce a `\verb|Pair|' \ac{AST} node with two children: the two expressions.
+\subsubsection{Updating the Redex Finding System With Pairs}
+Pairs themselves can never be redexes, so getting a list of all redex-contraction pairs in a `Pair' is trivial: we concatenate the list of \verb|RCPairs| in the left and right expression.
 
 \subsection{Pattern Matching}
-We must update the redex finding system with the ability to match patterns. 
+We add `Match' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A match node has many children. The first node represents the expression being matched over, then each case followed by its corresponding definition.
+ 
+\subsubsection{Parsing Match Statements}
+An example of using a match statement follows:
+% \sam{here it feels like you are trying to mix up the way you introduce code so it is not always the same, but instead you have just ended up with a weird sounding sentence. It doesnt matter if introducing code uses the same phrasing, as long as it is clear.}
+% \sam{more writing advice: only spend effort on nice writing for what is important. Introducing code not important, just do the basic thing. Biggest most complicated thing in your thesis is what deserves all your word choice and imagery. If you do this, it is also clear to the reader what is important: it is what you have spent your time on}
+\begin{lstlisting}[language=SFL]
+lengthIsAtLeast2 list = match list {
+  | Cons x (Cons y xs) -> true
+  | _ => false
+}
+\end{lstlisting}
 
+The algorithm used for parsing match statements is:
+\begin{enumerate}
+    \item Consume the `match' keyword.
+    \item Parse the expression matched over.
+    \item Consume an open brace.
+    \item While the next token isn't a close brace: \begin{enumerate}
+        \item Consume bar `|'.
+        \item Parse a pattern (\ref{impl:parsing_patterns}).
+        \item Consume a right arrow.
+        \item Parse an expression.
+    \end{enumerate}
+    \item Consume a close brace.
+\end{enumerate}
+This creates a `match' node, where the \verb|children| vector is set appropriately with the pattern and expressions.
+
+\paragraph{Patterns}
+\label{impl:parsing_patterns}
+A pattern must not contain anything that can be reduced. It would be nonsensical to have a situation where we had a pattern not in normal form such as \verb|1 + 1| and the expression to be matched was \verb|2|. 
+
+To parse a pattern, we may use the same techniques as parsing an expression, with a few differences:
+\begin{itemize}
+    \item Disallowing abstractions and match statements
+    \item Identifiers must be either
+    \begin{itemize}
+        \item Unbound lowercase variables
+        \item Underscore (\verb|_|) representing a wildcard pattern
+        \item A bound uppercase variable (a constructor)
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Updating the Redex Finding System With Pattern Matching}
 As discussed in the design (\ref{c2_design_match}), patterns are checked in order from first to last. Not only do we need to check that it does not currently match before moving on to checking the next pattern, we must check that it \textit{can not} match the expression i.e. we must refute the pattern. In the below example, \sflinline{repeat 1} must be evaluated enough to know whether it matches the first pattern before we move on to matching the second. 
 
 \begin{lstlisting}[language=SFL]
@@ -329,17 +538,50 @@ When matching an expression against a pattern, we have three possible results:
     \item Unknown: It does not match, but we cannot refute
 \end{itemize}
 
-The algorithm for finding the next evaluation step for a match expression is to sequentially attempt to match each pattern. If the result of matching an expression is a refutation, we check the next one. If the result is not yet known, we do not look at any further patterns, and we evaluate the expression further instead. This is listed in pseudocode in \ref{fig:all_pattern_list_iterate}. 
+The algorithm for finding the next evaluation step for a match expression is to sequentially attempt to match each pattern. If the result of matching an expression is a refutation, we check the next one. If the result is not yet known, we do not look at any further patterns, and we evaluate the expression further instead. 
 
-The algorithm for matching an expression against a single pattern, and getting either `Success, Refute, or Unknown' is also listed: \ref{fig:pattern_list_top_level}. 
-
-There are 4 structures in a pattern, and their corresponding algorithms are listed: 
+Below is a short summary of how pattern matching is done for different structures. This summary does not show all cases, but instead aims to give a general idea about how the algorithm works. To match an expression $E$ against a pattern $P$ and get all variables that the pattern would bind, we proceed case wise on the structure of $P$. 
 \begin{itemize}
-    \item Matching an expression against a pattern that is an Identifier: \ref{fig:pattern_list_id}
-    \item A pair: \ref{fig:pattern_list_pair}
-    \item An application: \ref{fig:pattern_list_app}
+    \item An Identifier \ref{fig:pattern_list_id}. 
+    \begin{itemize}
+        \item If the identifier is a lowercase variable, we succeed matching and returning the binding.
+        \item If it is an underscore, matching succeeds, but we do not bind anything. 
+        \item If it is an uppercase identifier (and therefore a constructor), we attempt to refute the pattern by showing that our expression will never evaluate to this constructor. Otherwise, our result is `unknown'.
+    \end{itemize}
+
+    % \item A pair: \ref{fig:pattern_list_pair}. We proceed case wise on the structure of $E$:
+    % \begin{itemize}
+    %     \item Another pair: we attempt to match the left and right of both pairs. If either Refutes then Refute, and if either is Unknown then return Unknown.
+    %     \item Literal, Abstraction or Uppercase Identifier: Refute.
+    %     \item Lowercase Identifier: Unknown, as it may stand for an expression that does evaluate to a pair
+    % \end{itemize}
+    
+    \item An application: \ref{fig:pattern_list_app}. We proceed case wise on the structure of $E$:
+    \begin{itemize}
+        \item Literal, Pair, Abstraction or Uppercase Identifier: Refute as these will not evaluate further.
+        \item Another application: Match the functions and match the arguments. If either Refutes then Refute, and if either is Unknown then return Unknown. Otherwise, Succeed, and concatenate the two lists of bindings
+    \end{itemize} 
+
     \item A literal: trivial, the algorithm is just a string match. It is listed inline in \ref{fig:pattern_list_top_level} for completeness's sake. 
 \end{itemize}
+
+The algorithm for matching an expression against a single pattern, and getting either `Success, Refute, or Unknown' is listed in pseudocode: \ref{fig:pattern_list_top_level}. The algorithm for getting a redex-contraction pair from a match statement is also listed \ref{fig:all_pattern_list_iterate}. If we succeed in pattern matching, the result should be the appropriate case with all  the bindings substituted. 
+
+\subsection{Multi Step Reduction and Lazy Mode}
+As it currently stands, the system gives users the option to select any possible redex to make progress. However, whilst demonstrating this project to my client, I found that these steps were often too small, and sometimes one larger step would have been easier. I found that having to apply a nested abstraction to concurrent terms particularly tedious. The expression \sflinline{f 1 2 3} where \sflinline{f = (\x y z. x)} would have reduction sequence:
+\begin{figure} %to avoid splitting 
+\begin{itemize}
+    \item \sflinline{f 1 2 3} \arr\ \verb|(\x y z. x) 1 2 3|
+    \item \verb|(\x y z. 1) 1 2 3| \arr\ \verb|(\y z. 1) 2 3|
+    \item \verb|(\y z. 1) 2 3| \arr\ \verb|(\z. 1) 3|
+    \item \verb|(\z. 1) 3| \arr\ \sflinline{1}
+\end{itemize}
+\end{figure}
+\noindent Many users of the system, particularly more advanced users, would not need to see each nested step of this application. These can all be grouped into one step, where we substitute label f and perform all three reductions simultaneously. 
+
+\todo{Algorithm if time, and reformat reduction}
+
+Users may not always want to choose reduction order themselves. The `Lazy' strategy \ref{bg:eval_strategies} is the one employed by Haskell and other functional languages, so it should be the one employed by \ac{SFL}. Conveniently, because of the way we are currently generating redexes, the list of redexes we generate already has the laziest option as the first element. This is because when generating redexes in an application, we calculate the redexes in the function before the redexes in the argument, which leads to a `leftmost first' list of redexes. 
 
 \subsection{The Prelude, and `if e then a else b'}
 Most programming languages come with functionality packaged that is included by default, and is written in the language. In Haskell, this is referred to as the Prelude. There is also the standard library which is more extensive and is not imported by default. 

@@ -99,13 +99,8 @@ These two features massively shorten and simplify programming in this language.
 (Module) \(M ::= A\: M \mid End\)
 \end{syntax}
 
-\subsection{Reduction and Progress}
-\label{c1_design_reduction_progress}
-As discussed in the background, functional programs progress via reduction. \ac{SFL}  programs can reduce when we have an abstraction applied to a term. 
+% \subsection{Design: Reduction and Progress} ???
 
-We may also want to replace variables with their assigned values. This is not reduction, however it is still progress
-
-\todo{FINISH, will be easier when the bg on reduction is improved}
 
 \section{Implementation}
 \subsection{The Abstract Syntax Tree}
@@ -113,10 +108,8 @@ The tree structure of \ac{SFL} requires the following different types of tree no
 \begin{itemize}
     \item Identifier
     \item Literal
-    \item Pair
     \item Application
     \item Abstraction
-    \item Match
     \item Assignment
     \item Module
 \end{itemize}
@@ -139,7 +132,6 @@ struct AST {
 enum ASTNodeType {
     Identifier,
     Literal,
-    Pair,
     Application,
     Assignment,
     Abstraction,
@@ -170,8 +162,6 @@ The node indices in the \verb|children| vector represent different things depend
 \begin{itemize}
     \item If it is an abstraction, the first node represents the variable (or pair of variables) abstracted over, and the second node represents the expression.
     \item If it is an application, the first node is the function, and the second is the argument.
-    \item If it is a pair, the first node is the first in the pair, and the second is the second in the pair.
-    \item If it is a match expression, the first node represents the matched value, then after this it consists of the case followed by the resulting expression. Match expressions will always therefore have an odd number of children.
     \item If it is a module, then each of the children is an assignment.
     \item If it is an assignment, then the first child is the variable being assigned to, and the second is the expression.
 \end{itemize}
@@ -231,11 +221,9 @@ struct AST<'a> {
 enum ASTNodeType<'a> {
     Identifier{name: String},
     Literal{value: String, _type: PrimitiveType},
-    Pair{first: &'a ASTNode<'a>, second: &'a ASTNode<'a>},
     Assignment{to: String, expr: &'a ASTNode<'a>, type_assign: Type},
     Abstraction{var: String, expr: &'a ASTNode<'a>, type_assign: Type},
     Module{assigns: Vec<&'a ASTNode<'a>>},
-    Match{expr: &'a ASTNode<'a>, cases: Vec<&'a ASTNode<'a>>}
 } 
 
 struct ASTNodeSyntaxInfo { ... }
@@ -278,9 +266,6 @@ We must also take into account whether a binary infix operator was used to gener
 
 % There is also other syntax sugar, such as turning a List from `Cons' syntax into more familiar braced syntax, with comma separation.   For instance: \verb|Cons 1 (Cons 2 (Cons 3 Nil))| should be displayed as \verb|[1,2,3]|. [TODO: Consider whether to have only literals in this syntax or everything. Maybe toggleable syntax sugar?]
 
-\subsection{Finding Redexes}
-\todo{do once the background is fixed}
-In SFL, a redex is an application \sam{unfinished?}
 
 \subsection{The Parser}
 The parser needs to consume a program, and return the following things:
@@ -357,7 +342,6 @@ At the top level, the expression parsing method is \verb|parse_expression|. A va
         \item A closing bracket
         \item EOF
         \item A newline
-        \item An opening brace (indicating the end of parsing the matched expression of a match statement)
         \item A double colon, indicating a type assignment follows
     \end{itemize}
     We return \verb|left|. 
@@ -397,6 +381,8 @@ ASTNode {
 }
 \end{verbatim}
 
+To parse an identifier, we must also check that the identifier is bound at this location.
+
 \paragraph{Parsing Abstractions}
 Abstractions (in the simple case) are parsed by:
 \begin{itemize}
@@ -410,12 +396,40 @@ Abstractions (in the simple case) are parsed by:
 However, the definition of abstractions has a few complicating elements of syntax sugar.
 
 \subparagraph{Abstractions May be Assignments}
-The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. As previously mentioned in\ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
+The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we do not parse the lambda, and expect the assignment operator `\verb|=|' as our separator rather than the dot. As previously mentioned in~\ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
 
 \subparagraph{Abstractions May Have Multiple Variables}
 The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|', and then producing a series of abstractions over these variables in order. 
 
-To parse an identifier, we must also check that the identifier is bound at this location.
+\subsection{Making Progress}
+\label{c1_design_reduction_progress}
+Functional programs progress via reduction. \lcalc\ expressions can reduce when we have an abstraction applied to a term. This is much the same in \ac{SFL}, the difference being we can also apply labels representing abstractions to terms. In the following listing, expressions labelled as `\sflinline{main1}' and `\sflinline{main2}' both reduce to \sflinline{5}. 
+\begin{lstlisting}[language=SFL]
+f x = 5
+
+main1 = f 10 
+main2 = (\x. 5) 10
+\end{lstlisting}
+\noindent Rather than simply reducing `\sflinline{f 10}' to 5 in one step, it would be useful to show the substitution to help users to understand why `\sflinline{f 10}' becomes `\sflinline{5}' here. This would involve substituting the variable \sflinline{f} for the function \sflinline{(\x. 5)}. We have two types of progress: reduction and substitution. In this section, we shall broaden the term `redex' to include both. 
+
+\paragraph{Representing and Applying Redex-Contraction Pairs}
+We can define a structure representing progress for our \ac{AST}: a pair where the first element is the node in the tree to be replaced, and the second element is an entirely new tree to replace it with. 
+\begin{lstlisting}[language=Rust_boxed]
+type RCPair = (usize, AST)
+\end{lstlisting}
+\noindent To do the substitution, we combine the two \ac{AST}s by concatenating their two lists of nodes, and replace all references to the original node to the root of the replacement \ac{AST}. 
+
+\subsubsection{Finding Redex-Contraction Pairs in a Term}
+\paragraph{Is the Term $T$ a Redex?}
+The core of the redex finding algorithm is being able to identify whether a term $T$ with \ac{AST} index $P$ is a redex, and get its contraction. This is achieved by proceeding case wise on the shape of $T$.
+\begin{itemize}
+    \item $T = (\backslash x. M)\, N$: We construct an \verb|RCPair| where the left size is $P$, and the right side is the body of the abstraction $M$ with all instances of $x$ replaced with $N$. 
+    \item $T = f$: We construct an \verb|RCPair| where the left size is $P$ and the right-hand side is the value associated with the identifier \verb|f| cloned into a new \ac{AST}. 
+    \item Any other shape, $T$ is not a redex. 
+\end{itemize}
+
+\paragraph{Getting a List of Redexes in the Term $T$}
+We first check if $T$ is a valid redex, and if so add it to our list. If $T$ is an application we extend this list with the lists of \verb|RCPair|s in the function and argument of the application. 
 
 \subsection{Web UI \ac{MVP}}
 As part of this section, I also developed the MVP for the Web UI. \ref{fig:screenshot_phase_1_end} shows the web UI after this stage of the project. 
