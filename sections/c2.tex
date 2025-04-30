@@ -405,50 +405,104 @@ This is an example of the algorithm in action. The pair function $\lam{x\;y} (x,
 
 
 \subsection{Synthesizing Example}
-We have a function \sflinline{f x = inc x} (desugared: \sflinline{f = (\x. inc x)}) that we want to synthesize the type of. \sflinline{inc} is a previously defined function with a type of $Int \arr Int$. 
+We have a function \sflinline{f x = Just x} (desugared: \sflinline{f = (\x. Just x)}) that we want to synthesize the type of. \sflinline{Just} is a constructor defined in the type declaration \sflinline{data Maybe a = Just a | Nothing}, and it has a type $\forall a. a \arr Maybe\,a$
 
 \begin{mathpar}
-\Gamma_0 = \text{inc}: Int \arr Int\\
-\Gamma_1 = \Gamma_0, \ahat, \bhat, x : \ahat\\
+T_{Just} = \forall \alpha. \alpha \arr Maybe\,\alpha \and
+T_{Nothing} = \forall \alpha. Maybe\,\alpha \\
+\Gamma_0 = Just: T_{Just},\; Nothing: T_{Nothing}\and
+\Gamma_1 = \Gamma_0, \ahat, \bhat, x : \ahat\and
+\Gamma_2 = \Gamma_1, \chat \\
+\Gamma_3 = \Gamma_1, \hypeq{\chat}{\ahat} \and
+\Gamma_4 = \Gamma_0, \ahat, \hypeq{\bhat}{Maybe\,\ahat}, x : \ahat, \hypeq{\chat}{\ahat}\\
 
 
 \Infer{%
         {\!\ArrIntroSyn[1]}
          }
-           { \chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{inc x}}{\bhat}{\Delta, x : \ahat, \Theta}
-           }
-           {{\synjudg{\Gamma_0}{\lam{x} \text{inc x}}{\ahat \arr \bhat}{\Delta}}}
-
-        \Infer{\Sub[2]}
+           { 
+            \Infer{\Sub[2]}
             {
-                \synjudg{\Gamma_1}{\text{inc x}}{A}{\Theta}[3]
+                \synjudg{\Gamma_1}{\text{Just x}}{Maybe\,\chat}{\Gamma_3}[3]
                 \\
-                \subjudg{\Theta}{[\Theta]A}{[\Theta]\bhat}{\Delta}
+                \subjudg{\Gamma_3}{[\Gamma_3]Maybe\,\chat}{[\Gamma_3]\bhat}{\Gamma_4}[6]
             }
-            {\chkjudg{\Gamma_1}{\text{inc x}}{\bhat}{\Delta}}
+            {\chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{Just x}}{\bhat}{\{\Gamma_0, \ahat, \hypeq{\bhat}{Maybe\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}}
+            % \chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{Just x}}{\bhat}{\{\Gamma_0, \ahat, 
+            % \hypeq{\bhat}{Maybe\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}
+           }
+           {{\synjudg{\Gamma_0}{\lam{x} \text{Just x}}{\ahat \arr \bhat}{\Gamma_0, \ahat, \hypeq{\bhat}{Maybe\,\ahat}}}}
+
+
 
         \Infer{\!\ArrElim[3]}
             {\Infer{\Var}
-                {(\text{inc} : Int \arr Int) \in \Gamma_1}
-                {\synjudg{\Gamma_1}{x}{A}{\Gamma_1}}
+                {(Just : T_{Just}) \in \Gamma_1}
+                {\synjudg{\Gamma_1}{Just}{T_{Just}}{\Gamma_1}}
                 \\
-                \Infer{\ArrApp}
-                    {\chkjudg{\Gamma_1}{x}{Int}{\Delta} [4]}
-                    {\appjudg{\Gamma_1}{x}{[\Gamma_1] (Int \arr Int)}{Int}{\Delta}}
+                \Infer{\AllApp}
+                    {\appjudg{\Gamma_1,\chat}{x}{[\chat/\alpha] (\alpha \arr \text{Mabye}\,\alpha)}{\text{Mabye}\,\chat}{\Gamma_3}[4]}
+                    {\appjudg{\Gamma_1}{x}{\alltype{\alpha}{\alpha \arr \text{Mabye}\,\alpha}}{\text{Mabye}\,\chat}{\Gamma_3}}
             }
-           {\synjudg{\Gamma_1}{\text{inc x}}{\bhat}{\Delta}}
+           {\synjudg{\Gamma_1}{\text{Just x}}{\text{Mabye}\,\chat}{\Gamma_3}} \\
 
-        \Infer{\Sub[4]}
+        \Infer{\ArrApp[4]}
             {
-                \Infer{\Var}
-                    {(\text{x} : \ahat) \in \Gamma_1}
-                    {\synjudg{\Gamma_1}{x}{\ahat}{\Gamma_1}}
-                \\
-                \subjudg{\Gamma_1}{[\Gamma_1]\ahat}{[\Theta]Int}{\Delta}
+                \Infer{\Sub}
+                    {
+                        \Infer{\Var}
+                            {(x : \ahat) \in \Gamma_2}
+                            {\synjudg{\Gamma_2}{x}{\ahat}{\Gamma_2}}
+                        \\
+                        \subjudg{\Gamma_2}{[\Gamma_2]\ahat}{[\Gamma_2]\chat}{\Gamma_3}\;\; [5]
+                    }
+                    {\chkjudg{\Gamma_2}{x}{\chat}{\Gamma_3}}
             }
-            {\chkjudg{\Gamma_1}{x}{Int}{\Delta}}
+            {\appjudg{\Gamma_2}{x}{\chat \arr \text{Mabye}\,\chat}{\text{Mabye}\,\chat}{\Gamma_3}} \\
 
+        \Infer{\SubInstL[5]}
+            {
+                \ahat \notin \FV{%
+                    \chat}
+                \\
+                \Infer{\InstLReach}
+                { }
+                {\instjudg{\Gamma_2[\ahat][\chat]}
+                        {\ahat}
+                        {\chat}
+                        {\Gamma_2[\ahat][\hypeq{\chat}{\ahat}]}}
+            }
+            {\subjudg{\Gamma_2}{\ahat}{\chat}{\Gamma_4}} \\
 
+        % \Infer{\Sub[4]}
+        %     {
+        %         \Infer{\Var}
+        %             {(\text{x} : \ahat) \in \Gamma_1}
+        %             {\synjudg{\Gamma_1}{x}{\ahat}{\Gamma_1}}
+        %         \\
+        %         \subjudg{\Gamma_1}{[\Gamma_1]\ahat}{[\Theta]Int}{\Delta}
+        %     }
+        %     {\chkjudg{\Gamma_1}{x}{Int}{\Delta}}
+
+        \Infer{\SubInstR[6]}
+        {
+            \bhat \notin \FV{%
+            \text{Mabye}\,\ahat}
+            \\
+            {\instjudgr{\Gamma_3}
+                {\bhat}
+                {\text{Mabye}\,\ahat}
+                {\Gamma_4}} [7]
+        }
+        {\subjudg{\Gamma_3}{\text{Mabye}\,\ahat}{\bhat}{\Gamma_4}}\\
+
+        \Infer{\InstRSolve[7]}
+        {\Gamma_3 \entails \text{Mabye}\,\ahat}
+            {\instjudgr{\{\Gamma_0, \ahat\}, \bhat, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
+                {\bhat}
+                {\text{Mabye}\,\ahat}
+                \{{\Gamma_0, \ahat\}, \hypeq{\bhat}{\text{Mabye}\,\ahat}, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
+            }
 
 \end{mathpar}
 
