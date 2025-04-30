@@ -138,6 +138,118 @@ This design was meant to be a work in progress, but it looks quite similar to th
 
 \section{Implementation}
 
+\subsection{Pairs}
+\todo{motivate pairs, Algebraic data types}
+To support pairs, we must first add `Pair' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A `Pair' node has \verb|ASTNodeType| of `Pair', and two children.
+
+\subsubsection{Parsing Pairs}
+Parsing pairs is trivial:
+\begin{itemize}
+    \item Expect an open parenthesis \verb|(|.
+    \item Parse an expression.
+    \item Expect a comma.
+    \item Parse a second expression.
+    \item Expect a closing parenthesis \verb|)|.
+\end{itemize}
+\noindent We then produce a `\verb|Pair|' \ac{AST} node with two children: the two expressions.
+\subsubsection{Updating the Redex Finding System With Pairs}
+Pairs themselves can never be redexes, so getting a list of all redex-contraction pairs in a `Pair' is trivial: we concatenate the list of \verb|RCPairs| in the left and right expression.
+
+\subsection{Pattern Matching}
+We add `Match' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A match node has many children. The first node represents the expression being matched over, then each case followed by its corresponding definition.
+ 
+\subsubsection{Parsing Match Statements}
+An example of using a match statement follows:
+% \sam{here it feels like you are trying to mix up the way you introduce code so it is not always the same, but instead you have just ended up with a weird sounding sentence. It doesnt matter if introducing code uses the same phrasing, as long as it is clear.}
+% \sam{more writing advice: only spend effort on nice writing for what is important. Introducing code not important, just do the basic thing. Biggest most complicated thing in your thesis is what deserves all your word choice and imagery. If you do this, it is also clear to the reader what is important: it is what you have spent your time on}
+\begin{lstlisting}[language=SFL]
+lengthIsAtLeast2 list = match list {
+  | Cons x (Cons y xs) -> true
+  | _ => false
+}
+\end{lstlisting}
+
+The algorithm used for parsing match statements is:
+\begin{enumerate}
+    \item Consume the `match' keyword.
+    \item Parse the expression matched over.
+    \item Consume an open brace.
+    \item While the next token isn't a close brace: \begin{enumerate}
+        \item Consume bar `|'.
+        \item Parse a pattern (\ref{impl:parsing_patterns}).
+        \item Consume a right arrow.
+        \item Parse an expression.
+    \end{enumerate}
+    \item Consume a close brace.
+\end{enumerate}
+This creates a `match' node, where the \verb|children| vector is set appropriately with the pattern and expressions.
+
+\paragraph{Patterns}
+\label{impl:parsing_patterns}
+A pattern must not contain anything that can be reduced. It would be nonsensical to have a situation where we had a pattern not in normal form such as \verb|1 + 1| and the expression to be matched was \verb|2|. 
+
+To parse a pattern, we may use the same techniques as parsing an expression, with a few differences:
+\begin{itemize}
+    \item Disallowing abstractions and match statements
+    \item Identifiers must be either
+    \begin{itemize}
+        \item Unbound lowercase variables
+        \item Underscore (\verb|_|) representing a wildcard pattern
+        \item A bound uppercase variable (a constructor)
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Updating the Redex Finding System With Pattern Matching}
+As discussed in the design (\ref{c2_design_match}), patterns are checked in order from first to last. Not only do we need to check that it does not currently match before moving on to checking the next pattern, we must check that it \textit{can not} match the expression i.e. we must refute the pattern. In the below example, \sflinline{repeat 1} must be evaluated enough to know whether it matches the first pattern before we move on to matching the second. 
+
+\begin{lstlisting}[language=SFL]
+repeat :: a -> List a
+repeat n = Cons n $ repeat n
+
+main :: Bool
+main = match repeat 1 {
+    | Cons _ (Cons _ _) -> true
+    | _ -> false
+}
+\end{lstlisting}
+
+When matching an expression against a pattern, we have three possible results:
+
+\begin{itemize}
+    \item Success: Matching was successful, and we have a list of what to bind
+    \item Refute: We can not match this pattern, and evaluating the expression further would definitely not result in being able to match
+    \item Unknown: It does not match, but we cannot refute
+\end{itemize}
+\noindent The algorithm for finding the next evaluation step for a match expression is to sequentially attempt to match each pattern. If the result of matching an expression is a refutation, we check the next one. If the result is not yet known, we do not look at any further patterns, and we evaluate the expression further instead. 
+
+Below is a short summary of how pattern matching is done for different structures. This summary does not show all cases, but instead aims to give a general idea about how the algorithm works. The full algorithm is listed in appendix~\ref{appx:pattern_match}. To match an expression $E$ against a pattern $P$ and get all variables that the pattern would bind, we proceed case wise on the structure of $P$. 
+\begin{itemize}
+    \item An Identifier \ref{fig:pattern_list_id}. 
+    \begin{itemize}
+        \item If the identifier is a lowercase variable, we succeed matching and returning the binding.
+        \item If it is an underscore, matching succeeds, but we do not bind anything. 
+        \item If it is an uppercase identifier (and therefore a constructor), we attempt to refute the pattern by showing that our expression will never evaluate to this constructor. Otherwise, our result is `unknown'.
+    \end{itemize}
+
+    % \item A pair: \ref{fig:pattern_list_pair}. We proceed case wise on the structure of $E$:
+    % \begin{itemize}
+    %     \item Another pair: we attempt to match the left and right of both pairs. If either Refutes then Refute, and if either is Unknown then return Unknown.
+    %     \item Literal, Abstraction or Uppercase Identifier: Refute.
+    %     \item Lowercase Identifier: Unknown, as it may stand for an expression that does evaluate to a pair
+    % \end{itemize}
+    
+    \item An application: \ref{fig:pattern_list_app}. We proceed case wise on the structure of $E$:
+    \begin{itemize}
+        \item Literal, Pair, Abstraction or Uppercase Identifier: Refute as these will not evaluate further.
+        \item Another application: Match the functions and match the arguments. If either Refutes then Refute, and if either is Unknown then return Unknown. Otherwise, Succeed, and concatenate the two lists of bindings
+    \end{itemize} 
+
+    \item A literal: trivial, the algorithm is just a string match. It is listed inline in \ref{fig:pattern_list_top_level} for completeness's sake. 
+\end{itemize}
+
+The algorithm for matching an expression against a single pattern, and getting either `Success, Refute, or Unknown' is listed in pseudocode: \ref{fig:pattern_list_top_level}. The algorithm for getting a redex-contraction pair from a match statement is also listed \ref{fig:all_pattern_list_iterate}. If we succeed in pattern matching, the result should be the appropriate case with all  the bindings substituted. 
+
+
 \subsection{Types}
 
 Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system) quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
@@ -566,116 +678,6 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
     \item To check that $\textit{Maybe}\,a \subtype \bhat$, we check that $\textit{Maybe}\,a$ has no free instances of $\bhat$, and we instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$ [12].
     \item To instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$, we use the rule \InstRSolve\ to `solve' type $\bhat$ to be $\textit{Maybe}\,a$. This only requires that $\textit{Maybe}\,a$ is well formed under the context, which means that the context `knows about' all of the existential type variables. % (see \ref{fig:well_formed}).
 \end{enumerate}
-
-\subsection{Pairs}
-To support pairs, we must first add `Pair' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A `Pair' node has \verb|ASTNodeType| of `Pair', and two children.
-
-\subsubsection{Parsing Pairs}
-Parsing pairs is trivial:
-\begin{itemize}
-    \item Expect an open parenthesis \verb|(|.
-    \item Parse an expression.
-    \item Expect a comma.
-    \item Parse a second expression.
-    \item Expect a closing parenthesis \verb|)|.
-\end{itemize}
-\noindent We then produce a `\verb|Pair|' \ac{AST} node with two children: the two expressions.
-\subsubsection{Updating the Redex Finding System With Pairs}
-Pairs themselves can never be redexes, so getting a list of all redex-contraction pairs in a `Pair' is trivial: we concatenate the list of \verb|RCPairs| in the left and right expression.
-
-\subsection{Pattern Matching}
-We add `Match' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A match node has many children. The first node represents the expression being matched over, then each case followed by its corresponding definition.
- 
-\subsubsection{Parsing Match Statements}
-An example of using a match statement follows:
-% \sam{here it feels like you are trying to mix up the way you introduce code so it is not always the same, but instead you have just ended up with a weird sounding sentence. It doesnt matter if introducing code uses the same phrasing, as long as it is clear.}
-% \sam{more writing advice: only spend effort on nice writing for what is important. Introducing code not important, just do the basic thing. Biggest most complicated thing in your thesis is what deserves all your word choice and imagery. If you do this, it is also clear to the reader what is important: it is what you have spent your time on}
-\begin{lstlisting}[language=SFL]
-lengthIsAtLeast2 list = match list {
-  | Cons x (Cons y xs) -> true
-  | _ => false
-}
-\end{lstlisting}
-
-The algorithm used for parsing match statements is:
-\begin{enumerate}
-    \item Consume the `match' keyword.
-    \item Parse the expression matched over.
-    \item Consume an open brace.
-    \item While the next token isn't a close brace: \begin{enumerate}
-        \item Consume bar `|'.
-        \item Parse a pattern (\ref{impl:parsing_patterns}).
-        \item Consume a right arrow.
-        \item Parse an expression.
-    \end{enumerate}
-    \item Consume a close brace.
-\end{enumerate}
-This creates a `match' node, where the \verb|children| vector is set appropriately with the pattern and expressions.
-
-\paragraph{Patterns}
-\label{impl:parsing_patterns}
-A pattern must not contain anything that can be reduced. It would be nonsensical to have a situation where we had a pattern not in normal form such as \verb|1 + 1| and the expression to be matched was \verb|2|. 
-
-To parse a pattern, we may use the same techniques as parsing an expression, with a few differences:
-\begin{itemize}
-    \item Disallowing abstractions and match statements
-    \item Identifiers must be either
-    \begin{itemize}
-        \item Unbound lowercase variables
-        \item Underscore (\verb|_|) representing a wildcard pattern
-        \item A bound uppercase variable (a constructor)
-    \end{itemize}
-\end{itemize}
-
-\subsubsection{Updating the Redex Finding System With Pattern Matching}
-As discussed in the design (\ref{c2_design_match}), patterns are checked in order from first to last. Not only do we need to check that it does not currently match before moving on to checking the next pattern, we must check that it \textit{can not} match the expression i.e. we must refute the pattern. In the below example, \sflinline{repeat 1} must be evaluated enough to know whether it matches the first pattern before we move on to matching the second. 
-
-\begin{lstlisting}[language=SFL]
-repeat :: a -> List a
-repeat n = Cons n $ repeat n
-
-main :: Bool
-main = match repeat 1 {
-    | Cons _ (Cons _ _) -> true
-    | _ -> false
-}
-\end{lstlisting}
-
-When matching an expression against a pattern, we have three possible results:
-
-\begin{itemize}
-    \item Success: Matching was successful, and we have a list of what to bind
-    \item Refute: We can not match this pattern, and evaluating the expression further would definitely not result in being able to match
-    \item Unknown: It does not match, but we cannot refute
-\end{itemize}
-\noindent The algorithm for finding the next evaluation step for a match expression is to sequentially attempt to match each pattern. If the result of matching an expression is a refutation, we check the next one. If the result is not yet known, we do not look at any further patterns, and we evaluate the expression further instead. 
-
-Below is a short summary of how pattern matching is done for different structures. This summary does not show all cases, but instead aims to give a general idea about how the algorithm works. The full algorithm is listed in appendix~\ref{appx:pattern_match}. To match an expression $E$ against a pattern $P$ and get all variables that the pattern would bind, we proceed case wise on the structure of $P$. 
-\begin{itemize}
-    \item An Identifier \ref{fig:pattern_list_id}. 
-    \begin{itemize}
-        \item If the identifier is a lowercase variable, we succeed matching and returning the binding.
-        \item If it is an underscore, matching succeeds, but we do not bind anything. 
-        \item If it is an uppercase identifier (and therefore a constructor), we attempt to refute the pattern by showing that our expression will never evaluate to this constructor. Otherwise, our result is `unknown'.
-    \end{itemize}
-
-    % \item A pair: \ref{fig:pattern_list_pair}. We proceed case wise on the structure of $E$:
-    % \begin{itemize}
-    %     \item Another pair: we attempt to match the left and right of both pairs. If either Refutes then Refute, and if either is Unknown then return Unknown.
-    %     \item Literal, Abstraction or Uppercase Identifier: Refute.
-    %     \item Lowercase Identifier: Unknown, as it may stand for an expression that does evaluate to a pair
-    % \end{itemize}
-    
-    \item An application: \ref{fig:pattern_list_app}. We proceed case wise on the structure of $E$:
-    \begin{itemize}
-        \item Literal, Pair, Abstraction or Uppercase Identifier: Refute as these will not evaluate further.
-        \item Another application: Match the functions and match the arguments. If either Refutes then Refute, and if either is Unknown then return Unknown. Otherwise, Succeed, and concatenate the two lists of bindings
-    \end{itemize} 
-
-    \item A literal: trivial, the algorithm is just a string match. It is listed inline in \ref{fig:pattern_list_top_level} for completeness's sake. 
-\end{itemize}
-
-The algorithm for matching an expression against a single pattern, and getting either `Success, Refute, or Unknown' is listed in pseudocode: \ref{fig:pattern_list_top_level}. The algorithm for getting a redex-contraction pair from a match statement is also listed \ref{fig:all_pattern_list_iterate}. If we succeed in pattern matching, the result should be the appropriate case with all  the bindings substituted. 
 
 \subsection{Multi Step Reduction and Lazy Mode}
 As it currently stands, the system gives users the option to select any possible redex to make progress. However, whilst demonstrating this project to my client, I found that these steps were often too small, and sometimes one larger step would have been easier. I found that having to apply a nested abstraction to concurrent terms particularly tedious. The expression \sflinline{f 1 2 3} where \verb|f = (\x y z. x)| would have the reduction sequence listed in~\ref{c2:multi_step_reduction}. 
