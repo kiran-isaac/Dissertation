@@ -650,7 +650,7 @@ When matching an expression against a pattern, we have three possible results:
 \end{itemize}
 \noindent The algorithm for finding the next evaluation step for a match expression is to sequentially attempt to match each pattern. If the result of matching an expression is a refutation, we check the next one. If the result is not yet known, we do not look at any further patterns, and we evaluate the expression further instead. 
 
-Below is a short summary of how pattern matching is done for different structures. This summary does not show all cases, but instead aims to give a general idea about how the algorithm works. To match an expression $E$ against a pattern $P$ and get all variables that the pattern would bind, we proceed case wise on the structure of $P$. 
+Below is a short summary of how pattern matching is done for different structures. This summary does not show all cases, but instead aims to give a general idea about how the algorithm works. The full algorithm is listed in appendix~\ref{appx:pattern_match}. To match an expression $E$ against a pattern $P$ and get all variables that the pattern would bind, we proceed case wise on the structure of $P$. 
 \begin{itemize}
     \item An Identifier \ref{fig:pattern_list_id}. 
     \begin{itemize}
@@ -678,7 +678,7 @@ Below is a short summary of how pattern matching is done for different structure
 The algorithm for matching an expression against a single pattern, and getting either `Success, Refute, or Unknown' is listed in pseudocode: \ref{fig:pattern_list_top_level}. The algorithm for getting a redex-contraction pair from a match statement is also listed \ref{fig:all_pattern_list_iterate}. If we succeed in pattern matching, the result should be the appropriate case with all  the bindings substituted. 
 
 \subsection{Multi Step Reduction and Lazy Mode}
-As it currently stands, the system gives users the option to select any possible redex to make progress. However, whilst demonstrating this project to my client, I found that these steps were often too small, and sometimes one larger step would have been easier. I found that having to apply a nested abstraction to concurrent terms particularly tedious. The expression \sflinline{f 1 2 3} where \sflinline{f = (\x y z. x)} would have reduction sequence:
+As it currently stands, the system gives users the option to select any possible redex to make progress. However, whilst demonstrating this project to my client, I found that these steps were often too small, and sometimes one larger step would have been easier. I found that having to apply a nested abstraction to concurrent terms particularly tedious. The expression \sflinline{f 1 2 3} where \verb|f = (\x y z. x)| would have the reduction sequence listed in~\ref{c2:multi_step_reduction}. 
 \begin{figure} %to avoid splitting 
 \begin{itemize}
     \item \sflinline{f 1 2 3} \arr\ \verb|(\x y z. x) 1 2 3|
@@ -686,6 +686,8 @@ As it currently stands, the system gives users the option to select any possible
     \item \verb|(\y z. 1) 2 3| \arr\ \verb|(\z. 1) 3|
     \item \verb|(\z. 1) 3| \arr\ \sflinline{1}
 \end{itemize}
+\caption{An example overly verbose reduction sequence that would be better expressed as one step.}
+\label{c2:multi_step_reduction}
 \end{figure}
 \noindent Many users of the system, particularly more advanced users, would not need to see each nested step of this application. These can all be grouped into one step, where we substitute label f and perform all three reductions simultaneously. 
 
