@@ -408,107 +408,109 @@ This is an example of the algorithm in action. The pair function $\lam{x\;y} (x,
 We have a function \sflinline{f x = Just x} (desugared: \sflinline{f = (\x. Just x)}) that we want to synthesize the type of. \sflinline{Just} is a constructor defined in the type declaration \sflinline{data Maybe a = Just a | Nothing}, and it has a type $\forall a. a \arr Maybe\,a$
 
 \begin{mathpar}
-T_{Just} = \forall \alpha. \alpha \arr Maybe\,\alpha \and
-T_{Nothing} = \forall \alpha. Maybe\,\alpha \\
+T_{Just} = \forall \alpha. \alpha \arr \textit{Maybe}\,\alpha \and
+T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
 \Gamma_0 = Just: T_{Just},\; Nothing: T_{Nothing}\and
 \Gamma_1 = \Gamma_0, \ahat, \bhat, x : \ahat\and
 \Gamma_2 = \Gamma_1, \chat \\
 \Gamma_3 = \Gamma_1, \hypeq{\chat}{\ahat} \and
-\Gamma_4 = \Gamma_0, \ahat, \hypeq{\bhat}{Maybe\,\ahat}, x : \ahat, \hypeq{\chat}{\ahat}\\
+\Gamma_4 = \Gamma_0, \ahat, \hypeq{\bhat}{\textit{Maybe}\,\ahat}, x : \ahat, \hypeq{\chat}{\ahat}\\
 
+\Infer{\InstRSolve[12]}
+{\Gamma_3 \entails \textit{Mabye}\,\ahat}
+    {\instjudgr{\{\Gamma_0, \ahat\}, \bhat, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
+        {\bhat}
+        {\textit{Mabye}\,\ahat}
+        \{{\Gamma_0, \ahat\}, \hypeq{\bhat}{\textit{Mabye}\,\ahat}, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
+    }\\
+
+
+\Infer{\SubInstR[11]}
+{
+    \bhat \notin \FV{%
+    \textit{Mabye}\,\ahat}
+    \\
+    {\instjudgr{\Gamma_3}
+        {\bhat}
+        {\textit{Mabye}\,\ahat}
+        {\Gamma_4}} [12]
+}
+{\subjudg{\Gamma_3}{\textit{Mabye}\,\ahat}{\bhat}{\Gamma_4}}\\
+
+
+
+\Infer{\SubInstL[9]}
+{
+    \ahat \notin \FV{%
+        \chat}
+    \\
+    \Infer{\InstLReach[10]}
+    { }
+    {\instjudg{\Gamma_2[\ahat][\chat]}
+            {\ahat}
+            {\chat}
+            {\Gamma_2[\ahat][\hypeq{\chat}{\ahat}]}}
+}
+{\subjudg{\Gamma_2}{\ahat}{\chat}{\Gamma_3}} \\
+
+\Infer{\ArrApp[6]}
+{
+    \Infer{\Sub[7]}
+        {
+            \Infer{\Var[8]}
+                {(x : \ahat) \in \Gamma_2}
+                {\synjudg{\Gamma_2}{x}{\ahat}{\Gamma_2}}
+            \\
+            \subjudg{\Gamma_2}{[\Gamma_2]\ahat}{[\Gamma_2]\chat}{\Gamma_3}\;\; [9]
+        }
+        {\chkjudg{\Gamma_2}{x}{\chat}{\Gamma_3}}
+}
+{\appjudg{\Gamma_2}{x}{\chat \arr \textit{Mabye}\,\chat}{\textit{Mabye}\,\chat}{\Gamma_3}} \\
+
+\Infer{\!\ArrElim[3]}
+    {\Infer{\Var[4]}
+        {(Just : T_{Just}) \in \Gamma_1}
+        {\synjudg{\Gamma_1}{Just}{T_{Just}}{\Gamma_1}}
+        \\
+        \Infer{\AllApp[5]}
+            {\appjudg{\Gamma_1,\chat}{x}{[\chat/\alpha] (\alpha \arr \textit{Mabye}\,\alpha)}{\textit{Mabye}\,\chat}{\Gamma_3}[6]}
+            {\appjudg{\Gamma_1}{x}{\alltype{\alpha}{\alpha \arr \textit{Mabye}\,\alpha}}{\textit{Mabye}\,\chat}{\Gamma_3}}
+    }
+    {\synjudg{\Gamma_1}{\textit{Just x}}{\textit{Mabye}\,\chat}{\Gamma_3}} \\
 
 \Infer{%
-        {\!\ArrIntroSyn[1]}
-         }
-           { 
-            \Infer{\Sub[2]}
-            {
-                \synjudg{\Gamma_1}{\text{Just x}}{Maybe\,\chat}{\Gamma_3}[3]
-                \\
-                \subjudg{\Gamma_3}{[\Gamma_3]Maybe\,\chat}{[\Gamma_3]\bhat}{\Gamma_4}[6]
-            }
-            {\chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{Just x}}{\bhat}{\{\Gamma_0, \ahat, \hypeq{\bhat}{Maybe\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}}
-            % \chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{Just x}}{\bhat}{\{\Gamma_0, \ahat, 
-            % \hypeq{\bhat}{Maybe\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}
-           }
-           {{\synjudg{\Gamma_0}{\lam{x} \text{Just x}}{\ahat \arr \bhat}{\Gamma_0, \ahat, \hypeq{\bhat}{Maybe\,\ahat}}}}
-
-
-
-        \Infer{\!\ArrElim[3]}
-            {\Infer{\Var}
-                {(Just : T_{Just}) \in \Gamma_1}
-                {\synjudg{\Gamma_1}{Just}{T_{Just}}{\Gamma_1}}
-                \\
-                \Infer{\AllApp}
-                    {\appjudg{\Gamma_1,\chat}{x}{[\chat/\alpha] (\alpha \arr \text{Mabye}\,\alpha)}{\text{Mabye}\,\chat}{\Gamma_3}[4]}
-                    {\appjudg{\Gamma_1}{x}{\alltype{\alpha}{\alpha \arr \text{Mabye}\,\alpha}}{\text{Mabye}\,\chat}{\Gamma_3}}
-            }
-           {\synjudg{\Gamma_1}{\text{Just x}}{\text{Mabye}\,\chat}{\Gamma_3}} \\
-
-        \Infer{\ArrApp[4]}
-            {
-                \Infer{\Sub}
-                    {
-                        \Infer{\Var}
-                            {(x : \ahat) \in \Gamma_2}
-                            {\synjudg{\Gamma_2}{x}{\ahat}{\Gamma_2}}
-                        \\
-                        \subjudg{\Gamma_2}{[\Gamma_2]\ahat}{[\Gamma_2]\chat}{\Gamma_3}\;\; [5]
-                    }
-                    {\chkjudg{\Gamma_2}{x}{\chat}{\Gamma_3}}
-            }
-            {\appjudg{\Gamma_2}{x}{\chat \arr \text{Mabye}\,\chat}{\text{Mabye}\,\chat}{\Gamma_3}} \\
-
-        \Infer{\SubInstL[5]}
-            {
-                \ahat \notin \FV{%
-                    \chat}
-                \\
-                \Infer{\InstLReach}
-                { }
-                {\instjudg{\Gamma_2[\ahat][\chat]}
-                        {\ahat}
-                        {\chat}
-                        {\Gamma_2[\ahat][\hypeq{\chat}{\ahat}]}}
-            }
-            {\subjudg{\Gamma_2}{\ahat}{\chat}{\Gamma_4}} \\
-
-        % \Infer{\Sub[4]}
-        %     {
-        %         \Infer{\Var}
-        %             {(\text{x} : \ahat) \in \Gamma_1}
-        %             {\synjudg{\Gamma_1}{x}{\ahat}{\Gamma_1}}
-        %         \\
-        %         \subjudg{\Gamma_1}{[\Gamma_1]\ahat}{[\Theta]Int}{\Delta}
-        %     }
-        %     {\chkjudg{\Gamma_1}{x}{Int}{\Delta}}
-
-        \Infer{\SubInstR[6]}
-        {
-            \bhat \notin \FV{%
-            \text{Mabye}\,\ahat}
-            \\
-            {\instjudgr{\Gamma_3}
-                {\bhat}
-                {\text{Mabye}\,\ahat}
-                {\Gamma_4}} [7]
-        }
-        {\subjudg{\Gamma_3}{\text{Mabye}\,\ahat}{\bhat}{\Gamma_4}}\\
-
-        \Infer{\InstRSolve[7]}
-        {\Gamma_3 \entails \text{Mabye}\,\ahat}
-            {\instjudgr{\{\Gamma_0, \ahat\}, \bhat, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
-                {\bhat}
-                {\text{Mabye}\,\ahat}
-                \{{\Gamma_0, \ahat\}, \hypeq{\bhat}{\text{Mabye}\,\ahat}, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
-            }
+{\!\ArrIntroSyn[1]}
+    }
+    { 
+    \Infer{\Sub[2]}
+    {
+        \synjudg{\Gamma_1}{\textit{Just x}}{\textit{Mabye}\,\chat}{\Gamma_3}[3]
+        \\
+        \subjudg{\Gamma_3}{[\Gamma_3]\textit{Mabye}\,\chat}{[\Gamma_3]\bhat}{\Gamma_4}[11]
+    }
+    {\chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\textit{Just x}}{\bhat}{\{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Mabye}\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}}
+    % \chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{Just x}}{\bhat}{\{\Gamma_0, \ahat, 
+    % \hypeq{\bhat}{Maybe\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}
+    }
+    {{\synjudg{\Gamma_0}{\lam{x} \textit{Just x}}{\ahat \arr \bhat}{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Mabye}\,\ahat}}}} \\
 
 \end{mathpar}
 
-
-Below I give an example of a situation that could occur during typechecking. We have a function we are typechecking that negates 
-
+\begin{enumerate}
+    \item We begin synthesis with the \ArrIntroSyn\ rule. We are trying to synthesize a type $A \arr B$  as the abstraction $\lam{x} \textit{Just x}$ must have a function type. We add to our context $\Gamma_0$ two existential type variables $\ahat, \bhat$. We also add to our context the type assignment $x: \ahat$, and then we check the inner body of the abstraction ($\textit{Just x}$) against $\bhat$ [1]. Check [1] yields the context $\Gamma_4$, and we discard everything after $x: \ahat$ to remove data we no longer need. We synthesize $\lam{x} \textit{Just x} \syn \ahat \arr \bhat$. Substituting the information from our context $\Gamma_4$ gives us $\ahat \arr \textit{Mabye}\,\ahat$. This is the final result of inference, but an existential type variables are simply a statement that `there exists a type', so they can be replaced with `$\forall$'s, giving our final result as $\forall a. a \arr \textit{Maybe}\,a$.
+    % \addtocounter{enumi}{1}
+    \item To check $\textit{Just x}$ against $\bhat$, we synthesize $\textit{Just x} \syn \textit{Mabye}\,\chat$ [3]. After applying $\Gamma_3$ as a substitution to $\textit{Mabye}\,\chat$ yielding $\textit{Mabye}\,\ahat$, we check this type against $\bhat$ [11], yielding $\Gamma_4$. 
+    \item To synthesize the type of $\textit{Just x}$, we synthesize $\textit{Just} \syn T_{Just}$ [4], and synthesize the type of the application of type $T_{Just}$ to $\textit{x}$.
+    \item From the context: $\textit{Just} \syn T_{Just}$
+    \item To synthesize the type of applying $\forall \alpha. \alpha \arr \textit{Maybe}\,\alpha$ to $\textit{x}$, we unwrap the forall by substituting all of the $\alpha$s for a fresh existential type variable $\chat$. We then synthesisze the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$.
+    \item To synthesisze the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$, we check $x$ against the first part of the arrow type $\chat$ [7]. We then yield the second part of the arrow type $\textit{Maybe}\,\chat$. 
+    \item To check $x$ against $\chat$, we synthesize $x \syn \ahat$ [8], and then check that $\ahat \subtype \chat$ [9].
+    \item From the context: $\textit{x} \syn \ahat$.
+    \item We use the \SubInstL\ rule to derive $\ahat \subtype \chat$. We could have equally used \SubInstR\ as both rules are for deriving a subtyping judgement where one side is an existential, but here both are existentials. To do this, we check that $\chat$ has no free instances of $\ahat$, and we instantiate $\ahat$ such that $\ahat \subtype \chat$ [10].
+    \item We instantiate $\ahat$ in our context $\Gamma_2$ to be a subtype of $\chat$ by setting $\chat$ to $\ahat$ in our context, yielding $\Gamma_3$.
+    \item To check that $\textit{Maybe}\,a \subtype \bhat$, we check that $\textit{Maybe}\,a$ has no free instances of $\bhat$, and we instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$ [12].
+    \item To instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$, we use the rule \InstRSolve\ to `solve' type $\bhat$ to be $\textit{Maybe}\,a$. This only requires that $\textit{Maybe}\,a$ is well formed under the context, which means that the context `knows about` all of the existential type variables (see \ref{fig:well_formed}).
+\end{enumerate}
 
 \subsection{Pairs}
 To support pairs, we must first add `Pair' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A `Pair' node has \verb|ASTNodeType| of `Pair', and two children.
