@@ -110,6 +110,9 @@ We want to be able to express the types of functions. The term \(\lambda x. x\) 
 
 A more complex term \(\lambda x\;y.x\) can be said to have type \(T \fto (U \fto T)\); If we give it a term $M$ of type $T$, it would return the function \(\lambda y.M\) which takes whatever is given to it (represented by $U$) and returns $M$ which has type $T$. 
 
+\subsubsection{Judgements}
+\todo{To make typechecking bit easier}
+
 By convention, $\fto$ is right associative so way may omit the right most parenthesis. 
 
 \subsection{Typechecking: Well typed programs do not go wrong}

@@ -104,33 +104,33 @@
   \noindent\hrulefill
 \end{figure*}
 
-\begin{figure}[t]
-  \judgbox{\judgetp{\Gamma}{A}}{Under context $\Gamma$, type $A$ is well-formed}
-  \begin{mathpar}
-      \Infer{\UvarWF}
-            { }
-            { \judgetp{\Gamma[\alpha]}{\alpha} }
-      \and
-      \Infer{\UnitWF}
-            { }
-            { \judgetp{\Gamma}{\unitty} }
-      \and
-      \Infer{\ArrowWF}
-            { \judgetp{\Gamma}{A} \\ \judgetp{\Gamma}{B} }
-            { \judgetp{\Gamma}{A \arr B} }
-      \and
-      \Infer{\ForallWF}
-            { \judgetp{\Gamma, \alpha}{A} }
-            { \judgetp{\Gamma}{\alltype{\alpha}{A}} }
-      \vspace{-1.3ex}
-      \\
-      \Infer{\EvarWF}
-            { }
-            { \judgetp{\Gamma[\ahat]}{\ahat} }
-       ~~~~
-      \Infer{\SolvedEvarWF}
-            { }
-            { \judgetp{\Gamma[\hypeq{\ahat}{\tau}]}{\ahat} }
-\end{mathpar}
-\label{fig:well_formed}
-\end{figure}
+% \begin{figure}[t]
+%   \judgbox{\judgetp{\Gamma}{A}}{Under context $\Gamma$, type $A$ is well-formed}
+%   \begin{mathpar}
+%       \Infer{\UvarWF}
+%             { }
+%             { \judgetp{\Gamma[\alpha]}{\alpha} }
+%       \and
+%       \Infer{\UnitWF}
+%             { }
+%             { \judgetp{\Gamma}{\unitty} }
+%       \and
+%       \Infer{\ArrowWF}
+%             { \judgetp{\Gamma}{A} \\ \judgetp{\Gamma}{B} }
+%             { \judgetp{\Gamma}{A \arr B} }
+%       \and
+%       \Infer{\ForallWF}
+%             { \judgetp{\Gamma, \alpha}{A} }
+%             { \judgetp{\Gamma}{\alltype{\alpha}{A}} }
+%       \vspace{-1.3ex}
+%       \\
+%       \Infer{\EvarWF}
+%             { }
+%             { \judgetp{\Gamma[\ahat]}{\ahat} }
+%        ~~~~
+%       \Infer{\SolvedEvarWF}
+%             { }
+%             { \judgetp{\Gamma[\hypeq{\ahat}{\tau}]}{\ahat} }
+% \end{mathpar}
+% \label{fig:well_formed}
+% \end{figure}

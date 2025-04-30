@@ -50,6 +50,7 @@ Figure \ref{fig:tc_types} shows the type system in SFL. Note that the definition
 % Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type, which can check that it is saturated before 
 
 \subsubsection{User Definable Algebraic Data Types}
+\label{c2:design_data_types}
 In Haskell, we can create algebraic types using the \sflinline{data} keyword (see \ref{bg:haskell_udt}). Replicating this syntax for \ac{SFL}'s user defined data types is desirable because it would allow people already familiar with Haskell to use the system, as well as viva versa. 
 
 As an example, the SFL (and Haskell) data declaration:
@@ -226,15 +227,16 @@ We may wish to add another name that a type can be known by. For instance, we ma
 The function that produces type aliases returns a `\verb|Type::Alias(String, Box<Type>)|'. The reason we do not want to simply rename all references to the alias name to the type in question is that this would make type errors more obscure, and harder for users to understand the error with reference to the original program.
 
 \subsubsection{Parsing Data Declaration} 
-As discussed in [REFHERE: Language Design], we want to be able to define and parse \verb|data| declarations. A \verb|data| deceleration consists of: 
+We want to be able to define and parse \verb|data| declarations~\ref{c2:design_data_types}. A \verb|data| deceleration consists of: 
 \begin{itemize}
     \item The `\verb|data|' keyword
     \item The name of the type (uppercase ID)
+    \item A list of type variables
     \item The assignment operator (=)
     \item A set of constructors separated by \(\mid\). Constructor definitions consist of the following. 
         \begin{itemize}
             \item The name of the constructor
-            \item Zero or more type expressions, representing what types the constructor can be applied to.
+            \item Zero or more type expressions, representing what types the constructor can be applied to. These type expressions must only contain type variables in the set before the assignment operator, but can be any other concrete type expression.  
         \end{itemize}
 \end{itemize}
 
@@ -255,19 +257,53 @@ Parsing constructors is not complex, as we have already implemented the mechanis
 
 \newpage
 \subsection{The Type Checker}
-The type checker will be bidirectional, and will follow an algorithm largely based on the one described by Dunfield and Krishnaswami \cite{completebidir}. The quote that follows from this paper, describes bidirectional type checking and its merits: \sam{another weird intro}
+\begin{figure*}[t]
+    \begin{minipage}{1\textwidth}
+    \judgbox{\chkjudg{\Gamma}{e}{A}{\Delta}}%
+    {Under input context $\Gamma$, $e$ checks against input type $A$, 
+    with output context $\Delta$} \\[1ex]
+ \judgbox{\synjudg{\Gamma}{e}{A}{\Delta}}%
+    {Under input context $\Gamma$, $e$ synthesizes output type $A$,
+      with output context $\Delta$} \\[0.5ex]
+ \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
+    {Under input context $\Gamma$, applying a function of type $A$ to $e$ synthesizes type $C$, \\ with output context $\Delta$} \\
+    \end{minipage}
+    \noindent\rule{\textwidth}{0.4pt}
+    \caption{Checking and Synthesis judgements the typechecking algorithm attempts to derive. These are from Dunfield and Krishnaswami~\cite{completebidir}, and are not modified in my extension of their algorithm.}
+    \label{fig:bidir_judgement_types}
+\end{figure*}
+
+The type checker uses an algorithm which is a modified version of the algorithm proposed by Dunfield and Krishnaswami \cite{completebidir}. 
 \begin{quote}
-`Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability \ldots its error reporting, and its relative ease of implementation' \cite{completebidir}
+`Bidirectional typechecking, in which terms either synthesize a type or are checked against a known type, has become popular for its scalability \ldots\ its error reporting, and its relative ease of implementation' \cite{completebidir}
 \end{quote}
 \noindent It was the `relative ease of implementation' that attracted me to bidirectional type checking. I modified their algorithm to add my extra types (the inbuilt types $Int$, $Bool$, as well as the \Uniontype\ and \Producttype\ types) and my extra expression syntax structures (literals, match, pairs). This does not include assignment and modules as these are not part of expression syntax. 
 
 \input{sections/fig_types_ctx}
 
-% The full typechecking algorithm is listed in figures \ref{fig:alg-subtyping}, \ref{fig:instantiation}, \ref{fig:alg-typing}. 
+% The full typechecking algorithm is listed in figures \ref{fig:alg-subtyping}, \ref{fig:instantiation}, \ref{fig:alg-typing}. Below I will describe the typechecking algorithm, focusing on my additions/changes. This will then be followed by two example derivations. Appendix \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. 
+
+\noindent The typechecking algorithm (Figure~\ref{fig:alg-typing}) is presented as a series of \textit{inference rules}, which describe how to derive conclusions (written below the horizontal line) from a set of premises (written above it). 
+These rules allow us to construct \textit{derivation trees} by starting from the conclusion we wish to prove and recursively deriving each premise, continuing until we reach axioms—rules with no premises.
+The conclusions derived in this way are called \textit{typing judgements}. A typical typing judgement takes the form $\judge{\Gamma}{x}{A}$, meaning `under context $\Gamma$, it is derivable that $x$ has type $A$'. However, in our bidirectional type system, we have three different types of typing judgements we attempt to derive, and in the process of deriving these judgements we also update our context with additional information gleaned during the derivation process~\ref{fig:bidir_judgement_types}. 
+\begin{figure}[!h]
+\begin{mathpar}
+\Infer{\Sub}
+    {\synjudg{\Gamma}{e}{A}{\Theta}
+        \\
+        \subjudg{\Theta}{[\Theta]A}{[\Theta]B}{\Delta}
+    }
+    {\chkjudg{\Gamma}{e}{B}{\Delta}}
+\end{mathpar}
+\caption{One of the inferrence rules in the algorithm, listed here as an example. }
+\label{fig:eg_infer_rule}
+\end{figure}
+
+
+Figure \ref{fig:eg_infer_rule} shows one of the most important rules in the algorithm as an example. This rule \Sub\ allows us to derive that $\chkjudg{\Gamma}{e}{B}{\Delta}$ (Under imput context $\Gamma, e$ checks against type $A$ with output context $\Delta$)
 
 
 \paragraph{Hole notation}
-% \sam{you have not prepared the reader for this extract, I'll inline my questions to illustrate}
 Below is a paragraph from the original paper \cite{completebidir} explaining `hole notation' in contexts, which is used throughout the algorithm descriptions in \ref{fig:alg-typing}, \ref{fig:alg-subtyping} and \ref{fig:instantiation}. 
 \begin{quote}
 `Since we will manipulate contexts not only by appending declarations \dots but by inserting and replacing declarations in the middle, a notation for contexts with a hole is useful:
@@ -275,7 +311,6 @@ Below is a paragraph from the original paper \cite{completebidir} explaining `ho
 \begin{displ}
   `$\Gamma = \Gamma_0[\Theta]$~~~means $\Gamma$ has the form $(\Gamma_L, \Theta, \Gamma_R)$
 \end{displ}
-% \sam{where does $\Gamma_0$ go? where do $\Gamma_L$ and $\Gamma_R$ come from?}
 For example, if $\Gamma = \Gamma_0[\bhat] = (\ahat, \bhat, x : \bhat)$,
 then $\Gamma_0[\hypeq{\bhat}{\ahat}] = (\ahat, \hypeq{\bhat}{\ahat}, x : \bhat)$
 % \sam{what is $\hypeq{\bhat}{\ahat}$ why are there two $\bhat$}
@@ -291,28 +326,12 @@ Occasionally, we also need contexts with \emph{two} ordered holes:
 \end{displ}
 \end{quote}
 
-\noindent Below I will describe the typechecking algorithm, focusing on my additions/changes. Appendix \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. 
 % \sam{please run a small example inline here}
 % \sam{you cannot rely on readers looking at your appendix}
 % \sam{now i have read the appendix, It is excellent!!! just move that. Its so much clearer and its not dry cos we gave a goal and it nicely guides me through}
 
 \subsubsection{Algorithmic Type Checking and Synthesis}
-\begin{figure*}[t]
-    \begin{minipage}{1\textwidth}
-    \judgbox{\chkjudg{\Gamma}{e}{A}{\Delta}}%
-    {Under input context $\Gamma$, $e$ checks against input type $A$, 
-    with output context $\Delta$} \\[1ex]
- \judgbox{\synjudg{\Gamma}{e}{A}{\Delta}}%
-    {Under input context $\Gamma$, $e$ synthesizes output type $A$,
-      with output context $\Delta$} \\[0.5ex]
- \judgbox{\appjudg{\Gamma}{e}{A}{C}{\Delta}}%
-    {Under input context $\Gamma$, applying a function of type $A$ to $e$ synthesizes type $C$, \\ with output context $\Delta$} \\
-    \end{minipage}
-    \noindent\rule{\textwidth}{0.4pt}
-    \caption{Checking and Synthesis rule formatting as described by Dunfield and Krishnaswami \cite{completebidir}}
-\end{figure*}
-
-Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. The rule I added are: 
+Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. Some of the inferrence rules listed The rule I added are: 
 %\sam{questions the reader might have: but how is this an algo? they are sequences of steps? What is all this notation? I've never seen the backwards turnstyle before or the backward implication. This should be walked thorugh in prose, you should not expect me to spend ages looking at the figure figuring it out. You are the writer, guide me}
 %\sam{say in the prose that they are highlighted. I think the way you use captions is weird. It reads as if your expectation upon someone reading "figure bla" is that they immediately read the caption of figure  bla, but i dont. I stick with the prose hoping to be guided through my viewing of the figure, especially such a complex one.}
 \begin{itemize}
@@ -329,7 +348,7 @@ Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizi
 
 Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm.
 
-\subsubsection{Algorithmic Subtyping} \sam{you need an example} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added rules for
+\subsubsection{Algorithmic Subtyping} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added rules for:
 \begin{itemize}
     \item $Int \subtype Int$ and $Bool \subtype Bool$ trivially. 
     \item $(A_1, B_1) \subtype (A_2, B_2)$ if $A_1 \subtype A_2$ and $B_1 \subtype B_2$.
@@ -341,72 +360,107 @@ Figure \ref{fig:instantiation} shows the special subtyping rules for existential
 
 For instance, the rule $\InstLArr$ instantiates $\ahat$ such that $\ahat \subtype A_1 \arr A_2$ by adding to our context $\ahat_1, \ahat_2$, and setting $\ahat = \ahat_1 \fto \ahat_2$ in the context. We then instantiate $\ahat_1 \instsymlop A_1$ and $\ahat_2 \instsymrop A_2$.
 
-\subsubsection{Typechecking the Pair Function}
-This is an example of the algorithm in action. The pair function $\lam{x\;y} (x, y)$ takes two arguments, and returns a pair of the two values. Here, we type check it against its correct type $\alltype{\alpha\;\beta}{\alpha \fto \beta \fto (\alpha, \beta)}$. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
+\subsubsection{Examples Derivations}
+Below are two example derivations that cover most of the key aspects of the algorithm. The first example aims to give a simpler demonstration and explaination of how the typechecking and synthesis inference rules work, and use some of my rules. The second aims to show a more complex derivation heavily relying on the context instantiation rules. A supplamentory derivation is included in the appendices~(\ref{appx:example_derive}), which shows more of my rules in action. 
+
+\paragraph{Typechecking an Expression Involving Lists}
+\label{c2:types_demo_1}
+We shall attempt to use the algorithm to check the type of $\text{Cons}\;1\;x$ against $List\;Int$. In this derivation, we defined \sflinline{data List = Cons Int (List Int) | Nil} to avoid the complexities of polymorphism, which are better demonstrated by the next example~\ref{c2:types_demo_2}. The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
+
+\begin{figure}[t]
 
 \begin{mathpar}
-\Gamma = \alpha,\beta,x : \alpha,y : \beta\\
-\Delta = \alpha\\
+T_{Nil} = List\;Int\and
+T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
+\Gamma = T_{Cons}, T_{Nil}\and\Gamma = \Gamma_0 = \Gamma_1\\
 
-\Infer{\Sub[6]}
-  {\Infer{\Var[8]}
-      {(x : \alpha) \in \{\Gamma\}}
-      {\synjudg{\Gamma}{x}{\alpha}{\Gamma}}
-    \\
-  \Infer{\SubVar[9]}
-      { }
-      {\subjudg{\Gamma[\alpha]}{\alpha}{\alpha}{\Gamma[\alpha]}}
-  }
-  {\chkjudg{\Gamma}{x}{\alpha}{\Gamma}}
 \\
 
-\Infer{\Sub[7]}
-  {\Infer{\Var[10]}
-      {(y : \beta) \in \{\Gamma\}}
-      {\synjudg{\Gamma}{y}{\beta}{\Gamma}}
-    \\
-  \Infer{\SubVar[11]}
-      { }
-      {\subjudg{\Gamma[\beta]}{\beta}{\beta}{\Gamma[\beta]}}
-  }
-  {\chkjudg{\Gamma}{y}{\beta}{\Gamma}}
+\Infer{\MyTCRule{\Unionsubrulename}[10]}
+    {\Infer{\MyTCRule{\Intsubrulename}[11]}{ }
+        {\subjudg{\Gamma_0}{\Inttype}{\Inttype}{\Gamma_1}}}
+    {\subjudg{\Gamma_0}{List[Int]}{List[Int]}{\Gamma_{1}}}
+\\
 
- \Infer{\AllIntro[1]}
-   {\Infer{\AllIntro[2]}
-   {
-    \Infer{\!\ArrIntro[3]}
-      {
-       \Infer{\!\ArrIntro[4]}
+\Infer{\ArrApp[7]}
+    {     \Infer{\Sub[8]}
+          { 
           {
-          \Infer{\MyTCRule{\Paircheckrulename}[5]}
-            {[6]\chkjudg{\Gamma}{x}{\alpha}{\Gamma} \\ [7]\chkjudg{\Gamma}{y}{\beta}{\Gamma}}
-            {\chkjudg{\Gamma}{(x, y)}{(\alpha, \beta)}{\Gamma}}
+          \Infer{\Var[9]}
+            {(Nil : T_{Nil}) \in \Gamma}
+            {\synjudg{\Gamma}{Nil}{T_{Nil}}{\Gamma}}
           }
-          {\chkjudg{\alpha,\beta,x : \alpha}{\lam{y} (x, y)}{\beta \fto (\alpha, \beta)}{\Gamma}}
+            \\
+            [10]\subjudg{\Gamma}{List[Int]}{List[Int]}{\Gamma}
           }
-      {{\chkjudg{\alpha,\beta}{\lam{x\; y} (x, y)}{\alpha \fto \beta \fto (\alpha, \beta)}{\Delta, \beta, \{x : \alpha, y : \beta\}}} \\ (= \Gamma)}
-   }
-   {{\chkjudg{\alpha}{\lam{x\;y} (x, y)}{\alltype{\beta}{\alpha \fto \beta \fto (\alpha, \beta)}}{\{.\}, \alpha, \{.\}}} \\ (= \Delta)}
-   }
-   {\chkjudg{.}{\lam{x\;y} (x, y)}{\alltype{\alpha\;\beta}{\alpha \fto \beta \fto (\alpha, \beta)}}{.}}\\
+          {\chkjudg{\Gamma}{Nil}{List\;Int}{\Gamma}}}
+    {\appjudg{\Gamma}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma}}
 
+\\
+\Infer{\!\ArrElim[3]}
+{
+{
+\Infer{\Var[4]}
+    {(Cons : T_{Cons}) \in \Gamma}
+    {\synjudg{\Gamma}{Cons}{T_{Cons}}{\Gamma}}
+}
+\\
+    {
+    \Infer{\ArrApp[5]}
+        {
+        \Infer{\MyTCRule{\Intcheckrulename}[6]}
+            { }
+            {\chkjudg{\Gamma}{1}{\Inttype}{\Gamma}}
+        }
+        {\appjudg{\Gamma}{1}{T_{Cons}}{List\;Int \arr List\;Int}{\Gamma}}
+     % \Infer{\AllApp}
+     %    {\appjudg{\Gamma_1,\ahat}{1}{(\ahat \fto List\; \ahat \fto List\;\ahat)}{C}{\Delta}}
+     %    {\appjudg{\Gamma_1}{1}{\alltype{\alpha}{\alpha \fto List\; \alpha \fto List\;\alpha}}{C}{\Delta}}
+    }
+    }
+    {\synjudg{\Gamma}{Cons\,1}{List\;Int \arr List\;Int}{\Gamma}}
+\\
+
+\Infer{\!\ArrElim[2]}
+    {
+    {
+        [3]{\synjudg{\Gamma}{Cons\,1}{List\;Int \arr List\;Int}{\Gamma}}
+    }
+    \\
+    [7]\appjudg{\Gamma}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma}
+    }
+    {\synjudg{\Gamma}{Cons\,1\,Nil}{List\;Int}{\Gamma}}
+\\
+
+\Infer{\Sub[1]}
+    {
+        [2]{\synjudg{\Gamma}{Cons\,1\,Nil}{List\;Int}{\Gamma}}
+        \\
+        [10]\subjudg{\Gamma}{List[Int]}{List[Int]}{\Gamma}
+    }
+    {\chkjudg{\Gamma}{Cons\;1\;Nil}{List\;Int}{\Gamma}}
 \end{mathpar}
+\caption{An example derivation showing how the type derivation $\chkjudg{.}{Cons\;1\;Nil}{List\;Int}{.}$}
+\end{figure}
 
 \begin{enumerate}
-    \item Here, we begin typechecking with the \AllIntro rule to introduce $\forall \alpha$. We do this by adding $\alpha$ to the initially empty context. We then check the function against the type without the $\forall \alpha$: $\alltype{\beta}{\alpha \fto \beta \fto (\alpha, \beta)}$. The output of this checking is then split into 3 parts: everything before the $\alpha$, the $\alpha$ itself, and the bits after the $\alpha$. Our output context is everything in $\Delta$ before the alpha, which is nothing. 
-    \item We apply the same rule as above, but we are introducing $\forall \beta$. We then check the function against ${\alpha \fto \beta \fto (\alpha, \beta)}$
-    Our output context for this rule is everything in $\Gamma$ before the $\beta$: only $\alpha$.
-    \item We then start to unwrap the abstractions. We strip the abstraction over $x$ from the expression, leaving us with ($\lam{y} (x, y)$). We then add $(x:\alpha)$ to our context, and then progress by checking the remaining part of the expression against ${\beta \fto (\alpha, \beta)}$. Our output context is $\Gamma$. 
-    \item Same as above, with $y$ against $\beta$. We unwrap the abstraction over $y$ to give us $(x, y)$. We then check this against ${(\alpha, \beta)}$. The output context is $\Gamma$.
-    \item We check $(x, y)$ against the type $(\alpha, \beta)$. To check this, we check $x$ against $\alpha$ and $y$ against $\beta$. The output context is $\Gamma$.
-    \item To check $x$ against type $\alpha$ we synthesise the type of $x$ ([9]: trivial, as its in the context). We then check this against $\alpha$, and a check of $\alpha$ against $\alpha$ ([10]) trivially passes.
-    \item Same as above with $y$ against $\beta$. The output context is $\Gamma$
+    \item To check $Cons\;1\;Nil$ against $List\;Int$ [2], we first synthesise the expression type, and check the synthesised type is as subtype of $List\;Int$ [10].
+    \item To synthesise the type of the expression $Cons\;1\;Nil$ (implicitly $((Cons\;1)\;Nil)$) we synthesise the type of the left hand side of the application $Cons\;1$ to be $List\;Int\arr List\;Int$ [7] and then we synthesise the type of $Nil$ under the application of that type, which gives us $List\;Int$.
+    \item To synthesise the type of $Cons\;1$, we synthesise the type of the left hand side of the application $Cons$ to be $T_{Cons}: Int\arr List\;Int\arr List\;Int$ [4], and then synthesise the type of $1$ under the application of that type, which gives us $List\;Int\arr List\;Int$ [5].
+    \item We synthesise the type of $Cons$ to be $T_{Cons}$ from the context.
+    \item We synthesise the type of $1$ under the application of $T_{Cons}$, by first checking the type of $1$ against the type $Int$ which is the left hand side of the applied type[6]. This allows us to synthesise the right hand side of the applied type: $List\;Int\arr List\;Int$. 
+    \item 1 checks against the type $Int$, as it is an Int literal.
+    \item To synthesise the type of $Nil$ under the application of $List\;Int\arr List\;Int$, we check $Nil$ against the type $List\;Int$ which is the left hand side of the applied type[8]. This allows us to synthesise the right hand side of the applied type: $List\;Int$
+    \item To check $Nil$ against the type $List\;Int$, we first synthesise the type of $Nil$ resulting in $T_{Nil} :List\;Int$[9]. We then check that this is a subtype of $List\;Int$[10].
+    \item We synthesise the type of $Nil$ to be $T_{Nil}$ from the context.
+    \item We apply the \MyTCRule{\Unionsubrulename} rule to check that $List\;Int$ is a subtype (non strict) of $List\;Int$. The first check is that the names are the same, as the names uniquely identify these types. We then iterate over the list of the arguments to the type constructor. The name of the context increments to reflect this iteration, but the context is unchanged during this check. There is only one type in the list
 \end{enumerate}
 
+\paragraph{Synthesizing Example}
+\label{c2:types_demo_2}
+\ac{SFL} explorer requires type assignments by default, but the below example does not have a type assignment as this allows us to hit some of the rules that we did not hit in the `pairs' example. We have a function \sflinline{f x = Just x} (desugared: \sflinline{f = (\x. Just x)}) that we want to synthesize the type of. \sflinline{Just} is a constructor defined in the type declaration \sflinline{data Maybe a = Just a | Nothing}, and it has a type $\forall a. a \arr Maybe\,a$.
 
-\subsection{Synthesizing Example}
-We have a function \sflinline{f x = Just x} (desugared: \sflinline{f = (\x. Just x)}) that we want to synthesize the type of. \sflinline{Just} is a constructor defined in the type declaration \sflinline{data Maybe a = Just a | Nothing}, and it has a type $\forall a. a \arr Maybe\,a$
-
+\begin{figure}[t]
 \begin{mathpar}
 T_{Just} = \forall \alpha. \alpha \arr \textit{Maybe}\,\alpha \and
 T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
@@ -417,26 +471,25 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
 \Gamma_4 = \Gamma_0, \ahat, \hypeq{\bhat}{\textit{Maybe}\,\ahat}, x : \ahat, \hypeq{\chat}{\ahat}\\
 
 \Infer{\InstRSolve[12]}
-{\Gamma_3 \entails \textit{Mabye}\,\ahat}
+{\Gamma_3 \entails \textit{Mabye}\;\ahat}
     {\instjudgr{\{\Gamma_0, \ahat\}, \bhat, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
         {\bhat}
-        {\textit{Mabye}\,\ahat}
-        \{{\Gamma_0, \ahat\}, \hypeq{\bhat}{\textit{Mabye}\,\ahat}, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
+        {\textit{Mabye}\;\ahat}
+        \{{\Gamma_0, \ahat\}, \hypeq{\bhat}{\textit{Mabye}\;\ahat}, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
     }\\
 
 
 \Infer{\SubInstR[11]}
 {
     \bhat \notin \FV{%
-    \textit{Mabye}\,\ahat}
+    \textit{Mabye}\;\ahat}
     \\
     {\instjudgr{\Gamma_3}
         {\bhat}
-        {\textit{Mabye}\,\ahat}
+        {\textit{Mabye}\;\ahat}
         {\Gamma_4}} [12]
 }
-{\subjudg{\Gamma_3}{\textit{Mabye}\,\ahat}{\bhat}{\Gamma_4}}\\
-
+{\subjudg{\Gamma_3}{\textit{Mabye}\;\ahat}{\bhat}{\Gamma_4}}\\
 
 
 \Infer{\SubInstL[9]}
@@ -465,7 +518,7 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
         }
         {\chkjudg{\Gamma_2}{x}{\chat}{\Gamma_3}}
 }
-{\appjudg{\Gamma_2}{x}{\chat \arr \textit{Mabye}\,\chat}{\textit{Mabye}\,\chat}{\Gamma_3}} \\
+{\appjudg{\Gamma_2}{x}{\chat \arr \textit{Mabye}\;\chat}{\textit{Mabye}\;\chat}{\Gamma_3}} \\
 
 \Infer{\!\ArrElim[3]}
     {\Infer{\Var[4]}
@@ -473,10 +526,10 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
         {\synjudg{\Gamma_1}{Just}{T_{Just}}{\Gamma_1}}
         \\
         \Infer{\AllApp[5]}
-            {\appjudg{\Gamma_1,\chat}{x}{[\chat/\alpha] (\alpha \arr \textit{Mabye}\,\alpha)}{\textit{Mabye}\,\chat}{\Gamma_3}[6]}
-            {\appjudg{\Gamma_1}{x}{\alltype{\alpha}{\alpha \arr \textit{Mabye}\,\alpha}}{\textit{Mabye}\,\chat}{\Gamma_3}}
+            {\appjudg{\Gamma_1,\chat}{x}{[\chat/\alpha] (\alpha \arr \textit{Mabye}\;\alpha)}{\textit{Mabye}\;\chat}{\Gamma_3}[6]}
+            {\appjudg{\Gamma_1}{x}{\alltype{\alpha}{\alpha \arr \textit{Mabye}\;\alpha}}{\textit{Mabye}\;\chat}{\Gamma_3}}
     }
-    {\synjudg{\Gamma_1}{\textit{Just x}}{\textit{Mabye}\,\chat}{\Gamma_3}} \\
+    {\synjudg{\Gamma_1}{\textit{Just x}}{\textit{Mabye}\;\chat}{\Gamma_3}} \\
 
 \Infer{%
 {\!\ArrIntroSyn[1]}
@@ -484,24 +537,26 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
     { 
     \Infer{\Sub[2]}
     {
-        \synjudg{\Gamma_1}{\textit{Just x}}{\textit{Mabye}\,\chat}{\Gamma_3}[3]
+        \synjudg{\Gamma_1}{\textit{Just x}}{\textit{Mabye}\;\chat}{\Gamma_3}[3]
         \\
-        \subjudg{\Gamma_3}{[\Gamma_3]\textit{Mabye}\,\chat}{[\Gamma_3]\bhat}{\Gamma_4}[11]
+        \subjudg{\Gamma_3}{[\Gamma_3]\textit{Mabye}\;\chat}{[\Gamma_3]\bhat}{\Gamma_4}[11]
     }
-    {\chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\textit{Just x}}{\bhat}{\{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Mabye}\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}}
+    {\chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\textit{Just x}}{\bhat}{\{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Mabye}\;\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}}
     % \chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{Just x}}{\bhat}{\{\Gamma_0, \ahat, 
     % \hypeq{\bhat}{Maybe\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}
     }
-    {{\synjudg{\Gamma_0}{\lam{x} \textit{Just x}}{\ahat \arr \bhat}{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Mabye}\,\ahat}}}} \\
+    {{\synjudg{\Gamma_0}{\lam{x} \textit{Just x}}{\ahat \arr \bhat}{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Mabye}\;\ahat}}}}
 
 \end{mathpar}
+\caption{An example derivation showing how the type of $\lam{x} \textit{Just x}$ can be synthesized}
+\end{figure}
 
 \begin{enumerate}
-    \item We begin synthesis with the \ArrIntroSyn\ rule. We are trying to synthesize a type $A \arr B$  as the abstraction $\lam{x} \textit{Just x}$ must have a function type. We add to our context $\Gamma_0$ two existential type variables $\ahat, \bhat$. We also add to our context the type assignment $x: \ahat$, and then we check the inner body of the abstraction ($\textit{Just x}$) against $\bhat$ [1]. Check [1] yields the context $\Gamma_4$, and we discard everything after $x: \ahat$ to remove data we no longer need. We synthesize $\lam{x} \textit{Just x} \syn \ahat \arr \bhat$. Substituting the information from our context $\Gamma_4$ gives us $\ahat \arr \textit{Mabye}\,\ahat$. This is the final result of inference, but an existential type variables are simply a statement that `there exists a type', so they can be replaced with `$\forall$'s, giving our final result as $\forall a. a \arr \textit{Maybe}\,a$.
+    \item We begin synthesis with the \ArrIntroSyn\ rule. We are trying to synthesize a type $A \arr B$  as the abstraction $\lam{x} \textit{Just x}$ must have a function type. We add to our context $\Gamma_0$ two existential type variables $\ahat, \bhat$. We also add to our context the type assignment $x: \ahat$, and then we check the inner body of the abstraction ($\textit{Just x}$) against $\bhat$ [1]. Check [1] yields the context $\Gamma_4$, and we discard everything after $x: \ahat$ to remove data we no longer need. We synthesize $\lam{x} \textit{Just x} \syn \ahat \arr \bhat$. Substituting the information from our context $\Gamma_4$ gives us $\ahat \arr \textit{Mabye}\;\ahat$. This is the final result of inference, but an existential type variables are simply a statement that `there exists a type', so they can be replaced with `$\forall$'s, giving our final result as $\forall a. a \arr \textit{Maybe}\,a$.
     % \addtocounter{enumi}{1}
-    \item To check $\textit{Just x}$ against $\bhat$, we synthesize $\textit{Just x} \syn \textit{Mabye}\,\chat$ [3]. After applying $\Gamma_3$ as a substitution to $\textit{Mabye}\,\chat$ yielding $\textit{Mabye}\,\ahat$, we check this type against $\bhat$ [11], yielding $\Gamma_4$. 
+    \item To check $\textit{Just x}$ against $\bhat$, we synthesize $\textit{Just x} \syn \textit{Mabye}\;\chat$ [3]. After applying $\Gamma_3$ as a substitution to $\textit{Mabye}\;\chat$ yielding $\textit{Mabye}\;\ahat$, we check this type against $\bhat$ [11], yielding $\Gamma_4$. 
     \item To synthesize the type of $\textit{Just x}$, we synthesize $\textit{Just} \syn T_{Just}$ [4], and synthesize the type of the application of type $T_{Just}$ to $\textit{x}$.
-    \item From the context: $\textit{Just} \syn T_{Just}$
+    \item From the context: $\textit{Just} \syn T_{Just}$.
     \item To synthesize the type of applying $\forall \alpha. \alpha \arr \textit{Maybe}\,\alpha$ to $\textit{x}$, we unwrap the forall by substituting all of the $\alpha$s for a fresh existential type variable $\chat$. We then synthesisze the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$.
     \item To synthesisze the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$, we check $x$ against the first part of the arrow type $\chat$ [7]. We then yield the second part of the arrow type $\textit{Maybe}\,\chat$. 
     \item To check $x$ against $\chat$, we synthesize $x \syn \ahat$ [8], and then check that $\ahat \subtype \chat$ [9].
@@ -509,7 +564,7 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
     \item We use the \SubInstL\ rule to derive $\ahat \subtype \chat$. We could have equally used \SubInstR\ as both rules are for deriving a subtyping judgement where one side is an existential, but here both are existentials. To do this, we check that $\chat$ has no free instances of $\ahat$, and we instantiate $\ahat$ such that $\ahat \subtype \chat$ [10].
     \item We instantiate $\ahat$ in our context $\Gamma_2$ to be a subtype of $\chat$ by setting $\chat$ to $\ahat$ in our context, yielding $\Gamma_3$.
     \item To check that $\textit{Maybe}\,a \subtype \bhat$, we check that $\textit{Maybe}\,a$ has no free instances of $\bhat$, and we instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$ [12].
-    \item To instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$, we use the rule \InstRSolve\ to `solve' type $\bhat$ to be $\textit{Maybe}\,a$. This only requires that $\textit{Maybe}\,a$ is well formed under the context, which means that the context `knows about` all of the existential type variables (see \ref{fig:well_formed}).
+    \item To instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$, we use the rule \InstRSolve\ to `solve' type $\bhat$ to be $\textit{Maybe}\,a$. This only requires that $\textit{Maybe}\,a$ is well formed under the context, which means that the context `knows about' all of the existential type variables. % (see \ref{fig:well_formed}).
 \end{enumerate}
 
 \subsection{Pairs}
@@ -593,8 +648,7 @@ When matching an expression against a pattern, we have three possible results:
     \item Refute: We can not match this pattern, and evaluating the expression further would definitely not result in being able to match
     \item Unknown: It does not match, but we cannot refute
 \end{itemize}
-
-The algorithm for finding the next evaluation step for a match expression is to sequentially attempt to match each pattern. If the result of matching an expression is a refutation, we check the next one. If the result is not yet known, we do not look at any further patterns, and we evaluate the expression further instead. 
+\noindent The algorithm for finding the next evaluation step for a match expression is to sequentially attempt to match each pattern. If the result of matching an expression is a refutation, we check the next one. If the result is not yet known, we do not look at any further patterns, and we evaluate the expression further instead. 
 
 Below is a short summary of how pattern matching is done for different structures. This summary does not show all cases, but instead aims to give a general idea about how the algorithm works. To match an expression $E$ against a pattern $P$ and get all variables that the pattern would bind, we proceed case wise on the structure of $P$. 
 \begin{itemize}
