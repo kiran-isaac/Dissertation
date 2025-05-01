@@ -476,28 +476,15 @@ Below is a summary of my clients thoughts about various aspects of the proof of 
 
 \subsection{Usefulness as a Teaching Tool}
 Below are some notes on what the client thought about the effectiveness of the project as a teaching tool, and how it could be improved in future iterations.
+The project is already very useful as a teaching tool to demonstrate:
 \begin{itemize}
-    \item The project is already very useful as a teaching tool to demonstrate:
-    \begin{itemize}
-        \item Evaluation order, and the importance of laziness
-        \item Currying
-        \item Recursion
-        \item The \lcalc
-    \end{itemize}
-
-    \item On top of this my client wanted to be able to use the system to demonstrate: 
-    \begin{itemize}
-        \item High Priority
-        \begin{itemize}
-            \item List and common list functions such as `map' and `fold'. These do not have to by polymorphic, they could be just defined over $Int$s or some other type. These also do not need to be user-definable, they can be built in. 
-            \item Pattern Matching
-        \end{itemize}
-        \item Lower Priority 
-        \begin{itemize}
-            \item User definable data types, preferably polymorphic. This would mean we could define `$List$' as part of the language which would be good for clarity. 
-        \end{itemize}
-    \end{itemize}
+    \item Evaluation order, and the importance of laziness
+    \item Currying
+    \item Recursion
+    \item The \lcalc
 \end{itemize}
+
+On top of this my client wanted to be able to use the system to demonstrate $List$s and common $List$ functions such as `map' and `fold'. These do not have to by polymorphic, they could be just defined over $Int$s or some other type. These also do not need to be user-definable, they can be built in. However, supporting polymorphic user defineable data types would be very useful and much clearer. 
 
 \subsection{The Existing Language}
 \paragraph{Positives:}

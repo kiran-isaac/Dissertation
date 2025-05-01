@@ -6,15 +6,13 @@ In this phase, I moved away from the autoethnographic (\ref{sec:c1_autoethnograp
 At the end of this phase, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the phase, 
 
 \section{Requirements Analysis}
-The requirements for this phase were motivated by my client meeting (\ref{eval:c1}). I wanted to tackle the most technical aspects in this phase to give me the maximum time to complete them, as this was still early in the project lifecycle. The most difficult features out of the client's requests were the ones to do with extending the language, so these were the main focus for this phase. 
+The requirements for this phase were motivated by my client meeting (\ref{eval:c1_client}). I wanted to tackle the most technical aspects in this phase to give me the maximum time to complete them, as this was still early in the project lifecycle. 
 
-The client's central idea for what they wanted to use the tool was to demonstrate methods on lists, such as `map' and `foldr/l'. This requires lists to be built into the language. Lists in functional programming languages are commonly defined recursively, using \verb|Cons x xs| to represent constructing a list from an element \verb|x| and the rest of the list \verb|xs|. \verb|Nil| represents an empty list. This recursive construction of lists comes from Lisp \cite{mccarthy1960recursivelisp}. Similarly, in Haskell, lists are defined as \verb!data [a] = [] | a : [a]! \\\todo{finish yapping about lists and talk about why that means we need ADTs} 
-
-This definition of lists is as example of a polymorphic data type. It also implicitly defines two polymorphic constructors, `[]' also known as Nil which has type $\forall a. [a]$, and `:' also known as Cons which has a type $\forall a. a \fto [a] \fto [a]$. 
+The client's central idea for what they wanted to use the tool was to demonstrate methods on lists, such as `map' and `foldr/l'. Lists in functional programming languages are commonly defined recursively, using \verb|Cons x xs| to represent constructing a list from an element \verb|x| and the rest of the list \verb|xs|. \verb|Nil| represents an empty list. This recursive construction of lists comes from Lisp \cite{mccarthy1960recursivelisp}. Similarly, in Haskell, lists are defined as \verb!data [a] = [] | a : [a]! This definition of lists is as example of a polymorphic data type. It also implicitly defines two polymorphic constructors, `[]' also known as Nil which has type $\forall a. [a]$, and `:' also known as Cons which has a type $\forall a. a \fto [a] \fto [a]$. 
 
 \section{Design}
 \subsection{Language Changes}
-The focus of this project phase is mainly to upgrade the language SFL. We have already identified what features we would like to add the language. This section will go into detail about the design for the extension for the language enabling these new features. 
+The focus of this project phase is mainly to upgrade the language. We have already identified what features we would like to add the language. This section will go into detail about the design for the extension for the language enabling these new features. 
 \subsubsection{Type System}
 \label{sec:type_system_design}
 % \sam{ive thought further about this, i still agree with what i said, but i think the reason this section suffers is that updates to the types needs to come LAST}
