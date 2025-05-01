@@ -13,6 +13,7 @@ C1:
     - cite more things for stepwise evaluation
     - MUST: Finish the "the explorer" subsection. 
     - make the definitions of SFL's basic syntax better
+    - Discuss builtins including if, +, >=
 
 C2: 
     - MUST: Redex finding system should be updated to talk about how free choice mode shows both  substitution and substitution and abstraction, otherwise it contradicts (c1, making progress):
