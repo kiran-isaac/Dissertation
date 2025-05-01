@@ -19,3 +19,4 @@ C2:
     - MUST: Redex finding system should be updated to talk about how free choice mode shows both  substitution and substitution and abstraction, otherwise it contradicts (c1, making progress):
         "Rather than simply reducing ‘f 10’ to 5 in one step, it would be useful to show the substitution to help users to understand why ‘f 10’ becomes ‘5’ here. This would involve substituting the variable f for the function (x. 5). "
     - MUST check through all sarah comments on overleaf
+    - Fix the "they liked" etc for AFG
