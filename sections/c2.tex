@@ -450,7 +450,7 @@ Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizi
     \item Checking and synthesis rules for pairs
     \begin{itemize}
         \item A pair $(e_1, e_2)$ checks against type $(A, B)$ if $e_1$ checks against $A$ and $e_2$ checks against $B$. 
-        \item If $e_1$ synthesizes type $A$ and $e_2$ synthesizes type $B$ then $(e_1, e_2)$ synthesises $(A, B)$
+        \item If $e_1$ synthesizes type $A$ and $e_2$ synthesizes type $B$ then $(e_1, e_2)$ synthesizes $(A, B)$
     \end{itemize}
     \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$ (\synjudg{\Gamma}{e}{A}{\Delta}). We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression. 
     % \sam{this is better, but match each sentence to the symbols you are describing, I've inlined an example}
@@ -554,16 +554,16 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
 \end{figure}
 
 \begin{enumerate}
-    \item To check $Cons\;1\;Nil$ against $List\;Int$ [2], we first synthesise the expression type, and check the synthesised type is as subtype of $List\;Int$ [10].
-    \item To synthesise the type of the expression $Cons\;1\;Nil$ (implicitly $((Cons\;1)\;Nil)$) we synthesise the type of the left hand side of the application $Cons\;1$ to be $List\;Int\arr List\;Int$ [7] and then we synthesise the type of $Nil$ under the application of that type, which gives us $List\;Int$.
-    \item To synthesise the type of $Cons\;1$, we synthesise the type of the left hand side of the application $Cons$ to be $T_{Cons}: Int\arr List\;Int\arr List\;Int$ [4], and then synthesise the type of $1$ under the application of that type, which gives us $List\;Int\arr List\;Int$ [5].
-    \item We synthesise the type of $Cons$ to be $T_{Cons}$ from the context.
-    \item We synthesise the type of $1$ under the application of $T_{Cons}$, by first checking the type of $1$ against the type $Int$ which is the left hand side of the applied type[6]. This allows us to synthesise the right hand side of the applied type: $List\;Int\arr List\;Int$. 
+    \item To check $Cons\;1\;Nil$ against $List\;Int$ [2], we first synthesize the expression type, and check the synthesized type is as subtype of $List\;Int$ [10].
+    \item To synthesize the type of the expression $Cons\;1\;Nil$ (implicitly $((Cons\;1)\;Nil)$) we synthesize the type of the left hand side of the application $Cons\;1$ to be $List\;Int\arr List\;Int$ [7] and then we synthesize the type of $Nil$ under the application of that type, which gives us $List\;Int$.
+    \item To synthesize the type of $Cons\;1$, we synthesize the type of the left-hand side of the application $Cons$ to be $T_{Cons}: Int\arr List\;Int\arr List\;Int$ [4], and then synthesize the type of $1$ under the application of that type, which gives us $List\;Int\arr List\;Int$ [5].
+    \item We synthesize the type of $Cons$ to be $T_{Cons}$ from the context.
+    \item We synthesize the type of $1$ under the application of $T_{Cons}$, by first checking the type of $1$ against the type $Int$ which is the left-hand side of the applied type[6]. This allows us to synthesize the right-hand side of the applied type: $List\;Int\arr List\;Int$. 
     \item 1 checks against the type $Int$, as it is an Int literal.
-    \item To synthesise the type of $Nil$ under the application of $List\;Int\arr List\;Int$, we check $Nil$ against the type $List\;Int$ which is the left hand side of the applied type[8]. This allows us to synthesise the right hand side of the applied type: $List\;Int$
-    \item To check $Nil$ against the type $List\;Int$, we first synthesise the type of $Nil$ resulting in $T_{Nil} :List\;Int$[9]. We then check that this is a subtype of $List\;Int$[10].
-    \item We synthesise the type of $Nil$ to be $T_{Nil}$ from the context.
-    \item We apply the \MyTCRule{\Unionsubrulename} rule to check that $List\;Int$ is a subtype (non strict) of $List\;Int$. The first check is that the names are the same, as the names uniquely identify these types. We then iterate over the list of the arguments to the type constructor. The name of the context increments to reflect this iteration, but the context is unchanged during this check. There is only one type in the list
+    \item To synthesize the type of $Nil$ under the application of $List\;Int\arr List\;Int$, we check $Nil$ against the type $List\;Int$ which is the left-hand side of the applied type[8]. This allows us to synthesize the right-hand side of the applied type: $List\;Int$
+    \item To check $Nil$ against the type $List\;Int$, we first synthesize the type of $Nil$ resulting in $T_{Nil} :List\;Int$[9]. We then check that this is a subtype of $List\;Int$[10].
+    \item We synthesize the type of $Nil$ to be $T_{Nil}$ from the context.
+    \item We apply the \MyTCRule{\Unionsubrulename} rule to check that $List\;Int$ is a subtype (non-strict) of $List\;Int$. The first check is that the names are the same, as the names uniquely identify these types. We then iterate over the list of the arguments to the type constructor. The name of the context increments to reflect this iteration, but the context is unchanged during this check. There is only one type in the list
 \end{enumerate}
 
 \paragraph{Synthesizing Example}
@@ -581,25 +581,25 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
 \Gamma_4 = \Gamma_0, \ahat, \hypeq{\bhat}{\textit{Maybe}\,\ahat}, x : \ahat, \hypeq{\chat}{\ahat}\\
 
 \Infer{\InstRSolve[12]}
-{\Gamma_3 \entails \textit{Mabye}\;\ahat}
+{\Gamma_3 \entails \textit{Maybe}\;\ahat}
     {\instjudgr{\{\Gamma_0, \ahat\}, \bhat, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
         {\bhat}
-        {\textit{Mabye}\;\ahat}
-        \{{\Gamma_0, \ahat\}, \hypeq{\bhat}{\textit{Mabye}\;\ahat}, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
+        {\textit{Maybe}\;\ahat}
+        \{{\Gamma_0, \ahat\}, \hypeq{\bhat}{\textit{Maybe}\;\ahat}, \{x : \ahat, \hypeq{\chat}{\ahat}\}}
     }\\
 
 
 \Infer{\SubInstR[11]}
 {
     \bhat \notin \FV{%
-    \textit{Mabye}\;\ahat}
+    \textit{Maybe}\;\ahat}
     \\
     {\instjudgr{\Gamma_3}
         {\bhat}
-        {\textit{Mabye}\;\ahat}
+        {\textit{Maybe}\;\ahat}
         {\Gamma_4}} [12]
 }
-{\subjudg{\Gamma_3}{\textit{Mabye}\;\ahat}{\bhat}{\Gamma_4}}\\
+{\subjudg{\Gamma_3}{\textit{Maybe}\;\ahat}{\bhat}{\Gamma_4}}\\
 
 
 \Infer{\SubInstL[9]}
@@ -628,7 +628,7 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
         }
         {\chkjudg{\Gamma_2}{x}{\chat}{\Gamma_3}}
 }
-{\appjudg{\Gamma_2}{x}{\chat \arr \textit{Mabye}\;\chat}{\textit{Mabye}\;\chat}{\Gamma_3}} \\
+{\appjudg{\Gamma_2}{x}{\chat \arr \textit{Maybe}\;\chat}{\textit{Maybe}\;\chat}{\Gamma_3}} \\
 
 \Infer{\!\ArrElim[3]}
     {\Infer{\Var[4]}
@@ -636,10 +636,10 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
         {\synjudg{\Gamma_1}{Just}{T_{Just}}{\Gamma_1}}
         \\
         \Infer{\AllApp[5]}
-            {\appjudg{\Gamma_1,\chat}{x}{[\chat/\alpha] (\alpha \arr \textit{Mabye}\;\alpha)}{\textit{Mabye}\;\chat}{\Gamma_3}[6]}
-            {\appjudg{\Gamma_1}{x}{\alltype{\alpha}{\alpha \arr \textit{Mabye}\;\alpha}}{\textit{Mabye}\;\chat}{\Gamma_3}}
+            {\appjudg{\Gamma_1,\chat}{x}{[\chat/\alpha] (\alpha \arr \textit{Maybe}\;\alpha)}{\textit{Maybe}\;\chat}{\Gamma_3}[6]}
+            {\appjudg{\Gamma_1}{x}{\alltype{\alpha}{\alpha \arr \textit{Maybe}\;\alpha}}{\textit{Maybe}\;\chat}{\Gamma_3}}
     }
-    {\synjudg{\Gamma_1}{\textit{Just x}}{\textit{Mabye}\;\chat}{\Gamma_3}} \\
+    {\synjudg{\Gamma_1}{\textit{Just x}}{\textit{Maybe}\;\chat}{\Gamma_3}} \\
 
 \Infer{%
 {\!\ArrIntroSyn[1]}
@@ -647,24 +647,24 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
     { 
     \Infer{\Sub[2]}
     {
-        \synjudg{\Gamma_1}{\textit{Just x}}{\textit{Mabye}\;\chat}{\Gamma_3}[3]
+        \synjudg{\Gamma_1}{\textit{Just x}}{\textit{Maybe}\;\chat}{\Gamma_3}[3]
         \\
-        \subjudg{\Gamma_3}{[\Gamma_3]\textit{Mabye}\;\chat}{[\Gamma_3]\bhat}{\Gamma_4}[11]
+        \subjudg{\Gamma_3}{[\Gamma_3]\textit{Maybe}\;\chat}{[\Gamma_3]\bhat}{\Gamma_4}[11]
     }
-    {\chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\textit{Just x}}{\bhat}{\{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Mabye}\;\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}}
+    {\chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\textit{Just x}}{\bhat}{\{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Maybe}\;\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}}
     % \chkjudg{\Gamma_0, \ahat, \bhat, x : \ahat}{\text{Just x}}{\bhat}{\{\Gamma_0, \ahat, 
     % \hypeq{\bhat}{Maybe\,\ahat}\}, x : \ahat, \{\hypeq{\chat}{\ahat}\}}
     }
-    {{\synjudg{\Gamma_0}{\lam{x} \textit{Just x}}{\ahat \arr \bhat}{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Mabye}\;\ahat}}}}
+    {{\synjudg{\Gamma_0}{\lam{x} \textit{Just x}}{\ahat \arr \bhat}{\Gamma_0, \ahat, \hypeq{\bhat}{\textit{Maybe}\;\ahat}}}}
 
 \end{mathpar}
 \caption{An example derivation showing how the type of $\lam{x} \textit{Just x}$ can be synthesized}
 \end{figure}
 
 \begin{enumerate}
-    \item We begin synthesis with the \ArrIntroSyn\ rule. We are trying to synthesize a type $A \arr B$  as the abstraction $\lam{x} \textit{Just x}$ must have a function type. We add to our context $\Gamma_0$ two existential type variables $\ahat, \bhat$. We also add to our context the type assignment $x: \ahat$, and then we check the inner body of the abstraction ($\textit{Just x}$) against $\bhat$ [1]. Check [1] yields the context $\Gamma_4$, and we discard everything after $x: \ahat$ to remove data we no longer need. We synthesize $\lam{x} \textit{Just x} \syn \ahat \arr \bhat$. Substituting the information from our context $\Gamma_4$ gives us $\ahat \arr \textit{Mabye}\;\ahat$. This is the final result of inference, but an existential type variables are simply a statement that `there exists a type', so they can be replaced with `$\forall$'s, giving our final result as $\forall a. a \arr \textit{Maybe}\,a$.
+    \item We begin synthesis with the \ArrIntroSyn\ rule. We are trying to synthesize a type $A \arr B$  as the abstraction $\lam{x} \textit{Just x}$ must have a function type. We add to our context $\Gamma_0$ two existential type variables $\ahat, \bhat$. We also add to our context the type assignment $x: \ahat$, and then we check the inner body of the abstraction ($\textit{Just x}$) against $\bhat$ [1]. Check [1] yields the context $\Gamma_4$, and we discard everything after $x: \ahat$ to remove data we no longer need. We synthesize $\lam{x} \textit{Just x} \syn \ahat \arr \bhat$. Substituting the information from our context $\Gamma_4$ gives us $\ahat \arr \textit{Maybe}\;\ahat$. This is the final result of inference, but an existential type variables are simply a statement that `there exists a type', so they can be replaced with `$\forall$'s, giving our final result as $\forall a. a \arr \textit{Maybe}\,a$.
     % \addtocounter{enumi}{1}
-    \item To check $\textit{Just x}$ against $\bhat$, we synthesize $\textit{Just x} \syn \textit{Mabye}\;\chat$ [3]. After applying $\Gamma_3$ as a substitution to $\textit{Mabye}\;\chat$ yielding $\textit{Mabye}\;\ahat$, we check this type against $\bhat$ [11], yielding $\Gamma_4$. 
+    \item To check $\textit{Just x}$ against $\bhat$, we synthesize $\textit{Just x} \syn \textit{Maybe}\;\chat$ [3]. After applying $\Gamma_3$ as a substitution to $\textit{Maybe}\;\chat$ yielding $\textit{Maybe}\;\ahat$, we check this type against $\bhat$ [11], yielding $\Gamma_4$. 
     \item To synthesize the type of $\textit{Just x}$, we synthesize $\textit{Just} \syn T_{Just}$ [4], and synthesize the type of the application of type $T_{Just}$ to $\textit{x}$.
     \item From the context: $\textit{Just} \syn T_{Just}$.
     \item To synthesize the type of applying $\forall \alpha. \alpha \arr \textit{Maybe}\,\alpha$ to $\textit{x}$, we unwrap the forall by substituting all of the $\alpha$s for a fresh existential type variable $\chat$. We then synthesisze the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$.

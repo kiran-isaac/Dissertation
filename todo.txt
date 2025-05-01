@@ -1,11 +1,9 @@
 Formatting:
-    - Make acronyms more consistant
     - Add syntax highlighting
 
 Introduction
     - Introduce the system as a whole better
     - Finish bit about agile
-    - Figure out how to link to the website
     - user testing
 
 

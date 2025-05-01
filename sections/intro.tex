@@ -1,12 +1,15 @@
 \chapter{Introduction}
 \label{chap:context}
-In this dissertation I present SFL-explorer: a tool to demonstrate how functional programming languages are evaluated, allowing users to gain a valuable intuition of these languages. It is an open source web based tool, available for download and offline use as a PWA (Progressive Web App, see \ref{bg:pwa}). 
+In this dissertation I present SFL-explorer, a tool to help build intuitive understanding of how functional programming languages work. The ultimate goal of this project was to make a tool that makes learning and teaching the basics of functional programming easier. 
 
-SFL-explorer takes the form of a functional language (\ac{SFL}), packaged with two interfaces that allows users to observe the process of evaluation of a term as a series of step by step or multi-step reductions, and control the order that sub-terms are evaluated. These interfaces are a \ac{CLI} and a web application. The ultimate goal of this project was to make a tool that makes learning and teaching the basics of functional programming easier. There are two groups of people the project is designed to be of interest to:
+The two groups of stakeholders that I identified for this project are:
 \begin{itemize}
-    \item Those involved in learning functional languages. These could be students of a university course, or anyone interested in the topic. 
-    \item Those involved in teaching functional languages, as part of a university course or otherwise.
+  \item Those involved in teaching functional languages, as part of a university course or otherwise. They could such a tool to demonstrates functional languages to facilitate intuitive explanations in lectures.
+  \item Those involved in learning functional languages. These could be students of a university course, or anyone interested in the topic. They could use such a tool to experiment with functional languages. 
 \end{itemize}
+
+% a tool to demonstrate how functional programming languages are evaluated, and help build intuitive understanding of how functional programming languages work. 
+SFL-explorer takes the form of a functional language (\ac{SFL}), packaged with a web based interface that allows users to observe the process of evaluating a term as a series of step by step reductions, and control the order that sub-terms are evaluated.  It is an open source web based tool, available for download and offline use as a PWA (Progressive Web App, see \ref{bg:pwa}). A build of SFL explorer is submitted in the additional materials, and it is also available at \href{https://functional.kiransturt.co.uk}{https://functional.kiransturt.co.uk}.
 
 \section{The Language}
 The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL-explorer and apply it to these languages. \ref{tab:fac_2_table_input} is an example program in the language, to find the factorial of 2. The relevant prelude functions are included for clarity.
@@ -105,28 +108,21 @@ match (false) {
 
 The user is provided with messages telling them what the next step that they can make is. Additionally, there is a `free choice' mode where users are presented with the options for progress, and they can choose which one is taken.
 
-\section{Agile Development Lifecycle}
-The project followed a development lifecycle inspired by Agile principles\cite{agilemanifesto2001}, structured into four iterative phases. Each phase built upon the last, integrating evaluation and feedback to continuously and rapidly refine the features and the UI/UX of the system. 
-
-Each phase was further subdivided into four phases:
-
-\begin{itemize}
-    \item \textbf{Requirements Gathering}
-    \item \textbf{Design and Research}
-    \item \textbf{Implementation}
-    \item \textbf{Evaluation}
-\end{itemize}
-
+\section{Development Lifecycle}
 \begin{figure}[t]
-    \centering
-    \fbox{\includegraphics[width=0.98\linewidth]{images/spiral1.drawio.png}}
-    \caption{A spiral representation of the project lifecycle, showing the 4 iterations, and the work done in each part of each phase. }\label{fig:spiral}
+  \centering
+  \fbox{\includegraphics[width=\linewidth]{images/spiral1.drawio.png}}
+  \caption{A spiral representation of the project lifecycle, showing the 4 iterations, and the work done in each part of each phase. }\label{fig:spiral}
 \end{figure}
 
-This iterative methodology helped manage complexity and uncertainty. Getting frequent feedback from focus groups and other sources throughout the project ensured that the project stayed on course 
 
-\subsection{User Testing}
-\todo{finish}
-This desired outcome of this project is an effective learning/teaching tool for functional languages. As such, user testing is vital for ensuring that the system is usable and intuitive, and therefore effective. I conducted user testing throughout the 
+The project followed a development lifecycle inspired by Agile principles~\cite{agilemanifesto2001}, structured into four iterative phases. 
+Each phase was further subdivided into four phases: \textbf{Requirements Gathering}, \textbf{Design and Research}, \textbf{Implementation} and \textbf{Evaluation}. Figure \ref{fig:spiral} shows the development lifecycle in a spiral shape to show its cyclical nature. 
 
-I tested my system in 3 separate ways. I held 3 focus groups with 12 people in total, all with varying levels of experience with functional programming. 
+Each phase built upon the last, integrating evaluation and feedback to continuously and rapidly refine the features and the UI/UX of the system. This iterative methodology helped manage complexity and uncertainty. Getting frequent feedback from focus groups and other sources throughout the project ensured that the project stayed on course. 
+
+The desired outcome of this project is an effective learning/teaching tool for functional languages. As such, user testing is vital for ensuring that the system is usable and intuitive, and therefore effective. At the beginning of the project, I identified a client Samantha Frohlich, a lecture in functional programming, to represent the group of stakeholders who teach functional programming. At the end of phase 1, I presented my client with a proof of concept of the system, and used her feedback to inform the design direction for the system~\ref{eval:c1_client}. 
+
+I also conducted user testing throughout the project with people representing the second group of stakeholders: students learning functional programming. There were 3 focus groups with 12 students in total, all with varying levels of experience with functional programming. In one of these focus groups~\ref{ref:afg}, I discussed \ac{SFL} with students who have a lot of experience with functional programming, to get their feedback on the language itself. In the other two focus groups~\ref{eval:IFG}~\ref{eval:BFG}, I employed an expert in functional programming to give a lecture on functional programming to a group of students. These students, as well as the lecturer himself, were then interviewed on how understandable the lecture was, how much the tool helped, and what could be improved/added to the tool to make the system better. 
+
+At the end of the project, I met with my client once more, and we discussed how useful the finished product would be for teaching functional programming~(see~\ref{c4:client}). She concluded that it would be very useful, and she plans to integrate it into the first year functional programming course~\hyperref[COMS10016]{COMS10016} in following years. 

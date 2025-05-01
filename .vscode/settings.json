@@ -84,7 +84,7 @@
     "latex-workshop.linting.chktex.enabled": false,
     "editor.wordWrap": "on",
     "editor.wrappingStrategy": "advanced",
-    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.latex.autoBuild.run": "never",
     "editor.tokenColorCustomizations": {
         "[*Light*]": {
             "textMateRules": [
