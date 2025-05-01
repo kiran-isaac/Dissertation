@@ -111,6 +111,35 @@
       commentstyle=\color{commentgray}
 } %
 
+\lstdefinelanguage{SFL_noprelude}{
+      sensitive = true,
+      keywords={},
+      otherkeywords={<=, >=, ::, ==, *, +, -, ->, \$},
+      keywords = [2]{
+      },
+      keywords = [3]{
+        Int, Bool
+      },
+      keywords = [4]{        
+        match, data, type, _,
+      },
+      keywordstyle=\color{blue},
+      keywordstyle=[2]\color{teal},
+      keywordstyle=[3]\color{teal},
+      keywordstyle=[4]\color{red},
+      numbers=left,
+      numberstyle=\scriptsize,
+      stepnumber=1,
+      numbersep=8pt,
+      showstringspaces=false,
+      breaklines=true,
+      frame=lines,
+      comment=[l]//,
+      keepspaces=true,
+      morecomment=[s]{/*}{*/},
+      commentstyle=\color{commentgray}
+} %
+
 \lstdefinelanguage{SFL_ite}{
       sensitive = true,
       keywords={},

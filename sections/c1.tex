@@ -1,5 +1,5 @@
 \chapter{Phase 1 --- Proof of Concept}
-The goal of Phase 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This phase started at the beginning of the project with a discussion my supervisor, and the identification of my client. I proceeded by analysing the project requirements using autoethnographic methods, designing the system, designing \ac{SFL} and the Explorer, and then implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept by speaking to my client. 
+The goal of Phase 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This phase started at the beginning of the project with a discussion my supervisor, and the identification of my client. I proceeded by analysing the project requirements using autoethnographic methods, designing the system, and implementing the proof of concept. I then evaluated the merits, drawbacks, and next steps for the project by discussing the proof of concept system with my client. 
 
 \section{Requirements Analysis}
 \subsection{Autoethnography}
@@ -8,16 +8,16 @@ The goal of Phase 1, which spanned approximately the first month of my project, 
 `Autoethnography is an ethnographic method in which the fieldworker's experience is investigated together with the experience of other observed social actors. \cite{autoethnography}'
 \end{quote}
 
-\noindent In this phase, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then quickly implement a proof of concept of this solution. 
+\noindent In this phase, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell as a teaching assistant for \hyperref[COMS10016]{COMS10016} for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then quickly implement a proof of concept of this solution. 
 
 \subsection{The Brief}
-This project was proposed by my supervisor, Jess Foster. In our initial meeting, we discussed how she wanted a tool that would help build intuition for how functional languages are evaluated, that she could use to supplement her explanation of otherwise difficult to intuit functional language concepts. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. Jess helped me to identify an appropriate client: Samantha Frohlich. Jess and Samantha are both lecturers on \hyperref[COMS10016]{COMS10016}. It was necessary to identify a client other than Jess, as her existing role as my supervisor/primary marker could limit guidance she would be able to give me if she were also my client. 
+This project was proposed by my supervisor, Jess Foster. In our initial meeting, we discussed how she wanted a tool that would help build intuition for how functional languages are evaluated, that she could use to supplement her explanation of otherwise difficult to intuit functional language concepts. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. Jess helped me to identify an appropriate client: Samantha Frohlich. Jess and Samantha are both lecturers on \hyperref[COMS10016]{COMS10016}. It was necessary to identify a client other than Jess, as her existing role as my supervisor/primary marker could limit guidance she would be able to give me as my client. 
 
-Following this meeting, I broke down this brief into smaller parts. Taking an autoethnographic approach, I used my own experience teaching functional languages to consider solutions and come up with requirements for each part. 
+Following this meeting, I broke down this brief into smaller parts. Taking an autoethnographic approach, I used my own experience teaching functional languages to consider solutions, and what those solutions would entail, for each part of the breif. 
 
 \subsubsection{Building Intuition}
 \label{building_intuition}
-This is the key to an effective solution. Most students of the first year \ac{FP} unit do not have any experience with functional programming. 
+This is the key to an effective solution. Most students of the first year \ac{FP} unit do not have any experience with functional programming before they take it. 
 % \sam{I disagree with the rest, cos we strive for the lectures to be engaging (so maybe you can say that the teaching style is already to make learning not passive, so this will further that. Also your comment about not attending or engaging with labs is irrelevant cos if they dont engage with labs why would they use your tool? } 
 % \todo{REWORK THIS PARA}
 % and find it difficult to gain an intuition from passively watching lectures, and do not attend or engage with labs. 
@@ -25,17 +25,17 @@ This is the key to an effective solution. Most students of the first year \ac{FP
 
 % All participants who did not disagree that functional languages are hard to learn were presented with a free form text box, and asked to describe why. These responses were turned into a word cloud \ref{fig:fp_wordcloud}. Half of responses included the word `different'. 
 
-In my experience teaching \ac{FP}, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for student during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'. \cite{fp_first_year} [TODO: theres more things to cite here]
+In my experience teaching \ac{FP}, a very effective way to build intuition for functional programming languages is to demonstrate evaluation step by step. I frequently wrote out evaluations on paper for students during the \hyperref[COMS10016]{COMS10016} labs. I would also ask students to complete sections themselves. Others have also found that encouraging stepwise evaluation on paper is an effective way to get `a feeling for what a program does'~\cite{fp_first_year}.
 
 Thus, a tool to perform these step by step evaluations in an interactive manner would be very valuable. The tool should have an interface that allows progress to be made step by step, showing the history of past steps as well as giving information about the step about to be taken. This would allow students to understand and interact with a stepwise evaluation, without anyone having to undertake the long process of writing it out, and without risk of incorrectness. Furthermore, the effects of changing the input program could be seen quickly, providing instant feedback. 
 
-\subsubsection{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. The tool must also be portable, and not require a complex installation process. 
+\subsubsection{Use as a Lecture Tool} The tool should be suitable for use in lectures. It should provide an interface that facilitates quality explanation of functional programming languages. The interface must be understandable, for both \ac{FP} `experts' (lecturers, advanced users) as well as people who have never seen a functional language before. 
 
 \subsubsection{Use as a Self Teaching Tool} The tool should be `self-explanatory' enough for people to use it on their own without expert help. It should be fairly intuitive, and should have all the information required to use it presented to users. The tool must also be portable, and not require a complex installation process. The less complex this tool is to use, the more people will use it. 
 
-\subsubsection{Demonstrating \ac{FP} languages} The tool must contain, at its core, a functional language in order to demonstrate how they work. A language that is similar to Haskell would make for easier evaluation of the project, as this would match the language taught in \hyperref[COMS10016]{COMS10016}, and therefore more people at the University of Bristol will be able to engage with the language. The most Haskell-like programming language that exists (as far as I am aware) is Haskell. 
+\subsubsection{Demonstrating \ac{FP} languages} The tool must contain, at its core, a functional language in order to demonstrate how they work. Using a language that is similar to Haskell would make for easier evaluation of the project, as this would match the language taught in \hyperref[COMS10016]{COMS10016}, and therefore more people at the University of Bristol would be able to engage with the project. The most Haskell-like programming language that exists (as far as I am aware) is Haskell. 
 
-Haskell could be included in the system/required to be installed on the host machine, however creating a demonstration tool around Haskell would be difficult due to the sheer size of the language, the number of features, and the complexity of the type system. It would be better to create Haskell-like language with a strictly limited size and maximum clarity, and include this in the system. The programming language should be designed with simplicity and clarity at its heart.
+Haskell could be included in the system/required to be installed on the host machine, however creating a demonstration tool around Haskell would be difficult due to the sheer size of the language, the number of features, and the complexity of the type system. It would be better to create Haskell-like language with a strictly limited size and include this in the system. The programming language should be designed with simplicity and clarity at its heart.
 
 \subsection{SFL Explorer}
 The requirements extracted from autoethnographic methods, as well as from my initial supervisor meeting, came together to form the idea for SFL Explorer. 
@@ -53,8 +53,8 @@ The system should be a website to maximize portability. The system should includ
 \label{design:goals}
 The language was given a name reflecting its core design principle: Simplicity. More precisely, the programming language should be designed with the following design principles in mind:
 \begin{enumerate}
-    \item \textbf{It should be simple and easy to understand}. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand why they work. 
-    \item \textbf{It should be similar to existing functional languages}. This would allow users to be able to transfer their intuition to other languages. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work similarly). 
+    \item \textbf{It should be simple and easy to understand}. This requires that the language should not have features that users might find difficult to understand why they work. This means that the language should have very few inbuilt functions, all of which should be easy to understand what they are for and what they do. 
+    \item \textbf{It should be similar to existing functional languages}. This would allow users to be able to transfer their intuition to other languages and vise versa. It should be similar in syntax (it should have similar tokens and structures), as well as semantics (it should work similarly). 
     \item \textbf{It should be powerful enough to explain key concepts.}
 \end{enumerate}
 The features that should be selected for the language are the features that maximize these goals for the minimum implementation complexity. Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. When adding features for the language, we must prioritize the features that allow explanation of the `core' features of functional languages, and de-prioritise features that are not so `core' to the understanding of functional languages. 
@@ -62,41 +62,38 @@ The features that should be selected for the language are the features that maxi
 \subsubsection{The Explorer}
 The website (the explorer) should include a code editor for people to enter programs. Including the functionality for the language inside the website rather than requiring complex client/server communication would simplify the system, as well as improving responsiveness. 
 
-[TODO: Finish this bit, summarize requirements]
-
 \section{Language Design}
-In this section, I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design, and it was the proof of concept.  
+In this section, I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design: the proof of concept.  
 
 \subsection{Definitions}
 
-\begin{syntax}[Lowercase and Uppercase ID syntax as regular expressions]
-\label{def:identifier_syntax}
-(Lowercase Identifier): \(id ::= [a..z][a..zA..Z0..9\_]*\)\newline
-(Operator): \(op ::= + \mid - \mid \times \mid / \mid > \mid \ge \mid < \mid \le \mid== \mid \mathrel{\mathtt{!=}} \)\newline
-(Uppercase Identifier): \(Id ::= [A..Z][a..zA..Z0..9\_]*\)
-\end{syntax}
-\sam{im so sorry but this looks ugly. I think it just needs more space, it is very crampt, this is a minor thing and can wait till the very end}
+% \sam{im so sorry but this looks ugly. I think it just needs more space, it is very crampt, this is a minor thing and can wait till the very end}
 
 \subsection{Basic Syntax}
-Lambda calculus is the basis of modern functional programming languages. As discussed in the background, lambda calculus consists of 3 structures: identifiers, application, and abstraction. \sam{sadly this effectly says in prose the same as the BG, the only thing the BG adds is the formal definition, which not everyone will be able to read} One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance:
+Lambda calculus is the basis of modern functional programming languages. As discussed in the background~\ref{bg:lcalc}, lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance, the following two listings are semantically identical:
 \begin{lstlisting}[language=SFL]
 f = (\x.x)
 main = f y
 \end{lstlisting}
-Is identical to \sam{dont do this, cos it gives latex the chance to mess up your formatting. Always give your listings a name and use the name in a full sentence e.g. "For instance, listing 1 and listing 2 are semantically equivalent"}
+% \sam{dont do this, cos it gives latex the chance to mess up your formatting. Always give your listings a name and use the name in a full sentence e.g. "For instance, listing 1 and listing 2 are semantically equivalent"}
 \begin{lstlisting}[language=SFL]
 main = (\x.x) y
 \end{lstlisting}
 Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the `entry-point' expression in the program. Haskell, as well as many other languages, uses `main' to represent a programs' entry point, so we may use main. 
 
 Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated.  We must also add a way to represent values, such as integers and booleans, to our language. 
-These two features massively shorten and simplify programming in this language.
+These two features massively shorten and simplify programming in this language. Definition~\ref{sfl_basic_syntax} shows the basic syntax of \ac{SFL}. Expression syntax is the same as \lcalc, but with our literal values, and infix operators (such as +). A module is a set of assignments, and each assignments is a labelled expression.
 
-\sam{this is not referenced anywhere. Above you say we need x and then just dump x here. Instead motivate, introduce and explain. What additions have been made to execute x. Explain your definitions like you would explain your code}
+% \sam{this is not referenced anywhere. Above you say we need x and then just dump x here. Instead motivate, introduce and explain. What additions have been made to execute x. Explain your definitions like you would explain your code}
 \begin{syntax}[The basic syntax of \ac{SFL}]
+(Lowercase Identifier): \(id ::= [a..z][a..zA..Z0..9\_]*\)\newline
+(Operator): \(op ::= + \mid - \mid \times \mid / \mid > \mid \ge \mid < \mid \le \mid== \mid \mathrel{\mathtt{!=}} \)\newline
+(Uppercase Identifier): \(Id ::= [A..Z][a..zA..Z0..9\_]*\)
+\newline\newline\noindent
 (Expression) \(E, F ::= [-][0, 1, ..]\mid E\; op\; F \mid true \mid false \mid id \mid \setminus id. E \mid E\:F\)\newline
 (Assignment) \(A ::= id = E\)\newline
 (Module) \(M ::= A\: M \mid End\)
+\label{sfl_basic_syntax}
 \end{syntax}
 
 % \subsection{Design: Reduction and Progress} ???
@@ -104,20 +101,54 @@ These two features massively shorten and simplify programming in this language.
 
 \section{Implementation}
 \subsection{The Abstract Syntax Tree}
-The tree structure of \ac{SFL} requires the following different types of tree nodes:
-\begin{itemize}
-    \item Identifier
-    \item Literal
-    \item Application
-    \item Abstraction
-    \item Assignment
-    \item Module
-\end{itemize}
-\sam{bullets look silly, if you have spare time draw a pictures, otherwise just say that it is a tree structure, listing the nodes adds nothing}
+% The tree structure of \ac{SFL} requires the following different types of tree nodes:
+% \begin{itemize}
+%     \item Identifier
+%     \item Literal
+%     \item Application
+%     \item Abstraction
+%     \item Assignment
+%     \item Module
+% \end{itemize}
+% \sam{bullets look silly, if you have spare time draw a pictures, otherwise just say that it is a tree structure, listing the nodes adds nothing}
 
+Programming language syntax can be expressed in a tree structure, known as an \ac{AST}. The process of turning a program from a string to a tree is known as parsing. In order to effectively explain the structure of a parsed program going forwards, the following structure will be used to give a written representation of an \ac{AST}:
+\begin{itemize}
+    \item Nodes are represented as one line each, where, with the name of the node type, followed by its value for \verb|Literal|s and \verb|Identifier|s.
+    \item The children of a node are all of the nodes with an indentation level one deeper than the node in question listed directly below it, until a shallower or equal depth node is listed. 
+\end{itemize}
+
+\noindent
+For instance, 
+\begin{lstlisting}
+main = (\x.1) 2
+\end{lstlisting}
+would be represented as:
+\begin{lstlisting}
+Module:
+  Assignment:
+    Identifier: main
+    Application:
+      Abstraction:
+        Identifier: x
+        Literal: 1
+      Literal: 2
+\end{lstlisting}
 Initially, the approach taken when implementing this tree structure was to have each node `owning' its child nodes (see \ref{bg:rust}). However, it will be frequently necessary to be able to find nodes based on certain conditions (for example, the condition that this node is a valid redex) and then provide a value that represents the location of this node within the tree. Even if each of the tree nodes had a unique ID, locating a node from this value representing its location will require some sort of tree search.
 
 Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as \ac{AST} and ASTNode, where \ac{AST} was an array of ASTNodes, and each ASTNode stored their children's indices in this array. The position in the array of an ASTNode will be referred to as its index.
+
+See \ref{fig:ast_lst} for the code listing for the \ac{AST} definition. In this implementation, \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The \ac{AST} stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. 
+
+The node indices in the \verb|children| vector represent different things depending on what kind of node it is. 
+\begin{itemize}
+    \item If it is an abstraction, the first node represents the variable (or pair of variables) abstracted over, and the second node represents the expression.
+    \item If it is an application, the first node is the function, and the second is the argument.
+    \item If it is a module, then each of the children is an assignment.
+    \item If it is an assignment, then the first child is the variable being assigned to, and the second is the expression.
+\end{itemize}
+
+\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. \verb|Identifier| nodes used as abstraction arguments. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
 
 \begin{figure}[t]
     \centering
@@ -156,55 +187,19 @@ struct ASTNode {
     \label{fig:ast_lst}
 \end{figure}
 
-See \ref{fig:ast_lst} for the code listing for the \ac{AST} definition. In this implementation, \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The \ac{AST} stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. 
-
-The node indices in the \verb|children| vector represent different things depending on what kind of node it is. 
-\begin{itemize}
-    \item If it is an abstraction, the first node represents the variable (or pair of variables) abstracted over, and the second node represents the expression.
-    \item If it is an application, the first node is the function, and the second is the argument.
-    \item If it is a module, then each of the children is an assignment.
-    \item If it is an assignment, then the first child is the variable being assigned to, and the second is the expression.
-\end{itemize}
-
-\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. \verb|Identifier| nodes used as abstraction arguments. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
-
-In order to effectively explain the structure of a parsed program going forwards, the following structure will be used to give a written representation of an AST:
-\begin{itemize}
-    \item Nodes are represented as one line each, where, with the name of the node type, followed by its value for \verb|Literal|s and \verb|Identifier|s.
-    \item The children of a node are all of the nodes with an indentation level one deeper than the node in question listed directly below it, until a shallower or equal depth node is listed. 
-\end{itemize}
-
-\noindent
-For instance, 
-\begin{lstlisting}
-main = (\x.1) 2
-\end{lstlisting}
-would be represented as:
-\begin{lstlisting}
-Module:
-  Assignment:
-    Identifier: main
-    Application:
-      Abstraction:
-        Identifier: x
-        Literal: 1
-      Literal: 2
-\end{lstlisting}
 
 \subsubsection{With the Benefit of Hindsight} % for jess's benefit as she did not like my AST definition so i want to aknowledge what she said about it
-\sam{very nice evaluation, love this section}
-This project was my first major project using Rust. Below is a discussion of some Rust features which were not fully taken advantage of in this definition of syntax trees, followed by a discussion of the combination of these features that would have been more optimal. 
+% \sam{very nice evaluation, love this section}
+This project was my first major project using Rust. Below is a discussion of some Rust features which were not fully taken advantage of in this definition of syntax trees, followed by a discussion of a combination of these features that would have been more optimal. 
 
 \paragraph{Tagged Unions}
-An alternative implementation could have involved \verb|ASTNodeType| being a tagged union, with different node types being associated with different children and data items. For instance, application could be represented by \verb|Application(f: usize, x: usize)|, and identifiers could be 
-
-\noindent\verb|Identifier(String)|. This would be more space efficient, as each node requires different data. It would also more elegantly represent the fact that each type of node is a different thing, and de-obfuscate the meaning of each of the different fields of a node. 
+An alternative implementation could have involved \verb|ASTNodeType| being a tagged union, with different node types being associated with different children and data items. For instance, application could be represented by \verb|Application(f: usize, x: usize)|, and identifiers could be \verb|Identifier(String)|. This would be more space efficient, as each node requires different data, and we would no longer need to store empty fields for data items we do not need. It would also more elegantly represent the fact that each type of node is a different `thing', and de-obfuscate the meaning of each of the different fields of a node. 
 
 \paragraph{References}
-This definition of the \ac{AST} \sam{i dont understand the rest of the sentence} and the nodes has a parent object owning all of the nodes. As previously discussed, this was done to enable constant-time lookup of nodes from their indices. However, all things in a program already have such a reference enabling constant time lookup: a pointer, represented in rust by a reference. This was not used, as there were concerns about ensuring validity of each reference, and avoiding use-after-free bugs. These concerns were unfounded, as one of Rust's major features is that it provides safety guarantees ensuring that these problems are never encountered \cite{rust_book}. An object can only store a reference to another object if it can be guaranteed that it exists, and it will continue to exist for at least as long as the object storing the reference will. This is achieved via lifetime checking, using either inferred or explicitly stated specifiers of how long the two objects will exist relative to each other. 
+This definition of the \ac{AST} has a parent object (the \verb|AST|) owning all of the nodes (the \verb|ASTNodes|). As previously discussed, this was done to enable constant-time lookup of nodes from their indices. However, all things in a program already have such a reference enabling constant time lookup: a pointer, represented in rust by a reference. This was not used, as there were concerns about ensuring validity of each reference, and avoiding use-after-free bugs. These concerns were unfounded, as one of Rust's major features is that it provides safety guarantees ensuring that these problems are never encountered \cite{rust_book}. An object can only store a reference to another object if it can be guaranteed that it exists, and it will continue to exist for at least as long as the object storing the reference will. This is achieved via lifetime checking, using either inferred or explicitly stated specifiers of how long the two objects will exist relative to each other. 
 
 \paragraph{A Better Implementation}
-\sam{numbers alone look odd, especially at the beginning of a sentence. An easy solution is to always give references titles e.g. Figure bla or Table bla}\ref{fig:ast_lst_2} shows an implementation that uses tagged unions to store information that is different for different node types, and pointers to the nodes directly rather than list indices. This avoids the possibility of referencing nodes that don't exist. It is also easier to understand what is common between nodes (syntax info) and what is uncommon. It is also more space efficient as it only stores the information that each type requires. The size of the improved implementation is 88 bytes, and the size of the original implementation is 128 bytes. The improved implementation is subjectively more elegant and readable. Objectively, it also takes up less space. It also forces memory safety, without the need for carefully implemented getter and setter functions. 
+Figure \ref{fig:ast_lst_2} shows an implementation that uses tagged unions to store information that is different for different node types, and pointers to the nodes directly rather than list indices. This avoids the possibility of referencing nodes that don't exist. It is also easier to understand what is common between nodes (syntax info) and what is uncommon. It is also more space efficient as it only stores the information that each type requires. The size of the improved implementation is 88 bytes, and the size of the original implementation is 128 bytes. The improved implementation is subjectively more elegant and readable. Objectively, it also takes up less space. It also forces memory safety, without the need for carefully implemented getter and setter functions. 
 
 Despite this, the decision was made not to update the implementation for several reasons. The \ac{AST} is so central to the implementation, that it would take a long time to switch properly. Memory and speed are not major constraints for this project, but implementation time is. Furthermore, as long as all indices used are either produced by a helper function, or the \ac{AST} root, there should not be a problem with memory safety. 
 
@@ -268,52 +263,14 @@ We must also take into account whether a binary infix operator was used to gener
 
 
 \subsection{The Parser}
-The parser needs to consume a program, and return the following things:
-\begin{itemize}
-    \item The AST.
-    \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as a struct `\verb|LabelTable|' which is a wrapper around a \verb|HashMap<String, Type>| with some useful methods. 
-    \item The `Type Table': All type constructors and concrete types defined, stored with their arities. This is implemented as: \verb|HashMap<String, usize>|.
-\end{itemize}
-For instance, from the program: \sam{examples are good!}
-\begin{lstlisting}[]
-data List a = Cons a (List a) | Nil
-double x = x * 2	
-main :: List Int
-main = Cons (double 1) (Cons (double 2) Nil)
-\end{lstlisting}
-We should extract the following data:
-\begin{itemize}
-    \item The AST: 
-    \begin{lstlisting}[]
-Module:
-  Assignent
-    Identifier: double
-    Abstraction
-      Identifer: x
-      App
-        App
-          Identifier: +
-          Identifier: x
-        Literal: 2
-    \end{lstlisting}
-    \item All the known type assignments (excluding inbuilts)
-        \begin{itemize}
-            \item Cons: \(\forall a. a \Rightarrow List\;a\Rightarrow List\;a\)
-            \item Nil: \(\forall a. List\;a\)
-            \item main: \(\forall a. List\;a\)
-        \end{itemize}
-    \item The names of all known types (excluding inbuilts) 
-        \begin{itemize}
-            \item List, with an arity of 1
-        \end{itemize}
-\end{itemize}
-
-% \sam{some advice i got when i started technical writing, as i think you are writing very similarly to  how I used to: when writing a report it is tempting to well report "this was done" "that was done" "this means" "noun will need to" but this results in quite dry and overly verbose writing. Instead it is more exciting to make the research / the noun the subject of the sentence. e.g. "noun needs to bla because of bla"}
-The parser will also store a set of all bound variables at each location. This will allow us to disqualify some invalid programs while generating the tree, rather than having to traverse it after generation to catch these issues. For instance, we must the following assignments:
+The parser needs to consume a program, and return the AST. It can also disqualify some invalid programs while generating the tree, rather than having to traverse it after generation to catch these issues. For instance, we must the following assignments:
 \begin{itemize}
     \item \verb|x = (\x. e)| where e is a valid expression, as x is ambiguous during the expression e. This would be disqualified when attempting to parse the abstraction as x is already bound.  
     \item \verb|x = y| where y is undefined.
 \end{itemize}
+
+% \sam{some advice i got when i started technical writing, as i think you are writing very similarly to  how I used to: when writing a report it is tempting to well report "this was done" "that was done" "this means" "noun will need to" but this results in quite dry and overly verbose writing. Instead it is more exciting to make the research / the noun the subject of the sentence. e.g. "noun needs to bla because of bla"}
+The parser will also store a set of all bound variables at each location. It will then be able to 
 
 \subsubsection{Lexical Analysis}
 Lexical analysis is the process splitting a program into its constituent tokens (Lexemes). For instance, the program \verb|main = (\x.x) 1| is the following stream of tokens: \[[Id: main, Assignment, LeftParen, Backslash, Id: x, Dot, Id: x, RightParen, Literal: 1]\]

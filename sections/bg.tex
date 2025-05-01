@@ -2,6 +2,7 @@
 \label{chap:technical}
 
 \section{The Lambda Calculus}
+\label{bg:lcalc}
 \newcommand{\lcalc}{$\lambda$-calculus}
 \newcommand{\lCalc}{$\lambda$-Calculus}
 \newcommand{\fto}{\rightarrow}
@@ -364,7 +365,7 @@ _f True (_f False _nil)
 \llessons\ is a website created by Jan Paul Posma and Steve Krouse at YC Hacks '14 \cite{lambdalessons}. It is a very effective demonstration of `map', `foldr' and `foldl:
 
 \begin{quotation}
-\noindent \llessons\ `A short, interactive lesson that teaches core functional programming concepts. It was designed to transform the way you think about performing operations on lists of things, by showing you how functions are executed' \cite{lambdalessons}
+\noindent It is `A short, interactive lesson that teaches core functional programming concepts. It was designed to transform the way you think about performing operations on lists of things, by showing you how functions are executed' \cite{lambdalessons}
 \end{quotation}
 
 \noindent It is unfortunate I only found out about it at the end of phase 4 of the project, otherwise my project could have drawn inspiration in terms of UI for free choice evaluation. Indeed, I only discovered this project through correspondence with Chris Done, the author of Duet \ref{bg:duet}. Despite the fact that my project did not take inspiration from this system, it would be remiss not to mention it. 
@@ -373,8 +374,7 @@ My particular favorite features of \llessons's UI are:
 
 \begin{itemize}
     \item It allows the user to select in the code what part they want to reduce next by clicking on it. 
-    \item It also shows informations about functions when you hover over them. 
-    \item The language looks like Haskell. However, I had many problems with the functionaltiy of the language that will be discussed later. 
+    \item It shows informations about functions when you hover over them in the source code. 
 \end{itemize}
 
 
@@ -392,18 +392,18 @@ My particular favorite features of \llessons's UI are:
     \label{bg:llessons_gets_confused}
 \end{figure}
 
-The UX/UI is the definite strong point of \llessons (see \ref{bg:llessons_ui}).  However, there are a few things that I would identify as weaknesses that make it not useful for what SFL explorer is useful for. 
+The UX/UI is the definite strong point of \llessons\ (see \ref{bg:llessons_ui}).  However, there are a few things that I would identify as weaknesses that make it not useful for what SFL explorer is useful for.
 
 \begin{itemize}
-    \item The language is not typechecked. There are type assignments, but upon testing and inspection of the source code \cite{lambdalessonsgithub}, type assignments are ignored. 
+    \item The language is not typechecked. There are type assignments, but upon testing and inspection of the source code \cite{lambdalessonsgithub}, type assignments are ignored. They say on the website that the language is `dynamically typed'~\cite{lambdalessons}, but it is not. 
     \item The language does not allow for user defined algebraic data types, but it has \sflinline{List} built in. 
-    \item As can be seen in \ref{bg:llessons_ui}, it seems to imply that \sflinline{((x : y : []))} reduces to \sflinline{[x, y]} which is misleading. 
-    \item The language does not support lambda functions
-    \item The language does not support currying (\ref{bg:llessons_gets_confused})
-    \item The program states are not saved between refreshes.
+    \item As can be seen in \ref{bg:llessons_ui}, it seems to imply that \sflinline{((x : y : []))} reduces to \sflinline{[x, y]} which is misleading, as these two are infact identical. 
+    \item The language does not support lambda functions.
+    \item The language does not support currying or partially applying functions (\ref{bg:llessons_gets_confused}).
+    \item The program states are not saved between refreshes. 
 \end{itemize} 
 
-In summary, \llessons\ is designed for a different purpose than SFL Explorer. It describes itself as a `document' \cite{lambdalessons} rather than a tool, which is an apt description as it is a document meant to teach one specific thing rather than to be an all around teaching tool for functional languages. It does not provide much of a capability to experiment yourself as the language is not very extensive. However, the ability to reduce an expression by clicking on the bit of the expression you want to reduce is very good, and inspiration should definitely be drawn for future work for SFL Explorer.  
+\noindent In summary, \llessons\ is designed for a different purpose than SFL Explorer. It describes itself as a `document'~\cite{lambdalessons} rather than an all around teaching tool for functional languages. It does not provide much capability to experiment yourself outside of `map' and `fold' as the language is not very extensive. However, the ability to reduce an expression by clicking on the section of the expression you want to reduce is very intuitive, and inspiration could definitely be drawn from this for any future iterations of SFL Explorer. 
 
 % \subsection{Other Notable Mentions}
 % Unfortunately, I do not have the page count to spare to go into detail about some of the other existing systems identified. Here are some of my favorites, along with a brief summary of their achievements. 
@@ -419,10 +419,10 @@ In summary, \llessons\ is designed for a different purpose than SFL Explorer. It
 
 \section{COMS10016: Imperative and Functional Programming at the University of Bristol}
 \label{COMS10016}
-In the first year of most computer science programs at the University of Bristol, students take the module \href{https://www.bristol.ac.uk/unit-programme-catalogue/UnitDetails.jsa?unitCode=COMS10016}{COMS10016}, a combined imperative and functional programming module. This is many students first encounter with both of these types of programming. In the functional part of this unit, students are taught Haskell. The unit material is presented to students through a very effective lecture series, supplemented by weekly worksheets that students have the opportunity to work through in labs attended by the lecturers, as well as some teaching assistants. Two of the lecturers in this unit are Jess Foster and Samantha Frohlich. 
+In the first year of most computer science programs at the University of Bristol, students take the module \href{https://www.bristol.ac.uk/unit-programme-catalogue/UnitDetails.jsa?unitCode=COMS10016}{COMS10016}, a combined imperative and functional programming module. This is many students first encounter with both of these types of programming. In the functional part of this unit, students are taught Haskell. The unit material is presented to students through a series of lectures, supplemented by weekly worksheets that students have the opportunity to work through in labs attended by the lecturers, as well as some teaching assistants. Two of the lecturers in this unit are Jess Foster and Samantha Frohlich. 
 
 \begin{quote}
 `The aim [of the functional portion of the unit] is to introduce types and functions. Important principles include datatypes, evaluation order, higher-order functions, and purity' \cite{COMS10016}
 \end{quote}
 
-\noindent I acted as a teaching assistant in the labs for two academic years. My role was to answer students questions about functional languages or the worksheets they were given. The inspiration for this project came from my experience struggling to explain key functional programming concepts. 
+\noindent I acted as a teaching assistant in the labs for two academic years. My role was to answer students questions about functional languages or the worksheets they were given. The inspiration for this project came from my experience struggling to explain key functional programming concepts. I frequently needed to resort to writing out the evaluation sequence for a term.

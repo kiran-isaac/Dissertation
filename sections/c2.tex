@@ -249,7 +249,6 @@ The algorithm for matching an expression against a single pattern, and getting e
 
 
 \subsection{Types}
-
 Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system) quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
 
 \begin{figure}[ht]
@@ -291,14 +290,54 @@ Aliases are defined here with their name, and the type they are an alias for. Al
 Below are a selection of the more important or interesting methods implemented on Types.
 \sam{didn't we have similar before?}
 
-\paragraph{Substitution of type variables} \sam{it is annoying that para has the same formatting as subsubsection, if you have spare time, id change that as it makes reading harder}We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
+\paragraph{Substitution of type variables} We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
 
 \paragraph{To String} We will frequently wish to display types as strings for debugging purposes. 
-\subsection{Type Assignment and Definition Parsing}
-We must also be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a|, or \verb|data a|). Parsing both of these things require the ability to parse type expressions. 
+
+\subsection{Parsing Types}
+In the proof of concept system. The parser simply returns an AST. In order to parse a program with user defined types, type assignments, and pattern matching, the parser should return:
+\begin{itemize}
+    \item The AST.
+    \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as a struct `\verb|LabelTable|' which is a wrapper around a \verb|HashMap<String, Type>| with some useful methods. 
+    \item The `Type Table': All type constructors and concrete types defined, stored with their arities. This is implemented as: \verb|HashMap<String, usize>|.
+\end{itemize}
+For instance, from the program:
+\begin{lstlisting}[language=SFL_noprelude]
+data List a = Cons a (List a) | Nil
+type IntAlias = Int
+double :: IntAlias -> IntAlias
+double x = x + x	
+\end{lstlisting}
+We should extract the following data:
+\begin{itemize}
+    \item The AST: 
+    \begin{lstlisting}[]
+Module:
+  Assignent
+    Identifier: double
+    Abstraction
+      Identifer: x
+      App
+        App
+          Identifier: +
+          Identifier: x
+        Literal: 2
+    \end{lstlisting}
+    \item All the known type assignments (excluding inbuilts).
+        \begin{itemize}
+            \item Cons: \(\forall a. a \Rightarrow List\;a\Rightarrow List\;a\).
+            \item Nil: \(\forall a. List\;a\).
+            \item double: \(IntAlias \arr IntAlias\).
+        \end{itemize}
+    \item The names of all known types (excluding inbuilts) 
+        \begin{itemize}
+            \item List: a type constructor with arity 1.
+            \item IntAlias: a type alias pointing to Int.
+        \end{itemize}
+\end{itemize}
 
 \subsubsection{Parsing Type Expressions}
-Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. The algorithm for parsing a primary is as follows:
+The parser needs to be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a|, or \verb|data a|). Parsing both of these things require the ability to parse type expressions. Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. The algorithm for parsing a primary is as follows:
 
 \paragraph{Parsing Type Expression Primaries}
 \begin{verbatim}

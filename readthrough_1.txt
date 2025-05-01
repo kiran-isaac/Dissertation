@@ -5,4 +5,10 @@ formatting:
 BG:
     Cite lcalc conventions
     Cite haskell using lazy
-    WASM and frontend BG (must be done, there are references to it)
+    MUST: WASM and frontend BG (must be done, there are references to it)
+    Other noteable mentions: HEE and WinHIPE
+
+C1:
+    cite more things for stepwise evaluation
+    MUST: Finish the "the explorer" subsection. 
+    make the definitions of SFL's basic syntax better
