@@ -410,7 +410,12 @@ The conclusions derived in this way are called \textit{typing judgements}. A typ
 \end{figure}
 
 
-Figure \ref{fig:eg_infer_rule} shows one of the most important rules in the algorithm as an example. This rule \Sub\ allows us to derive that $\chkjudg{\Gamma}{e}{B}{\Delta}$ (Under imput context $\Gamma, e$ checks against type $A$ with output context $\Delta$)
+Figure \ref{fig:eg_infer_rule} shows one of the most important rules in the algorithm as an example. This rule \Sub\ allows us to derive that $\chkjudg{\Gamma}{e}{B}{\Delta}$ (Under imput context $\Gamma, e$ checks against type $B$ with output context $\Delta$), if:
+\begin{itemize}
+    \item We can synthesize the type of $e$ to get any type $A$, with output context $|delta$ ($
+    \synjudg{\Gamma}{e}{A}{\Theta}$).
+    \item Then, after we subsitute all of the information in context $\Theta$ into types $A$ and $B$, we can derive that $A$ is a subtype of $B$ (\subjudg{\Theta}{[\Theta]A}{[\Theta]B}{\Delta})
+\end{itemize}
 
 
 \paragraph{Hole notation}

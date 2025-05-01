@@ -77,7 +77,7 @@
             ]
         }
     ],
-    "latex-workshop.latex.recipe.default": "latexmk",
+    "latex-workshop.latex.recipe.default": "XeLaTeX -> BibTeX -> XeLaTeX (2x)",
     "latex-workshop.synctex.afterBuild.enabled": true,
     // "latex-workshop.message.error.show": "log",
     "latex-workshop.view.pdf.viewer": "tab",

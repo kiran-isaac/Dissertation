@@ -1,2 +1,8 @@
 Dedication
 
+formatting:
+    fix listings breaking sentances
+BG:
+    Cite lcalc conventions
+    Cite haskell using lazy
+    WASM and frontend BG (must be done, there are references to it)
