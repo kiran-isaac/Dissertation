@@ -202,7 +202,7 @@ As discussed in the design (\ref{c2_design_match}), patterns are checked in orde
 
 \begin{lstlisting}[language=SFL]
 repeat :: a -> List a
-repeat n = Cons n $ repeat n
+repeat n = Cons n (repeat n)
 
 main :: Bool
 main = match repeat 1 {
