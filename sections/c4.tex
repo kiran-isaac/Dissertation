@@ -1,6 +1,6 @@
 \chapter{Phase 4 --- Further UI/UX Iteration}
 \section{Requirements Analysis}
-This phase was limited by time, as the project was nearing its end. For this reason, this phase was mostly focused on fixing the high priority issues identified in the previous phase. This included adding a light mode, adding syntax highlighting, as well as fixing language and typechecker bugs. 
+This phase was time limited, as the project was nearing its end. For this reason, this phase was mostly focused on fixing the high priority issues identified in the previous phase. This included adding a light mode, adding syntax highlighting, as well as fixing language and typechecker bugs. 
 
 At the end of this phase, I wanted to hold another focus group where Amos would give a lecture on functional programming, but this time to complete beginners. After a planning conversation with Amos at the beginning of Phase 4, we identified that it would be useful to add an `untyped mode' so the beginners could be taught the basics of \lcalc\ before trying to explain types, as they can be initially confusing. 
 
@@ -15,20 +15,20 @@ To implement it, I added a floating settings menu with a button that would toggl
 
 Using CSS media queries, I was also able to tell the user's preference for light or dark mode from their browser, and use this by default unless the user chose otherwise. 
 
-\subsection{Bugfixes}
-\subsubsection{Frontend}
+% \subsection{Bugfixes}
+% \subsubsection{Frontend}
 
 \section{The Beginner Focus Group: Evaluation and Next Steps}
 \label{eval:BFG}
 \subsection{Selection and Format}
 This focus group had the same format as the intermediate focus group \ref{eval:IFG}; Amos was employed once more to give a 45-minute lecture, followed by a 45-minute interview. The full transcript of the lecture and interview is available in the auxiliary materials \ref{appx:additional_mats}.
 
-The goals of this focus group was to evaluate the use of SFL explorer in a lecture setting with complete beginners, with a wide variety of different experiences and perspectives on programming. Crucially, I wanted none of them to have learnt about or used functional languages before. As such, I decided to recruit non Computer Scientists. Hoping to get a mix of more `practical' and more `theoretical' students, the four students I recruited were from the following disciplines:
+The goals of this focus group was to evaluate the use of SFL explorer in a lecture setting with complete beginners, with a wide variety of different experiences and perspectives on programming. Crucially, I wanted none of them to have learnt about or used functional languages before. As such, I decided to recruit non Computer Scientists. Hoping to get a mix of more `practical' and more `theoretical' students, the four students I recruited had the following backgrounds:
 
 \begin{itemize}
-    \item A second year undergraduate Mechanical and Aerospace Engineer from the University of Cambridge, with experience in Python
-    \item A third year undergraduate Mechanical Engineer from the University of Bristol, with experience in Python and C/C++
-    \item Two third year undergraduate Maths students from the University of Bristol, with experience in mostly Python and R
+    \item A second year undergraduate Mechanical and Aerospace Engineer from the University of Cambridge, with experience in Python, C/C++.
+    \item A third year undergraduate Mechanical Engineer from the University of Bristol, with experience in Python and C/C++.
+    \item Two third year undergraduate Maths students from the University of Bristol, with experience in mostly Python and R.
 \end{itemize}
 
 \subsection{Bugs}
@@ -68,21 +68,51 @@ Most of the feedback was positive, and users had no specific feedback on what th
 
 \section{The Final Client Meeting}
 \label{c4:client}
-\todo{This bit}
-After the beginner focus group, I met my client. This was at the end of the project
+After the beginner focus group, I met my client, Samantha Frohlich, in order to evaluate the project. We discussed how useful the finished product would be for teaching functional programming~(see~\ref{c4:client}). She concluded that it would be very useful, and she plans to integrate it into the first year functional programming course~\hyperref[COMS10016]{COMS10016} in following years. 
 
-My client liked my project, and shared it with Jamie Willis, a teaching fellow at Imperial College London, who is involved in their first year unit which includes functional programming \cite{imperialFP}. When my client asked about whether he would use it, he responded:
+Following this meeting, my client shared the project with Jamie Willis, a teaching fellow at Imperial College London, who is involved in their first year unit which includes functional programming \cite{imperialFP}. When my client asked about whether he would use it, he responded:
 
 \begin{quotation}
 \noindent `I could see it being useful for sure, a lot of the time I end up writing out these step-by-step reductions by hand in my notes, but it would be nice for them to have access to a tool they could use to explore for themselves'
 \end{quotation}
+
+\paragraph{The Language, \ac{SFL}} 
+Samantha was very positive about the langugage. More specifially, she liked the following things:
+
+\begin{itemize}
+    \item The language is minimal and clear, and it has the right set of features for the purpose it is designed for and no more.
+    \item The type system is sufficient to express complex programs. Type aliases and data types are defined using Haskell syntax. 
+    \item Pattern matching is very clear, and she agreed with all three focus groups that it is good for a teaching tool. 
+    \item The type checker is robust; she was not able to break it. 
+    \item Untyped mode is very useful to have, especially for demonstrating the untypable Y-combinator
+    \item The provided examples were useful. 
+    \item The prelude was good, and she could not think of anything else she would want to add to it. 
+\end{itemize}
+
+\noindent She had the following feedback about the language:
+
+\begin{itemize}
+    \item Even though \lcalc\ abstractions are typically expressed like \verb|\x. M| with a dot separating the variable and the term, she thought it should be an arrow in \ac{SFL} to match Haskell.
+    \item She identified, like the advanced focus group did, that expressions often balloon very quickly into a series of nested matches. This is definitely a weakness of the project, and it is something to be improved on~\ref{conc:baboon}.
+    \item She thought that \sflinline{Cons} should be an infix operator \sflinline{:}. However, after discussing the results of the advanced~\ref{ref:afg} and intermediate~\ref{eval:IFG} focus groups with her, and how the consensus in these groups was that explicitly writing \sflinline{Cons} was clearer, she changed her mind. 
+\end{itemize}
+
+\paragraph{UI/UX and the System, as a whole}
+She was also very positive about the UI/UX and the system as a whole. She mentioned liking the following things:
+
+\begin{itemize}
+    \item The UI looks nice, very practical.
+    \item The syntax highlighting was good
+\end{itemize}
+
+The only specific thing she mentiones wanting changed was she wanted to be able to use the keyboard to control progress, for instance using the `up' and `down' keys for forward and backwards.
 
 % `Wait, is SFL your language? It was so good that i just assumed you had grabbed it from somewhere'
 
 % The aims of this focus group were to use the system and attempt to recap functional programming concepts 
 
 % Evaluation:
-% - They liked explicit match: they liked it more than haskell for learning about how pattern matching works
+% - They liked explicit match: they liked it more than Haskell for learning about how pattern matching works
 % - Really Really needed light mode
 % - Horizontal overflow bug
 

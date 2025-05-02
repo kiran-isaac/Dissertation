@@ -49,13 +49,14 @@ fn pattern_match(expr, pattern) -> MatchResult {
     if (pattern is identifier) {match_against_identifier(expr, pattern)}
     if (pattern is a pair) {match_against_pair(expr, pattern)}
     if (pattern is an app) {match_against_application(expr, pattern)}
-    if (pattern is a literal) {
+    if (pattern is a literal and expr is a literal) {
         if (expr.to_string() == pattern.to_string()) 
             return Success([])
         } else {
             return Refute
         }
     }
+    return Unknown
 }
 \end{lstlisting}
     \caption{The algorithm for matching an expression against a pattern}
