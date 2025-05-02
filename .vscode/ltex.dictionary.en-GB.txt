@@ -20,7 +20,7 @@ redexes
 arity
 typechecking
 subtyping
-testathon
+Testathon
 wasm-bindgen
 stringification
 redex-contraction
