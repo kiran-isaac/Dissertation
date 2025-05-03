@@ -24,6 +24,7 @@ C2:
     - Finish introduction
     - MUST: Write more for requirements analysis. 
     - MUST: Motivate Type system at beginning of design
+    - MUST: Convert parsing primary bit to prose
 
 conclusion:
     - Ensure all references to future work are followed up on

@@ -31,7 +31,7 @@ First-order polymorphic type constructors would be useful to have in \ac{SFL}, w
     \[
         \begin{array}{llcl}
             \text{Types} & A, B, C & \bnfas &
-                \Inttype \bnfalt 
+                Int \bnfalt 
                 \Booltype \bnfalt 
                 \alpha \bnfalt \alltype{\alpha}{A} \bnfalt 
                 A \arr B \bnfalt (A, B) \bnfalt \Unionname[A_1, \dots, A_n]
@@ -336,8 +336,10 @@ Module:
 The parser needs to be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a|, or \verb|data a|). Parsing both of these things require the ability to parse type expressions. Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. The algorithm for parsing a primary is as follows:
 
 \paragraph{Parsing Type Expression Primaries}
-\begin{verbatim}
-function parse_type_expression_primary(bound_type_variables, type_table) {
+\todo{Convert to prose}
+\begin{figure}
+\begin{lstlisting}[language=SFL]
+fn parse_type_expression_primary(bound_type_variables, type_table) {
     next_token = consume()
     match (next_token) {
         case lowercase_id {
@@ -359,7 +361,9 @@ function parse_type_expression_primary(bound_type_variables, type_table) {
         otherwise Error
     }
 }
-\end{verbatim}
+\end{lstlisting}
+\caption{The algorithm for parsing }
+\end{figure}
 
 \subsubsection{Parsing Type Alias Definitions} 
 We may wish to add another name that a type can be known by. For instance, we may wish to define `\verb|String|' as a list of characters, so that we may reference it easier. A type alias declaration consists of:
@@ -374,7 +378,7 @@ The function that produces type aliases returns a `\verb|Type::Alias(String, Box
 \subsubsection{Parsing Data Declaration} 
 We want to be able to define and parse \verb|data| declarations~\ref{c2:design_data_types}. A \verb|data| deceleration consists of: 
 \begin{itemize}
-    \item The `\verb|data|' keyword
+    \item The \sflinline{data} keyword
     \item The name of the type (uppercase ID)
     \item A list of type variables
     \item The assignment operator (=)
@@ -515,7 +519,7 @@ Below are two example derivations that cover most of the key aspects of the algo
 
 \paragraph{Typechecking an Expression Involving Lists}
 \label{c2:types_demo_1}
-We shall attempt to use the algorithm to check the type of $\text{Cons}\;1\;x$ against $List\;Int$. In this derivation, we defined \sflinline{data List = Cons Int (List Int) | Nil} to avoid the complexities of polymorphism, which are better demonstrated by the next example~\ref{c2:types_demo_2}. The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
+We shall attempt to use the algorithm to check the type of \lstinline[language=SFL]|Cons 1 Nil| against \lstinline[language=SFL]|List Int|. In this derivation, we defined \sflinline{data List = Cons Int (List Int) | Nil} to avoid the complexities of polymorphism, which are better demonstrated by the next example~\ref{c2:types_demo_2}. The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
 
 \begin{figure}[t]
 
@@ -528,7 +532,7 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
 
 \Infer{\MyTCRule{\Unionsubrulename}[10]}
     {\Infer{\MyTCRule{\Intsubrulename}[11]}{ }
-        {\subjudg{\Gamma_0}{\Inttype}{\Inttype}{\Gamma_1}}}
+        {\subjudg{\Gamma_0}{Int}{Int}{\Gamma_1}}}
     {\subjudg{\Gamma_0}{List[Int]}{List[Int]}{\Gamma_{1}}}
 \\
 
@@ -541,7 +545,7 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
             {\synjudg{\Gamma}{Nil}{T_{Nil}}{\Gamma}}
           }
             \\
-            [10]\subjudg{\Gamma}{List[Int]}{List[Int]}{\Gamma}
+            \subjudg{\Gamma}{List[Int]}{List[Int]}{\Gamma}[10]
           }
           {\chkjudg{\Gamma}{Nil}{List\;Int}{\Gamma}}}
     {\appjudg{\Gamma}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma}}
@@ -560,7 +564,7 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
         {
         \Infer{\MyTCRule{\Intcheckrulename}[6]}
             { }
-            {\chkjudg{\Gamma}{1}{\Inttype}{\Gamma}}
+            {\chkjudg{\Gamma}{1}{Int}{\Gamma}}
         }
         {\appjudg{\Gamma}{1}{T_{Cons}}{List\;Int \arr List\;Int}{\Gamma}}
      % \Infer{\AllApp}
@@ -574,23 +578,23 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
 \Infer{\!\ArrElim[2]}
     {
     {
-        [3]{\synjudg{\Gamma}{Cons\,1}{List\;Int \arr List\;Int}{\Gamma}}
+        {\synjudg{\Gamma}{Cons\,1}{List\;Int \arr List\;Int}{\Gamma}}[3]
     }
     \\
-    [7]\appjudg{\Gamma}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma}
+    \appjudg{\Gamma}{Nil}{List\;Int \arr List\;Int}{List\;Int}{\Gamma}[7]
     }
     {\synjudg{\Gamma}{Cons\,1\,Nil}{List\;Int}{\Gamma}}
 \\
 
 \Infer{\Sub[1]}
     {
-        [2]{\synjudg{\Gamma}{Cons\,1\,Nil}{List\;Int}{\Gamma}}
+        {\synjudg{\Gamma}{Cons\,1\,Nil}{List\;Int}{\Gamma}}[2]
         \\
-        [10]\subjudg{\Gamma}{List[Int]}{List[Int]}{\Gamma}
+        \subjudg{\Gamma}{List[Int]}{List[Int]}{\Gamma}[10]
     }
     {\chkjudg{\Gamma}{Cons\;1\;Nil}{List\;Int}{\Gamma}}
 \end{mathpar}
-\caption{An example derivation showing how the type derivation $\chkjudg{.}{Cons\;1\;Nil}{List\;Int}{.}$}
+\caption{An example derivation showing typechecking of $Cons\;1\;Nil$ against $List\;Int$}
 \end{figure}
 
 \begin{enumerate}
@@ -608,7 +612,7 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
 
 \paragraph{Synthesizing Example}
 \label{c2:types_demo_2}
-\ac{SFL} explorer requires type assignments by default, but the below example does not have a type assignment as this allows us to hit some of the rules that we did not hit in the `pairs' example. We have a function \sflinline{f x = Just x} (desugared: \sflinline{f = (\x. Just x)}) that we want to synthesize the type of. \sflinline{Just} is a constructor defined in the type declaration \sflinline{data Maybe a = Just a | Nothing}, and it has a type $\forall a. a \arr Maybe\,a$.
+\ac{SFL} explorer requires type assignments by default, but the below example does not have a type assignment as this allows us to hit some of the rules that we did not hit in the `pairs' example. We have a function \sflinline{f x = Just x} (desugared: \lstinline[language=SFL]|f = (\x. Just x)|) that we want to synthesize the type of. \sflinline{Just} is a constructor defined in the type declaration \sflinline{data Maybe a = Just a | Nothing}, and it has a type $\forall a. a \arr Maybe\,a$.
 
 \begin{figure}[t]
 \begin{mathpar}
