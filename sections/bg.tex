@@ -245,15 +245,15 @@ If a value is owned in one scope, but another scope needs to read/write it, we m
 
 These rules ensure that immutable references are to things that don't change, and all references are always to things that exist.
 
-\section{Frontend Technologies}
-\label{bg:frontend}
-\label{bg:pwa}
-\begin{itemize}
-    \item Vite
-    \item React
-    \item NPM
-    \item PWAs
-\end{itemize}
+% \section{Frontend Technologies}
+% \label{bg:frontend}
+% \label{bg:pwa}
+% \begin{itemize}
+%     \item Vite
+%     \item React
+%     \item NPM
+%     \item PWAs
+% \end{itemize}
 
 
 \section{Web Assembly} \label{bg:wasm}
@@ -261,9 +261,9 @@ This project runs entirely within the browser, despite being written in Rust. Th
 
 We will discuss this here to allow us to refer to these restrictions, and also to explain the process of compiling and using Rust code in a modern web browser. 
 
-Web Assembly 2.0 is a 32 bit target~\cite{WebAssemblyCoreSpecification2}. This means we only have 4GB of addressable memory. The Rust compiler is based on LLVM, which provides a web-assembly compilation target. The Rust compiler has a toolchain around this compilation target, that allows for easy compilation to web-assembly. However, this only creates a binary blob, which requires more work to make interoperable with our JavaScript build system (Vite). We must do two things to achieve interoperability:
+Web Assembly 2.0 is a 32 bit target~\cite{WebAssemblyCoreSpecification2}. This means we only have 4GB of addressable memory. The Rust compiler is based on LLVM, which provides a web-assembly compilation target. The Rust compiler has a toolchain around this compilation target, that allows for easy compilation to web-assembly. However, this only creates a binary blob, which requires more work to make interoperable with our JavaScript front end. We must do two things to achieve interoperability:
 \begin{itemize}
-    \item Incorporate it into our build so it can be served with it.
+    \item Incorporate it into our build system so it can be served with it.
     \item Load the WASM package in a way that allows for us to call the functions.
 \end{itemize}
 Producing an NPM package with some JavaScript functions that call the WebAssembly functions would achieve both of these goals. However, if we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the WASM functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 

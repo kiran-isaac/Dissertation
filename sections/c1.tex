@@ -409,7 +409,7 @@ Until this point, development was done in one rust package. This package would b
         \item A JavaScript file that would load the blob into the browsers' memory, and that provides methods that can call the appropriate the methods in the blob.
         \item A TypeScript file providing the types of all of the packages exported functions. 
     \end{itemize}
-    \item The Vite+React frontend (see \ref{bg:frontend}) that requires the package that results from compiling \textbf{libsfl\_wasm}.
+    \item The frontend that imports the package that results from compiling \textbf{libsfl\_wasm}.
 \end{itemize}
 
 The \ac{WASM} library provided functions that could be called from the JavaScript module. Rather than passing the \ac{AST} between the \ac{WASM} library and the JavaScript module, the \ac{AST} was stored at a known memory address, and retrieved during subsequent calls to \textbf{libsfl\_wasm} functions. 

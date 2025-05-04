@@ -2,11 +2,11 @@ Dedication
 
 formatting:
     - 4: fix listings breaking sentances
-    - 5: serach for all verbatims and convert to listings 
+    - ✔ 5:serach for all verbatims and convert to listings 
 BG:
     - 4: Cite lcalc conventions
     - 2: Cite haskell using lazy
-    - 5: Vite + react frontend, or strip references. 
+    - ✔ (stripped references) 5: Vite + react frontend, or strip references. 
     - 5: WASM and frontend BG (must be done, there are references to it)
     - 1: Other noteable mentions: HEE and WinHIPE
 
