@@ -78,15 +78,15 @@ The closed term
 \noindent Most languages use the \textbf{call-by-value} evaluation strategy, where `only the outermost redexes are reduced and a redex is reduced only when its right-hand side has already been reduced to a value \ldots\ where the only values are \lambda expressions'~\cite{pierce2002types}. This reduction strategy is also known as `strict'. In this strategy, we would reduce by the following sequence:
 \begin{alignat*}{2}
 id\,\underline{(id\,(\lam{z} id z))}  && \;\;\arr\\ 
-(\underline{id\,(\lam{z} id z)})      && \;\;\arr\\ 
-(\lam{z} id z)                        && \;\;\\ 
+\underline{id\,(\lam{z} id z)}        && \;\;\arr\\ 
+\lam{z} id z                          && \;\;\\ 
 \end{alignat*}
 
 \noindent Using the \textbf{call-by-name} strategy, `The leftmost outermost redex is always reduced first \ldots\ and [we allow] no reductions inside abstractions' \cite{pierce2002types}. Only abstractions are valid values. Our reduction sequence would look like this:
 \begin{alignat*}{2}
 \underline{id\,(id\,(\lam{z} id z))}  && \;\;\arr\\ 
-(\underline{id\,(\lam{z} id z)})      && \;\;\arr\\ 
-(\lam{z} id z)                        && \;\;\\ 
+\underline{id\,(\lam{z} id z)}        && \;\;\arr\\ 
+\lam{z} id z                          && \;\;\\ 
 \end{alignat*}
 \noindent \textbf{Call-by-need} is similar to call by name but with sharing. This means we `overwrite all occurrences of an argument with the value the first time it is evaluated' \cite{pierce2002types}. Only abstractions are valid values once again. This is an optimization of call-by-name that is known as lazy evaluation. It is used by many functional languages including Haskell, and is of particular importance to SFL explorer. In this case, our reduction order would be the same as \textbf{call-by-name}. 
 

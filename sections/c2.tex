@@ -485,11 +485,11 @@ Occasionally, we also need contexts with \emph{two} ordered holes:
 % \sam{now i have read the appendix, It is excellent!!! just move that. Its so much clearer and its not dry cos we gave a goal and it nicely guides me through}
 
 \subsubsection{Algorithmic Type Checking and Synthesis}
-Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. Some of the inferrence rules listed The rule I added are: 
+Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. The rules I added are: 
 %\sam{questions the reader might have: but how is this an algo? they are sequences of steps? What is all this notation? I've never seen the backwards turnstyle before or the backward implication. This should be walked thorugh in prose, you should not expect me to spend ages looking at the figure figuring it out. You are the writer, guide me}
 %\sam{say in the prose that they are highlighted. I think the way you use captions is weird. It reads as if your expectation upon someone reading "figure bla" is that they immediately read the caption of figure  bla, but i dont. I stick with the prose hoping to be guided through my viewing of the figure, especially such a complex one.}
 \begin{itemize}
-    \item Checking and synthesizing rules for $Int$s and $Bool$s: An int literal synthesizes the type $Int$, and checks against the type $Int$ etc. 
+    \item Checking and synthesizing rules for values of type $Int$ and $Bool$: An integer literal synthesizes the type $Int$, and checks against the type $Int$ etc. 
     %\sam{there is a way to reference rules, which might be nice here}
     \item Checking and synthesis rules for pairs
     \begin{itemize}
@@ -502,11 +502,11 @@ Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizi
 
 Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm.
 
-\subsubsection{Algorithmic Subtyping} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added rules for:
+\subsubsection{Algorithmic Subtyping} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added the following rules:
 \begin{itemize}
     \item $Int \subtype Int$ and $Bool \subtype Bool$ trivially. 
     \item $(A_1, B_1) \subtype (A_2, B_2)$ if $A_1 \subtype A_2$ and $B_1 \subtype B_2$.
-    \item The union with name $N_1$ and arguments $A_1 \dots A_n$ is a subtype of a union with name $N_2$ and arguments $B_1 \dots B_n$ is a subtype, if the names are the same as the names uniquely identify these types, as well as all the constituent types being subtypes of each other. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression.
+    \item The union with name $N_1$ and arguments $A_1 \dots A_n$ is a subtype of a union with name $N_2$ and arguments $B_1 \dots B_n$, if the names are the same, as the names uniquely identify these types, as well as all the constituent types being subtypes of each other in order. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression.
 \end{itemize}
 
 \subsubsection{Context Instantiation} 
@@ -515,11 +515,11 @@ Figure \ref{fig:instantiation} shows the special subtyping rules for existential
 For instance, the rule $\InstLArr$ instantiates $\ahat$ such that $\ahat \subtype A_1 \arr A_2$ by adding to our context $\ahat_1, \ahat_2$, and setting $\ahat = \ahat_1 \fto \ahat_2$ in the context. We then instantiate $\ahat_1 \instsymlop A_1$ and $\ahat_2 \instsymrop A_2$.
 
 \subsubsection{Examples Derivations}
-Below are two example derivations that cover most of the key aspects of the algorithm. The first example aims to give a simpler demonstration and explaination of how the typechecking and synthesis inference rules work, and use some of my rules. The second aims to show a more complex derivation heavily relying on the context instantiation rules. A supplamentory derivation is included in the appendices~(\ref{appx:example_derive}), which shows more of my rules in action. 
+Below are two example derivations that cover most of the key aspects of the algorithm. The first example~\ref{tc_eg_list} aims to give a simpler demonstration and explaination of how the typechecking and synthesis inference rules work, and use some of my rules. The second~\ref{c2:types_demo_2} aims to show a more complex derivation heavily relying on the context instantiation rules. A supplamentory derivation is included in the appendices~(\ref{appx:example_derive}), which shows more of my rules in action. 
 
 \paragraph{Typechecking an Expression Involving Lists}
 \label{c2:types_demo_1}
-We shall attempt to use the algorithm to check the type of \lstinline[language=SFL]|Cons 1 Nil| against \lstinline[language=SFL]|List Int|. In this derivation, we defined \sflinline{data List = Cons Int (List Int) | Nil} to avoid the complexities of polymorphism, which are better demonstrated by the next example~\ref{c2:types_demo_2}. The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
+In figure~\ref{tc_eg_list}, we attempt to use the algorithm to check the type of \lstinline[language=SFL]|Cons 1 Nil| against \lstinline[language=SFL]|List Int|. In this derivation, we defined \sflinline{data List = Cons Int (List Int) | Nil} to avoid the complexities of polymorphism, which are better demonstrated by the next example~\ref{c2:types_demo_2}. The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
 
 \begin{figure}[t]
 
@@ -595,6 +595,7 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
     {\chkjudg{\Gamma}{Cons\;1\;Nil}{List\;Int}{\Gamma}}
 \end{mathpar}
 \caption{An example derivation showing typechecking of $Cons\;1\;Nil$ against $List\;Int$}
+\label{tc_eg_list}
 \end{figure}
 
 \begin{enumerate}
