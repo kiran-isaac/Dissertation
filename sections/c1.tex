@@ -60,16 +60,17 @@ The language was given a name reflecting its core design principle: Simplicity. 
 The features that should be selected for the language are the features that maximize these goals for the minimum implementation complexity. Out of our design goals, 2 and 3 have the potential to be in conflict, as more expressive power often requires more complex syntax. We must ensure a sensible compromise between all of our goals, while accounting for implementation complexity. When adding features for the language, we must prioritize the features that allow explanation of the `core' features of functional languages, and de-prioritise features that are not so `core' to the understanding of functional languages. 
 
 \subsubsection{The Explorer}
-The website (the explorer) should include a code editor for people to enter programs. Including the functionality for the language inside the website rather than requiring complex client/server communication would simplify the system, as well as improving responsiveness. 
+The website (the explorer) should include a code editor for people to enter programs. Including the functionality for the language inside the website rather than requiring complex client/server communication would simplify the system, as well as improving responsiveness. It should display the current state of the program in a clear way, as well as giving the user options as to how to progress. 
 
-\section{Language Design}
-In this section, I will discuss the design of \ac{SFL} with respect to the requirements. This is iteration 1 of the design: the proof of concept.  
+\section{Design}
 
-\subsection{Definitions}
+% \subsection{Definitions}
 
 % \sam{im so sorry but this looks ugly. I think it just needs more space, it is very crampt, this is a minor thing and can wait till the very end}
 
-\subsection{Basic Syntax}
+\subsection{Language Design}
+In this section, I will discuss the design of iteration 1 of the design of \ac{SFL}: the proof of concept. In order to produce a minimal language design for the proof of concept, I started with considering the \lcalc, and adding the bare minimum set of extra features on top of it. This helps to meet design goal 1, as a minimal set of features helps a language to be easy to understand. This process also helps us to meet design goal 2, as functional programming languages are fundamentally based on the \lcalc.
+
 Lambda calculus is the basis of modern functional programming languages. As discussed in the background~\ref{bg:lcalc}, lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance, the following two listings are semantically identical:
 \begin{lstlisting}[language=SFL]
 f = (\x.x)
@@ -79,10 +80,10 @@ main = f y
 \begin{lstlisting}[language=SFL]
 main = (\x.x) y
 \end{lstlisting}
-Note the use of \verb|"\"| instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the `entry-point' expression in the program. Haskell, as well as many other languages, uses `main' to represent a programs' entry point, so we may use main. 
+Note the use of `\verb|\|' instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the `entry-point' expression in the program. Haskell, as well as many other languages, uses `main' to represent a programs' entry point, so we may use main. 
 
-Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated.  We must also add a way to represent values, such as integers and booleans, to our language. 
-These two features massively shorten and simplify programming in this language. Definition~\ref{sfl_basic_syntax} shows the basic syntax of \ac{SFL}. Expression syntax is the same as \lcalc, but with our literal values, and infix operators (such as +). A module is a set of assignments, and each assignments is a labelled expression.
+Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated.  We must also add a way to represent values, such as integers and booleans, to our language. In order to do computations with these integers, we also need some functions to be inbuilt on them that perform integer operations such as addition, subtraction, comparisons, etc. 
+These two features massively shorten and simplify programming in this language. Definition~\ref{sfl_basic_syntax} shows the basic syntax of \ac{SFL}. Expression syntax is the same as \lcalc, but with our literal values and operators. A module is a set of assignments, and each assignments is a labelled expression.
 
 % \sam{this is not referenced anywhere. Above you say we need x and then just dump x here. Instead motivate, introduce and explain. What additions have been made to execute x. Explain your definitions like you would explain your code}
 \begin{syntax}[The basic syntax of \ac{SFL}]
@@ -96,8 +97,15 @@ These two features massively shorten and simplify programming in this language. 
 \label{sfl_basic_syntax}
 \end{syntax}
 
-% \subsection{Design: Reduction and Progress} ???
+\subsection{Reduction and Progress} 
+The `entry point' expression of an \ac{SFL} program is the one labled `main'. In order to make progress in \lcalc, we $\beta$-reduce valid redexes within the term. However, in \ac{SFL}, we also have assignments, where a term can be given a label. For instance, in the following \ac{SFL} program, if the only way of making progress was $\beta$-reduction we would not get anywhere:
 
+\begin{lstlisting}[language=SFL]
+f = (\x. x + 1)
+main = f 10
+\end{lstlisting}
+
+\noindent Clearly, we also need to be able to subtitute lables as a form of progress. Therefore, there are two forms of progress: $\beta$-reduction and substitution. In this dissertation, we shall broaden the term `redex' to include both. We will later further broaden this definition when discussing pattern matching~\ref{c2_design_match_progress}. 
 
 \section{Implementation}
 \subsection{The Abstract Syntax Tree}
@@ -250,7 +258,7 @@ Below are a selection of the more important or interesting methods implemented o
 
 Note that this orphans the node for the abstraction, and the node for the abstraction variable \verb|x|. This is hard to rectify as deleting any nodes will shift the whole list, which would invalidate indies of nodes, which will break many of the references. This is rectified by cloning the AST, as described below.
 
-\paragraph{Clone} The AST, or just a subsection of the \ac{AST} from a given node, can be cloned by starting from the desired new root, and cloning each nodes children recursively. The new indices of each node may not be the same, as they may be moved in the list, but they will all be in the same place relative to each other. This also removes orphaned nodes, as they will never be cloned as they have no parents. 
+\paragraph{Clone} \label{c1_paragraph_clone} The AST, or just a subsection of the \ac{AST} from a given node, can be cloned by starting from the desired new root, and cloning each nodes children recursively. The new indices of each node may not be the same, as they may be moved in the list, but they will all be in the same place relative to each other. This also removes orphaned nodes, as they will never be cloned as they have no parents. 
 
 \paragraph{To String} \label{paragraph:to_string} Programs can also be effectively transformed back into strings. This requires a few other pieces of information to be associated with some tree nodes, to make the output program as similar to the input program as possible. The more similar the output is to the input, the easier it is to understand. Some examples include:
 \begin{itemize}
@@ -366,14 +374,14 @@ f x = 5
 main1 = f 10 
 main2 = (\x. 5) 10
 \end{lstlisting}
-\noindent Rather than simply reducing `\sflinline{f 10}' to 5 in one step, it would be useful to show the substitution to help users to understand why `\sflinline{f 10}' becomes `\sflinline{5}' here. This would involve substituting the variable \sflinline{f} for the function \verb|(\x. 5)|. We have two types of progress: reduction and substitution. In this section, we shall broaden the term `redex' to include both. 
+\noindent Rather than simply reducing `\sflinline{f 10}' to 5 in one step, it would be useful to show the substitution to help users to understand why `\sflinline{f 10}' becomes `\sflinline{5}' here. This would involve substituting the variable \sflinline{f} for the function \verb|(\x. 5)|. 
 
 \paragraph{Representing and Applying Redex-Contraction Pairs}
 We can define a structure representing progress for our \ac{AST}: a pair where the first element is the node in the tree to be replaced, and the second element is an entirely new tree to replace it with. Below is how this type is represented in Rust. 
 \begin{lstlisting}[language=Rust_boxed]
 type RCPair = (usize, AST)
 \end{lstlisting}
-\noindent To do the substitution, we combine the two \ac{AST}s by concatenating their two lists of nodes, and replace all references to the original node to the root of the replacement \ac{AST}. This orphans the original node, as there is no references to it. Rather than simply deleting it, which would cause the list to shift and therefore invalidating the indices, we can clone the tree (see~\ref{}). 
+\noindent To do the substitution, we combine the two \ac{AST}s by concatenating their two lists of nodes, and replace all references to the original node to the root of the replacement \ac{AST}. This orphans the original node, as there is no references to it. Rather than simply deleting it, which would cause the list to shift and therefore invalidating the indices, we can clone the tree (see~\ref{c1_paragraph_clone}). 
 
 \subsubsection{Finding Redex-Contraction Pairs in a Term}
 \paragraph{Is the Term $T$ a Redex?}

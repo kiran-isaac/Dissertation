@@ -80,7 +80,8 @@ fac n = n * factorial (n - 1)
 
 Here, the definition of the `fac' function is different depending on if is it applied to $0$ or to any other $Int$. If it is applied to an $Int$ other than 0, n is substituted for this value in the expression.  See \ref{bg:haskell_pattern_match} for more information about Haskell pattern matching. 
 
-Pattern matching at the top level like this would be difficult to implement, as it would require significantly changing how abstractions are represented. It would be easier to create a new syntax structure: a match expression. This could look like:
+\paragraph{Syntax}
+Pattern matching at the top level like this would be difficult to implement, as it would require significantly changing how abstractions are represented. It would be simpler to create a new syntax structure: a match expression. This could look like:
 
 \begin{lstlisting}[language=SFL]
 fac :: Int -> Int
@@ -103,7 +104,11 @@ lenIsAtLeastTwo list = match list {
 }    
 \end{lstlisting}
 
-\noindent In this example, it is important that we evaluate the term `list' enough to \textit{know for sure} that it does not match the first pattern before moving on to the second, as the second pattern is irrefutable. 
+\noindent In the above example where we defined `lenIsAtLeastTwo', when attempting to pattern match, it is important that we evaluate the term `list' enough to \textit{know for sure} that it does not match the first pattern before moving on to the second, as the second pattern is irrefutable. 
+
+\paragraph{Reduction and Progress}
+\label{c2_design_match_progress}
+In the previous iteration of the language design, we discussed the two types of progress in \ac{SFL}: $\beta$-reduction and substitution. In order to support pattern matching, we add a third type of progress representing succeeding in pattern matching. 
 
 \subsection{Next UI Iteration}
 \label{c2:next_ui}
@@ -753,7 +758,7 @@ As it currently stands, the system gives users the option to select any possible
 \end{figure}
 \noindent Many users of the system, particularly more advanced users, would not need to see each nested step of this application. These can all be grouped into one step, where we substitute label f and perform all three reductions simultaneously. 
 
-\todo{Algorithm if time, and reformat reduction}
+% \todo{Algorithm if time, and reformat reduction}
 
 Users may not always want to choose reduction order themselves. The `Lazy' strategy \ref{bg:eval_strategies} is the one employed by Haskell and other functional languages, so it should be the one employed by \ac{SFL}. Conveniently, because of the way we are currently generating redexes, the list of redexes we generate already has the laziest option as the first element. This is because when generating redexes in an application, we calculate the redexes in the function before the redexes in the argument, which leads to a `leftmost first' list of redexes. 
 

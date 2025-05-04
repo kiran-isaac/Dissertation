@@ -256,7 +256,8 @@ These rules ensure that immutable references are to things that don't change, an
 % \end{itemize}
 
 
-\section{Web Assembly} \label{bg:wasm}
+\section{Web Assembly} \label{bg:wasm}\label{bg:wasm-pack}
+
 This project runs entirely within the browser, despite being written in Rust. This is due to the fact that it compiles to web assembly. Automated tools exist for the generation of JavaScript bindings around Rust functions/types, but this process places certain restrictions around functions arguments and return types. 
 
 We will discuss this here to allow us to refer to these restrictions, and also to explain the process of compiling and using Rust code in a modern web browser. 
@@ -268,13 +269,8 @@ Web Assembly 2.0 is a 32 bit target~\cite{WebAssemblyCoreSpecification2}. This m
 \end{itemize}
 Producing an NPM package with some JavaScript functions that call the WebAssembly functions would achieve both of these goals. However, if we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the WASM functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 
 
-Fortunately, the rust crate \verb|wasm-bindgen| provides macros that generate a whole NPM package, including TS bindings, automatically. This package can then be added as a dependency to an NPM app that provides a website, and the functions within it can [TODO: WASM-bindgen vs WASM pack?]
-
-\paragraph{wasm-pack}
-\label{bg:wasm-pack}
-
+Fortunately, the rust crate \verb|wasm-bindgen|~\cite{wasm_bindgen_guide} provides macros that generate a whole NPM package, including TS bindings, automatically. This package can then be added as a dependency to an NPM app that provides a website, and the functions within it can be called using the JavaScript wrapper functions. 
 \section{Existing systems}
-Below are the most relevant existing systems for SFL explorer. 
 % https://dl.acm.org/doi/pdf/10.1145/1480828.1480845
 % lit review  in previous diss: https://research.ou.nl/ws/portalfiles/portal/31271878/Nicasi_K_IM9906_AF_SE_scriptie_PURE.pdf
 % \subsection{WinHIPE}
@@ -285,14 +281,14 @@ Below are the most relevant existing systems for SFL explorer.
 Duet is:
 
 \begin{quotation}
-`A tiny language, a subset of Haskell (with type classes) aimed at aiding teachers to teach Haskell'~\cite{duet_hackage}
+\noindent `A tiny language, a subset of Haskell (with type classes) aimed at aiding teachers to teach Haskell'~\cite{duet_hackage}
 \end{quotation}
 
 \begin{figure}[h]
-    \centering
-    \begin{tabular}{c}
-    \hline
-    \begin{lstlisting}[language=SFL_noprelude_numbers]
+    % \centering
+    % \begin{tabular}{c}
+    % \hline
+    \begin{lstlisting}[language=SFL_noprelude]
 data List a = Nil | Cons a (List a)
 foldr = \f z l ->
   case l of
@@ -305,18 +301,17 @@ foldl = \f z l ->
 list = (Cons True (Cons False Nil))
 
 main = foldr _f _nil list
-\end{lstlisting}\\ \hline
-
-    \end{tabular}
-    \caption{An example Duet program provided in the repository. \_f and \_nil are not defined, but the underscore indicates that this is fine and they should just be left unchanged}
+\end{lstlisting}
+    % \end{tabular}
+    \caption{An example Duet program provided in the repository. \_f and \_nil are not defined, but the underscore indicates that this is fine and they should just be left unchanged. }
     \label{bg:duet_foldr}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \begin{tabular}{c}
-    \hline
-    \begin{lstlisting}[language=SFL_noprelude_numbers]
+    % \begin{tabular}{c}
+    % \hline
+    \begin{lstlisting}[language=SFL]
 foldr _f _nil list
 (\f z l ->
     case l of
@@ -347,14 +342,14 @@ _f True
         Nil -> _nil
         Cons x xs -> _f x (foldr _f _nil xs)))
 _f True (_f False _nil)
-\end{lstlisting}\\ \hline
+\end{lstlisting}
 
-    \end{tabular}
+    % \end{tabular}
     \caption{The output of evaluating the program shown in Figure \ref{bg:duet_foldr}. The beginning and end are shown, with the middle removed. }
     \label{bg:duet_foldr_eval}
 \end{figure}
 
-\noindent When running Duet \cite{duet_hackage} on the program shown \ref{bg:duet_foldr}, we get a large block of text as output that shows the reduction or this program. This all happens at once, and we do not get the chance to pick reduction order. It is also quite hard to tell what is going on, as it is dumped as one block of text. The author, Chris Done, also hosts a website where one can try it out without installing it c \cite{duet_delta}. The website does not provide much in the way of a UI, it is a text box input and a text box output for running Duet programs.
+\noindent When running Duet \cite{duet_hackage} on the program shown \ref{bg:duet_foldr}, we get a large block of text as output that shows the reduction or this program. This all happens at once, and we do not get the chance to pick reduction order. It is also quite hard to tell what is going on, as it is dumped as one block of text. The author, Chris Done, also hosts a website where one can try it out without installing it~\cite{duet_delta}. The website does not provide much in the way of a UI, it is a text box input and a text box output for running Duet programs.
 
 \noindent The main strong point of this project is the language. It is a solid subset of Haskell that includes many similar features to SFL. For this project, I did not draw direct inspiration from Duet or Duet Delta. This was because even though I liked the subset of Haskell selected for Duet, I wanted to attempt to design a clearer language, and potentially break away from being a Haskell subset. Furthermore, Duet and Duet Delta focus on the language, not the UX/UI, whereas I wanted SFL explorer to be strong in both regards. 
 
