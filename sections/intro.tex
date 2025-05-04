@@ -9,7 +9,7 @@ The two groups of stakeholders that I identified for this project are:
 \end{itemize}
 
 % a tool to demonstrate how functional programming languages are evaluated, and help build intuitive understanding of how functional programming languages work. 
-SFL-explorer takes the form of a functional language (\ac{SFL}), packaged with a web based interface that allows users to observe the process of evaluating a term as a series of step by step reductions, and control the order that sub-terms are evaluated.  It is an open source web based tool, available for download and offline use as a PWA (Progressive Web App, see \ref{bg:pwa}). A build of SFL explorer is submitted in the auxiliary materials, and it is also available at \href{https://functional.kiransturt.co.uk}{https://functional.kiransturt.co.uk}.
+SFL-explorer takes the form of a functional language (\ac{SFL}), packaged with a web based interface that allows users to observe the process of evaluating a term as a series of step by step reductions, and control the order that sub-terms are evaluated.  It is an open source web based tool, available for download and offline use. A build of SFL explorer is submitted in the auxiliary materials, and it is also available at \href{https://functional.kiransturt.co.uk}{https://functional.kiransturt.co.uk}.
 
 \section{The Language}
 The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL-explorer and apply it to these languages. \ref{tab:fac_2_table_input} is an example program in the language, to find the factorial of 2. The relevant prelude functions are included for clarity.
@@ -32,7 +32,7 @@ main = fac 2
 \label{tab:fac_2_table_input}
 \end{figure}
 
-\ref{tab:fac_2_table} is a table showing the evaluation of this function in lazy mode by the system. The `Prompt` column shows what the user is presented with as a button to make progress. The first prompt entry at row $0$ is empty, as it represents the starting program state. This table is generated dynamically as the user progresses through the given program.  
+\ref{tab:fac_2_table} is a table showing the evaluation of this function in lazy mode by the system. The `Prompt' column shows what the user is presented with as a button to make progress. The first prompt entry at row $0$ is empty, as it represents the starting program state. This table is generated dynamically as the user progresses through the given program.  
 
 
 \begin{figure}[t]
@@ -111,7 +111,7 @@ The user is provided with messages telling them what the next step that they can
 \section{Development Lifecycle}
 \begin{figure}[t]
   \centering
-  \fbox{\includegraphics[width=\linewidth]{images/spiral1.drawio.png}}
+  \fbox{\includegraphics[width=0.98\linewidth]{images/spiral1-5.png}}
   \caption{A spiral representation of the project lifecycle, showing the 4 iterations, and the work done in each part of each phase. }\label{fig:spiral}
 \end{figure}
 
