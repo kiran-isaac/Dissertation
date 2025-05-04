@@ -14,15 +14,15 @@ fn diff(ast1, ast2, expr1, expr2) -> Diff {
     diff = Diff::new();
     match (node1, node2) {
         // IDs and Lits are compared based on their string "values"
-        case (ID, ID)
-        case (Lit, Lit) {
+        (ID, ID) |
+        (Lit, Lit) => {
             if node1.value == node2.value {
                 diff += Similarity(node1.value)
             } else {
                 diff += Difference(node1.value, node2.value)
             }
         }
-        case (Pair {first1, second1}, Pair {first2, second2}) {
+        (Pair {first1, second1}, Pair {first2, second2}) => {
             // As both are pairs, their opening brackets, 
             // commas, and closing brackets are in common.
             // We get the diff of the first and second

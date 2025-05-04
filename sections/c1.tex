@@ -148,13 +148,13 @@ The node indices in the \verb|children| vector represent different things depend
     \item If it is an assignment, then the first child is the variable being assigned to, and the second is the expression.
 \end{itemize}
 
-\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. \verb|Identifier| nodes used as abstraction arguments. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
+\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
 
 \begin{figure}[t]
-    \centering
-    \begin{tabular}{c}
-    \hline
-    \begin{lstlisting}[language=Rust]
+    % \centering
+    % \begin{tabular}{c}
+    % \hline
+    \begin{lstlisting}[language=Rust_boxed]
 struct AST {
     vec: Vec<ASTNode>,
     root: usize,
@@ -181,8 +181,8 @@ struct ASTNode {
     additional_syntax_information: ASTNodeSyntaxInfo
 }
     \end{lstlisting}
-    \\\hline
-    \end{tabular}
+    % \\\hline
+    % \end{tabular}
     \caption{The Rust code listing for the definition of the AST, with lifetime specifiers, accessibility modifiers, and the syntax information (see \ref{paragraph:to_string}) removed for conciseness.}
     \label{fig:ast_lst}
 \end{figure}
@@ -204,10 +204,10 @@ Figure \ref{fig:ast_lst_2} shows an implementation that uses tagged unions to st
 Despite this, the decision was made not to update the implementation for several reasons. The \ac{AST} is so central to the implementation, that it would take a long time to switch properly. Memory and speed are not major constraints for this project, but implementation time is. Furthermore, as long as all indices used are either produced by a helper function, or the \ac{AST} root, there should not be a problem with memory safety. 
 
 \begin{figure}[t]
-    \centering
-    \begin{tabular}{c}
-        \hline
-    \begin{lstlisting}[language=Rust]
+    % \centering
+    % \begin{tabular}{c}
+    %     % \hline
+    \begin{lstlisting}[language=Rust_boxed]
 struct AST<'a> {
     vec: Vec<ASTNode<'a>>,
     root: &'a ASTNode<'a>,
@@ -228,14 +228,14 @@ struct ASTNode<'a> {
     info: ASTNodeSyntaxInfo
 }
     \end{lstlisting}
-    \\\hline
-    \end{tabular}
+    % \\\hline
+    % \end{tabular}
     \caption{An alternative implementation with a few advantages over the actual implementation. }
     \label{fig:ast_lst_2}
 \end{figure}
 
 \subsection{Methods on the AST}
-Below are a selection of the more important or interesting methods implemented on the \ac{AST} and its nodes. \sam{i think I want to see the code as well}
+Below are a selection of the more important or interesting methods implemented on the \ac{AST} and its nodes. 
 
 \paragraph{Adding new nodes} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so the tree will add them to the end, and return their index. These methods are needed extensively for the parser.
 

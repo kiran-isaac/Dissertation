@@ -13,7 +13,7 @@ BG:
 C1:
     - 2: cite more things for stepwise evaluation
     - 4: Finish the "the explorer" subsection. 
-    - 3: make the definitions of SFL's basic syntax better
+    - 4: make the definitions of SFL's basic syntax better
     - 2: Discuss builtins including if, +, >=
 
 C2: 
@@ -21,11 +21,12 @@ C2:
         "Rather than simply reducing ‘f 10’ to 5 in one step, it would be useful to show the substitution to help users to understand why ‘f 10’ becomes ‘5’ here. This would involve substituting the variable f for the function (x. 5). "
     - ✔ MUST check through all sarah comments on overleaf
     - 4: Fix the "they liked" etc for AFG
+    - 2: Talk about unpacking pairs
     - 5: Finish introduction
     - 3: Motivate the design  
     - 4: Write more for requirements analysis. 
     - 4: Motivate Type system at beginning of design
-    - 4: Convert parsing primary bit to prose
+    - ✔ (removed) 4: Convert parsing primary bit to prose
 
 conclusion:
     - 5: Ensure all references to future work are followed up on

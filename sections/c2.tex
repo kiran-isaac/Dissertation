@@ -38,7 +38,7 @@ First-order polymorphic type constructors would be useful to have in \ac{SFL}, w
             \\[2pt]
         \end{array}
     \]
-    \caption{The SFL type system}
+    \caption{The SFL type system. }
     \label{fig:sfl_types_no_exst}
 \end{figure}
 % Note that our type constructor application definition above is more permissive than is correct, as it does not enforce correct arity. This can be handled by the parser maintaining the context of the arity of each type, which can check that it is saturated before 
@@ -68,8 +68,9 @@ To summarize, we will implement type aliases and algebraic data types to work si
 
 \subsubsection{Match}
 \label{c2_design_match}
-\sam{one sentence reminder to reader of what patternmatching is: "Pattern matching is an elegant form of branching used in many functional languages." (this just sets the scene better)}
-See \ref{bg:haskell_pattern_match} for more information about Haskell pattern matching. A basic example of pattern matching in Haskell: \sam{the preceeding sentence sounds very weird because it has no subject. You either want to say "fac is a basic example" or "here is a basic example"}
+% \sam{one sentence reminder to reader of what patternmatching is: "Pattern matching is an elegant form of branching used in many functional languages." (this just sets the scene better)}
+Pattern matching is an elegant form of branching used in many functional languages. Here is basic example of pattern matching in Haskell: 
+% \sam{the preceeding sentence sounds very weird because it has no subject. You either want to say "fac is a basic example" or "here is a basic example"}
 
 \begin{lstlisting}[language=SFL]
 fac :: Int -> Int
@@ -77,7 +78,7 @@ fac 0 = 1
 fac n = n * factorial (n - 1)
 \end{lstlisting}
 
-Here, the definition of the `fac' function is different depending on if is it applied to $0$ or to any other $Int$. If it is applied to an $Int$ other than 0, n is substituted for this value in the expression.
+Here, the definition of the `fac' function is different depending on if is it applied to $0$ or to any other $Int$. If it is applied to an $Int$ other than 0, n is substituted for this value in the expression.  See \ref{bg:haskell_pattern_match} for more information about Haskell pattern matching. 
 
 Pattern matching at the top level like this would be difficult to implement, as it would require significantly changing how abstractions are represented. It would be easier to create a new syntax structure: a match expression. This could look like:
 
@@ -88,9 +89,9 @@ fac n = match n {
     | _ -> n * (fac (n - 1))
 }
 \end{lstlisting}
-This syntax was fairly arbitrary, as syntax is quite easy to change. However, this syntax proved to be fairly popular with all three focus groups, so it did not change between this stage and the end of the project. \sam{the last code sandwich is your best yet! More lik this please! It is clear and to the point}
+This syntax was fairly arbitrary, as syntax is quite easy to change. However, this syntax proved to be fairly popular with all three focus groups, so it did not change between this stage and the end of the project. 
 
-\sam{no need to repeat yourself. Just say something like this does the same as the Haskell fac, just with different syntax. Here you are not explaining the code, but the difference between this code and the previous version}The `fac' function takes an $Int$ n, and proceeds differently with different values of n. If the value is 0, the value of the whole expression becomes 0, otherwise it becomes \lstinline[language=SFL]!n * (fac (n - 1))!. We can use literals in our pattern to differentiate between different values of literals. Inspired by Haskell, we can use a variable (which is a lowercase identifier) to match anything, a `wildcard' pattern. All instances of the variable in the pattern's corresponding expression with the term that the variable matches. `\_' is a special case wildcard, where no variable is bound, but it still matches anything, 
+The `fac' function takes an $Int$ n, and proceeds differently with different values of n. If the value is 0, the value of the whole expression becomes 0, otherwise it becomes \lstinline[language=SFL]!n * (fac (n - 1))!. We can use literals in our pattern to differentiate between different values of literals. Inspired by Haskell, we can use a variable (which is a lowercase identifier) to match anything, a `wildcard' pattern. All instances of the variable in the pattern's corresponding expression with the term that the variable matches. `\_' is a special case wildcard, where no variable is bound, but it still matches anything, 
 
 We should also be able to match more complex structures including Algebraic Data Types. For instance, we can write the following function to figure out whether a list has length 2 or grater
 
@@ -106,15 +107,19 @@ lenIsAtLeastTwo list = match list {
 
 \subsection{Next UI Iteration}
 \label{c2:next_ui}
-At this phase of the project, the current version of the web UI is a proof of concept. See \ref{fig:screenshot_phase_1_end} for the current state. The UI requires a total redesign \sam{end of sentence? why does it need a redesign?}
+At this phase of the project, the current version of the web UI is a proof of concept. See \ref{fig:screenshot_phase_1_end} for the current state.
 
-I completely redesigned the UI based on the clients' feedback, as well as based on other requiremenets identified during the \hyperref[sec:c1_autoethnography]{autoethnographic} phase of the project.  See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. \sam{talk about these designs! This section is very thin, you just say heres what im aiming for, totally chatted to focus group, but the reader will be interested in why you went this way and what the focus group said. This is more reason I suggested at the top to tackle each change one by one cos you're always leaving the reader hanging and pointing else where in the document, but it is not dramatic suspense, I'm just opening more tabs in my brain than I can cope with}These designs were done using \href{https://figma.com}{Figma}. 
+I completely redesigned the UI based on the clients' feedback, as well as based on other requiremenets identified during the \hyperref[sec:c1_autoethnography]{autoethnographic} phase of the project.  See \ref{fig:screenshot_figma1} and \ref{fig:screenshot_figma2} for screenshots of the new design. 
+% \sam{talk about these designs! This section is very thin, you just say heres what im aiming for, totally chatted to focus group, but the reader will be interested in why you went this way and what the focus group said. This is more reason I suggested at the top to tackle each change one by one cos you're always leaving the reader hanging and pointing else where in the document, but it is not dramatic suspense, I'm just opening more tabs in my brain than I can cope with}
+These designs were done using \href{https://figma.com}{Figma}. 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{images/figma_1.png} 
     \captionsetup{justification=centering}
-    \caption{Screenshot 1 of the Figma design of the web UI\sam{formatting bug bear: put full stops at the end of captions}}
+    \caption{Screenshot 1 of the Figma design of the web UI.
+    % \sam{formatting bug bear: put full stops at the end of captions}
+    }
     \label{fig:screenshot_figma1}
 \end{figure}
 
@@ -122,18 +127,18 @@ I completely redesigned the UI based on the clients' feedback, as well as based 
     \centering
     \includegraphics[width=1\linewidth]{images/figma_2.png}
     \captionsetup{justification=centering}
-    \caption{Screenshot 2 of the Figma design of the web UI. This version shows the prelude extended \sam{here is motivation as to why, it looks like somethign following extended has been cut off}}
+    \caption{Screenshot 2 of the Figma design of the web UI. This version shows the prelude dropdown extended. }
     \label{fig:screenshot_figma2}
 \end{figure}
 
-This design was meant to be a work in progress, but it looks quite similar to the final release of the product (Screenshots \ref{fig:screenshot_final_dark}, \ref{fig:screenshot_final_light}, \ref{fig:screenshot_final_dark_prelude_free} and \ref{fig:screenshot_final_light_prelude_free}). Before implementing this design, I discussed this design with the Advanced Focus Group (see \ref{ref:afg_figma}) and they were much more positive about this UI than the existing one 
-\todo{Discuss revert}\\
-\todo{Design principle: simplicity, speed, minimalism, feeling like vscode.}
+This design was meant to be a work in progress, but it looks quite similar to the final release of the product (Screenshots \ref{fig:screenshot_final_dark}, \ref{fig:screenshot_final_light}, \ref{fig:screenshot_final_dark_prelude_free} and \ref{fig:screenshot_final_light_prelude_free}). Before implementing this design, I discussed this design with the Advanced Focus Group (see \ref{ref:afg_figma}) and they were much more positive about this UI than the existing one.
+% \todo{Discuss revert}\\
+% \todo{Design principle: simplicity, speed, minimalism, feeling like vscode.}
 
 \section{Implementation}
 
 \subsection{Pairs}
-\todo{motivate pairs, Algebraic data types}
+% \todo{motivate pairs, Algebraic data types}
 To support pairs, we must first add `Pair' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A `Pair' node has \verb|ASTNodeType| of `Pair', and two children.
 
 \subsubsection{Parsing Pairs}
@@ -197,6 +202,7 @@ To parse a pattern, we may use the same techniques as parsing an expression, wit
 As discussed in the design (\ref{c2_design_match}), patterns are checked in order from first to last. Not only do we need to check that it does not currently match before moving on to checking the next pattern, we must check that it \textit{can not} match the expression i.e. we must refute the pattern. In the below example, \sflinline{repeat 1} must be evaluated enough to know whether it matches the first pattern before we move on to matching the second. 
 
 \begin{lstlisting}[language=SFL]
+// Repeat is in the prelude, but it is shown here for convenience
 repeat :: a -> List a
 repeat n = Cons n (repeat n)
 
@@ -210,9 +216,9 @@ main = match repeat 1 {
 When matching an expression against a pattern, we have three possible results:
 
 \begin{itemize}
-    \item Success: Matching was successful, and we have a list of what to bind
-    \item Refute: We can not match this pattern, and evaluating the expression further would definitely not result in being able to match
-    \item Unknown: It does not match, but we cannot refute
+    \item Success: Matching was successful, and we have a list of what to bind.
+    \item Refute: We can not match this pattern, and evaluating the expression further would definitely not result in being able to match.
+    \item Unknown: It does not match, but we cannot refute.
 \end{itemize}
 \noindent The algorithm for finding the next evaluation step for a match expression is to sequentially attempt to match each pattern. If the result of matching an expression is a refutation, we check the next one. If the result is not yet known, we do not look at any further patterns, and we evaluate the expression further instead. 
 
@@ -245,7 +251,7 @@ The algorithm for matching an expression against a single pattern, and getting e
 
 
 \subsection{Types}
-Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system) quite easily using Enums. Rust's Enums are an example of algebraic data types, and are therefore very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
+Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system) quite easily using Enums. Rust's Enums are an example of an algebraic data type themselves, and are very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
 
 \begin{figure}[ht]
     % \centering
@@ -284,17 +290,16 @@ Aliases are defined here with their name, and the type they are an alias for. Al
 
 \subsubsection{Methods on Types}
 Below are a selection of the more important or interesting methods implemented on Types.
-\sam{didn't we have similar before?}
 
 \paragraph{Substitution of type variables} We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
 
 \paragraph{To String} We will frequently wish to display types as strings for debugging purposes. 
 
 \subsection{Parsing Types}
-In the proof of concept system. The parser simply returns an AST. In order to parse a program with user defined types, type assignments, and pattern matching, the parser should return:
+In the proof of concept system, the parser simply returns an AST. In order to parse a program with user defined types, type assignments, and pattern matching, the parser should return:
 \begin{itemize}
     \item The AST.
-    \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as a struct `\verb|LabelTable|' which is a wrapper around a \verb|HashMap<String, Type>| with some useful methods. 
+    \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as \verb|HashMap<String, Type>|. 
     \item The `Type Table': All type constructors and concrete types defined, stored with their arities. This is implemented as: \verb|HashMap<String, usize>|.
 \end{itemize}
 For instance, from the program:
@@ -333,37 +338,39 @@ Module:
 \end{itemize}
 
 \subsubsection{Parsing Type Expressions}
-The parser needs to be able to parse type assignments (\verb|x :: Int|) and type definitions (\verb|type a|, or \verb|data a|). Parsing both of these things require the ability to parse type expressions. Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. The algorithm for parsing a primary is as follows:
+The parser needs to be able to parse type assignments (\verb|x :: Int|) and type declarations (\sflinline{type}, or \sflinline{data}). Parsing both of these things require the ability to parse type expressions. Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. 
 
-\paragraph{Parsing Type Expression Primaries}
-\todo{Convert to prose}
-\begin{figure}
-\begin{lstlisting}[language=SFL]
-fn parse_type_expression_primary(bound_type_variables, type_table) {
-    next_token = consume()
-    match (next_token) {
-        case lowercase_id {
-            name = next_token.value
-            if bound_type_variables exists {
-                if !bound_type_variables.contains(name) {Error}
-            }
-            return TypeVariable(name)
-        }
-        case uppercase_id {
-            name = next_token.value
-            if type_table.contains(name) {
-                return type_table.get(name)
-            } else {Error}
-        }
-        case left_paren {
-            return parse_type_expression(bound_type_variables, type_table)
-        }
-        otherwise Error
-    }
-}
-\end{lstlisting}
-\caption{The algorithm for parsing }
-\end{figure}
+% \paragraph{Parsing Type Expression Primaries}
+% There are 
+
+% \todo{Convert to prose}
+% \begin{figure}
+% \begin{lstlisting}[language=SFL]
+% fn parse_type_expression_primary(bound_type_variables, type_table) {
+%     next_token = consume()
+%     match (next_token) {
+%         case lowercase_id {
+%             name = next_token.value
+%             if bound_type_variables exists {
+%                 if !bound_type_variables.contains(name) {Error}
+%             }
+%             return TypeVariable(name)
+%         }
+%         case uppercase_id {
+%             name = next_token.value
+%             if type_table.contains(name) {
+%                 return type_table.get(name)
+%             } else {Error}
+%         }
+%         case left_paren {
+%             return parse_type_expression(bound_type_variables, type_table)
+%         }
+%         otherwise Error
+%     }
+% }
+% \end{lstlisting}
+% \caption{The algorithm for parsing }
+% \end{figure}
 
 \subsubsection{Parsing Type Alias Definitions} 
 We may wish to add another name that a type can be known by. For instance, we may wish to define `\verb|String|' as a list of characters, so that we may reference it easier. A type alias declaration consists of:
@@ -399,10 +406,23 @@ An example definition is: `\verb!data Either a b = Left a | Right b!'. The infor
     \end{itemize}
 \end{itemize}
 We must store the type name and its arity in the `Type Table', and all constructors in the `Label Table'. 
+\paragraph{Parsing Data Constructors}
+In order to parse the type constructor definition, we continually expect a lowercase identifier token until we reach the assignment operator `\verb|=|'. The lowercase identifiers declared are passed to the functions that parse constructors so that we can enforce that all of the type variables used in the constructor parsing are `in scope'. We also do this to make sure that the variables are correct. 
 
-In order to parse the type constructor definition, we continually expect a lowercase identifier token until we reach the assignment operator `\verb|=|'. The lowercase identifiers declared are passed to the functions that parse constructors so that we can enforce that all of the type variables used in the constructor parsing are `in scope'. We also do this to make sure that the variables are correct, and in the correct order in the constructor definitions. 
+Parsing constructors is not complex, as we have already implemented the mechanism for parsing type expressions. We simply keep parsing expressions until either the constructor separator ($\mid$) or a newline is reached. When parsing the type expression, we expect only valid concrete types in the Type Table, or valid in scope type variables from the type constructor definition. We then produce a type from the types of the arguments in order, with all of the type variables declared lifted to the start of the type into a series of nested `\verb|Type::Forall|'s. 
+\begin{lstlisting}[language=SFL]
+data EGType a b c = EGCnstr1 a Int b | EGCnstr2 Bool c | EGCnstr3 b c a
+\end{lstlisting}
+\noindent For instance, the above data declaration results in constructors:
+\begin{itemize}
+    \item \verb|EGCnstr1|: \(\alltype{a\,b\,c} a \arr Int \arr b \arr EGType\;a\;b\;c\).
+    \item \verb|EGCnstr2|: \(\alltype{a\,b\,c} Bool \arr c \arr EGType\;a\;b\;c\).
+    \item \verb|EGCnstr3|: \(\alltype{a\,b\,c} b \arr c \arr a \arr EGType\;a\;b\;c\).
+\end{itemize}
 
-Parsing constructors is not complex, as we have already implemented the mechanism for parsing type expressions. We simply keep parsing expressions until either the constructor separator ($\mid$) or a newline is reached. When parsing the type expression, we expect only valid concrete types in the Type Table, or valid in scope type variables from the type constructor definition. We then produce a type from the types of the arguments in order, so `\verb|ConstructorName expr1 expr2 expr3|' results in the type `\(expr1  \rightarrow expr2 \rightarrow expr3 \rightarrow  TypeName\)', with all of the free type variables lifted to the start of the type into a series of nested `\verb|Type::Forall|'s.
+
+
+% so the constructor definition `\verb|ConstructorName a b|', results in the type `\(a \rightarrow b \rightarrow  TypeName\)'
 
 \newpage
 \subsection{The Type Checker}
@@ -433,29 +453,19 @@ The type checker uses an algorithm which is a modified version of the algorithm 
 % The full typechecking algorithm is listed in figures \ref{fig:alg-subtyping}, \ref{fig:instantiation}, \ref{fig:alg-typing}. Below I will describe the typechecking algorithm, focusing on my additions/changes. This will then be followed by two example derivations. Appendix \ref{appx:example_derive} shows some example derivations using this algorithm including some of my rules. 
 
 \noindent The typechecking algorithm (Figure~\ref{fig:alg-typing}) is presented as a series of \textit{inference rules}, which describe how to derive conclusions (written below the horizontal line) from a set of premises (written above it). 
-These rules allow us to construct \textit{derivation trees} by starting from the conclusion we wish to prove and recursively deriving each premise, continuing until we reach axioms—rules with no premises.
-The conclusions derived in this way are called \textit{typing judgements}. A typical typing judgement takes the form $\judge{\Gamma}{x}{A}$, meaning `under context $\Gamma$, it is derivable that $x$ has type $A$'. However, in our bidirectional type system, we have three different types of typing judgements we attempt to derive, and in the process of deriving these judgements we also update our context with additional information gleaned during the derivation process~\ref{fig:bidir_judgement_types}. 
+These rules allow us to construct \textit{derivation trees} by starting from the conclusion we wish to prove and recursively deriving each premise, continuing until we reach axioms - rules with no premises.
+The conclusions derived in this way are called \textit{typing judgements}. A typical typing judgement takes the form $\judge{\Gamma}{x}{A}$, meaning `under context $\Gamma$, it is derivable that $x$ has type $A$'. However, in our bidirectional type system, we have three different types of typing judgements we attempt to derive~(see~\ref{fig:bidir_judgement_types}), and in the process of deriving these judgements we also update our context with additional information gleaned during the derivation process. 
 \begin{figure}[!h]
-\begin{mathpar}
-\Infer{\Sub}
-    {\synjudg{\Gamma}{e}{A}{\Theta}
-        \\
-        \subjudg{\Theta}{[\Theta]A}{[\Theta]B}{\Delta}
-    }
-    {\chkjudg{\Gamma}{e}{B}{\Delta}}
-\end{mathpar}
-\caption{One of the inferrence rules in the algorithm, listed here as an example. }
-\label{fig:eg_infer_rule}
+    \begin{mathpar}
+    \Infer{\MyTCRule{\Paircheckrulename}}
+        {\chkjudg{\Gamma}{e_1}{A}{\Theta} \\ \chkjudg{\Theta}{e_2}{B}{\Delta}}
+        {\chkjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}
+    \end{mathpar}
+    \caption{One of the inferrence rules in the algorithm, listed here as an example. }
+    \label{fig:eg_infer_rule}
 \end{figure}
 
-
-Figure \ref{fig:eg_infer_rule} shows one of the most important rules in the algorithm as an example. This rule \Sub\ allows us to derive that $\chkjudg{\Gamma}{e}{B}{\Delta}$ (Under imput context $\Gamma, e$ checks against type $B$ with output context $\Delta$), if:
-\begin{itemize}
-    \item We can synthesize the type of $e$ to get any type $A$, with output context $|delta$ ($
-    \synjudg{\Gamma}{e}{A}{\Theta}$).
-    \item Then, after we subsitute all of the information in context $\Theta$ into types $A$ and $B$, we can derive that $A$ is a subtype of $B$ (\subjudg{\Theta}{[\Theta]A}{[\Theta]B}{\Delta})
-\end{itemize}
-
+Figure~\ref{fig:eg_infer_rule} shows an example inferrence rule, one of the ones that I added to the algorithm. It allows us to derive that a pair $(e_1, e_2)$ checks against type $(A, B)$ under context $\Gamma$ with output context $\Delta$ ($\chkjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}$) if $e_1$ checks against $A$ under context $\Gamma$ with output context $\Theta$ ($\chkjudg{\Gamma}{e_1}{A}{\Theta}$) and if $e_2$ checks against $B$ under context $\Theta$ with output context $\Delta$ ($\chkjudg{\Theta}{e_2}{B}{\Delta}$).
 
 \paragraph{Hole notation}
 Below is a paragraph from the original paper \cite{completebidir} explaining `hole notation' in contexts, which is used throughout the algorithm descriptions in \ref{fig:alg-typing}, \ref{fig:alg-subtyping} and \ref{fig:instantiation}. 
@@ -485,7 +495,7 @@ Occasionally, we also need contexts with \emph{two} ordered holes:
 % \sam{now i have read the appendix, It is excellent!!! just move that. Its so much clearer and its not dry cos we gave a goal and it nicely guides me through}
 
 \subsubsection{Algorithmic Type Checking and Synthesis}
-Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. The rules I added are: 
+Figure~\ref{fig:alg-typing} shows the main algorithm for checking and synthesizing the types of various expression structures. The rules I added are: 
 %\sam{questions the reader might have: but how is this an algo? they are sequences of steps? What is all this notation? I've never seen the backwards turnstyle before or the backward implication. This should be walked thorugh in prose, you should not expect me to spend ages looking at the figure figuring it out. You are the writer, guide me}
 %\sam{say in the prose that they are highlighted. I think the way you use captions is weird. It reads as if your expectation upon someone reading "figure bla" is that they immediately read the caption of figure  bla, but i dont. I stick with the prose hoping to be guided through my viewing of the figure, especially such a complex one.}
 \begin{itemize}
@@ -493,7 +503,7 @@ Figure \ref{fig:alg-typing} shows the main algorithm for checking and synthesizi
     %\sam{there is a way to reference rules, which might be nice here}
     \item Checking and synthesis rules for pairs
     \begin{itemize}
-        \item A pair $(e_1, e_2)$ checks against type $(A, B)$ if $e_1$ checks against $A$ and $e_2$ checks against $B$. 
+        \item A pair $(e_1, e_2)$ checks against type $(A, B)$ if $e_1$ checks against $A$ and $e_2$ checks against $B$ (see \ref{fig:eg_infer_rule}). 
         \item If $e_1$ synthesizes type $A$ and $e_2$ synthesizes type $B$ then $(e_1, e_2)$ synthesizes $(A, B)$
     \end{itemize}
     \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$ (\synjudg{\Gamma}{e}{A}{\Delta}). We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression. 
@@ -519,7 +529,11 @@ Below are two example derivations that cover most of the key aspects of the algo
 
 \paragraph{Typechecking an Expression Involving Lists}
 \label{c2:types_demo_1}
-In figure~\ref{tc_eg_list}, we attempt to use the algorithm to check the type of \lstinline[language=SFL]|Cons 1 Nil| against \lstinline[language=SFL]|List Int|. In this derivation, we defined \sflinline{data List = Cons Int (List Int) | Nil} to avoid the complexities of polymorphism, which are better demonstrated by the next example~\ref{c2:types_demo_2}. The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
+In figure~\ref{tc_eg_list}, we attempt to use the algorithm to check the type of \lstinline[language=SFL]|Cons 1 Nil| against \lstinline[language=SFL]|List Int|. In this derivation, the definition of $List$ is only over $Int$s to avoid the complexities of polymorphism, which are better demonstrated by the next example~\ref{c2:types_demo_2}:
+\begin{lstlisting}[language=SFL]
+data List = Cons Int (List Int) | Nil
+\end{lstlisting}
+\noindent The reason the context is never changed is as we do not have any abstractions or foralls, so no variables or type variables are introduced. Type checking/synthesis is done recursively from bottom up, so read [1] upwards. 
 
 \begin{figure}[t]
 
@@ -613,7 +627,10 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
 
 \paragraph{Synthesizing Example}
 \label{c2:types_demo_2}
-\ac{SFL} explorer requires type assignments by default, but the below example does not have a type assignment as this allows us to hit some of the rules that we did not hit in the `pairs' example. We have a function \sflinline{f x = Just x} (desugared: \lstinline[language=SFL]|f = (\x. Just x)|) that we want to synthesize the type of. \sflinline{Just} is a constructor defined in the type declaration \sflinline{data Maybe a = Just a | Nothing}, and it has a type $\forall a. a \arr Maybe\,a$.
+In the below example, we synthesize the type of the function \lstinline[language=SFL]|\x. Just x|. Note that the backslash \lstinline|\| and \lambda\ are used interchangably. \sflinline{Just} is a constructor of the commonly used `Maybe' type, defined in \ac{SFL} as:
+\begin{lstlisting}[language=SFL]
+data Maybe a = Just a | Nothing
+\end{lstlisting}
 
 \begin{figure}[t]
 \begin{mathpar}
@@ -707,7 +724,7 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
 \end{figure}
 
 \begin{enumerate}
-    \item We begin synthesis with the \ArrIntroSyn\ rule. We are trying to synthesize a type $A \arr B$  as the abstraction $\lam{x} \textit{Just x}$ must have a function type. We add to our context $\Gamma_0$ two existential type variables $\ahat, \bhat$. We also add to our context the type assignment $x: \ahat$, and then we check the inner body of the abstraction ($\textit{Just x}$) against $\bhat$ [1]. Check [1] yields the context $\Gamma_4$, and we discard everything after $x: \ahat$ to remove data we no longer need. We synthesize $\lam{x} \textit{Just x} \syn \ahat \arr \bhat$. Substituting the information from our context $\Gamma_4$ gives us $\ahat \arr \textit{Maybe}\;\ahat$. This is the final result of inference, but an existential type variables are simply a statement that `there exists a type', so they can be replaced with `$\forall$'s, giving our final result as $\forall a. a \arr \textit{Maybe}\,a$.
+    \item We begin synthesis with the \ArrIntroSyn\ rule. We are trying to synthesize a type $A \arr B$  as the abstraction $\lam{x} \textit{Just x}$ must have a function type. We add to our context $\Gamma_0$ two existential type variables $\ahat, \bhat$. We also add to our context the type assignment $x: \ahat$, and then we check the inner body of the abstraction ($\textit{Just x}$) against $\bhat$ [1]. [2] yields the context $\Gamma_4$, and we discard everything after $x: \ahat$ to remove data we no longer need. We synthesize $\lam{x} \textit{Just x} \syn \ahat \arr \bhat$. Substituting the information from our context $\Gamma_4$ gives us $\ahat \arr \textit{Maybe}\;\ahat$. This is the final result of inference, but an existential type variables are simply a statement that `there exists a type', so they can be replaced with `$\forall$'s, giving our final result as $\forall a. a \arr \textit{Maybe}\,a$.
     % \addtocounter{enumi}{1}
     \item To check $\textit{Just x}$ against $\bhat$, we synthesize $\textit{Just x} \syn \textit{Maybe}\;\chat$ [3]. After applying $\Gamma_3$ as a substitution to $\textit{Maybe}\;\chat$ yielding $\textit{Maybe}\;\ahat$, we check this type against $\bhat$ [11], yielding $\Gamma_4$. 
     \item To synthesize the type of $\textit{Just x}$, we synthesize $\textit{Just} \syn T_{Just}$ [4], and synthesize the type of the application of type $T_{Just}$ to $\textit{x}$.
