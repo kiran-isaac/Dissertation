@@ -4,7 +4,8 @@ The aims of this project were to create a system to help to build an intuitive u
 
 
 \section{Strengths}
-\subsection{The System is Useful, and Will be Used}
+\subsection{The System is Useful for Teaching Functional Programming, and Will be Used for that Purpose}
+All three focus groups found the system useful. In particular, the intermediate focus group who had just taken the Haskell unit, all agreed that they would have benefitted from this system in the module. 
 As discussed previously \ref{c4:client}, my client will use this project in future in teaching \hyperref[COMS10016]{COMS10016}. Furthermore, she shared it with a teaching fellow who teaches Haskell at Imperial, who agreed that it is useful. 
 
 \subsection{The Language Achieves Its Design Aims}
@@ -21,7 +22,7 @@ Both the advanced and intermediate focus groups, both with participants that had
 Amos Holland used SFL explorer to explain key concepts to the intermediate \ref{eval:IFG} and beginner \ref{eval:BFG} focus groups. 
 
 \begin{quotation}
-\noindent `There are features of Haskell it doesn't have, but Haskell is a very advanced language. For teaching functional programming, I think it's got the right range of features'. Amos, During an interview after lecturing in the intermediate focus group
+\noindent `There are features of Haskell it doesn't have, but Haskell is a very advanced language. For teaching functional programming, I think it's got the right range of features'. Amos Holland, During an interview after lecturing in the intermediate focus group.
 \end{quotation}
 
 \noindent The language is also capable of doing everything that my client mentioned that she wanted to use such a system for (\ref{eval:c1_client}).
@@ -46,7 +47,7 @@ main = sum $ list_of_squares 1 5
 \end{lstlisting}
 % \end{figure}
 
-Despite their being no match expressions in sight, the `main' expression balloons to 3 match statements deep within 6 lazy steps:
+\noindent Despite their being no match expressions, the `main' expression balloons to 3 match statements deep within 6 lazy steps:
 
 % \begin{figure}[h]
 \begin{lstlisting}[language=SFL]
@@ -68,15 +69,15 @@ The outer one comes from `sum', the middle one comes from `map', and the inner o
 This situation could be improved by being able to select which functions we are interested in seeing the expansion of, and which ones we are not. See \ref{fw:function_checkboxes}
 
 \subsection{There is No Documentation}
-When designing the new UI (\ref{c2:next_ui}), I included buttons that would create help menus, and more information about the project, as well as instructions. However, these are time-consuming to write,
+When designing the new UI (\ref{c2:next_ui}), I included buttons that would create help menus, and more information about the project, as well as instructions. However, these are time-consuming to write,  and I did not have time. 
 
 \section{Future Work}
 \label{conc:future_work}
-\paragraph{Add More Documentation to the Website} As the language is quite similar to Haskell, an advanced user would not have much trouble figuring out how the website works. This works fine for a lecture tool as the lecturer would be able to figure it out, the lack of documentation is detrimental to other users. 
+\paragraph{Add More Documentation to the Website} As the language is quite similar to Haskell, an advanced user would not have much trouble figuring out how the website works. This works fine for a lecture tool as the lecturer would be able to figure it out, but the lack of documentation is detrimental to other users. 
 \paragraph{Other Evaluation Strategies}
-Users could have the option to pick the evaluation strategy (\ref{bg:eval_strategies}). 
+Users could have the option to pick the evaluation strategy. They can manually pick the evaluation strategy using free choice mode, but a mode that enforces strict evaluation for example would be useful to have. 
 \paragraph{Improve Free Choice Mode}
-Inspiration could be taken from the UI used by \llessons\ (\ref{bg:llessons_ui}) where the expression to be evaluated could be selected by clicking on the input text itself. 
+Inspiration could be taken from the UI used by \llessons~\ref{bg:llessons_ui} where the expression to be evaluated could be selected by clicking on the input text itself. 
 \paragraph{Selective Skipping}
 \label{fw:function_checkboxes}
 We are not always interested in all the functions involved in our program. For instance, if a lecturer is attempting to demonstrate \verb|foldr| over a list, they may not be interested in the expansion of how \verb|range| works in order to generate their list they are going to fold over. They may want the evaluation of some things to be `skipped'. 

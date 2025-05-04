@@ -1,14 +1,11 @@
-\chapter{A Section of the Difference Algorithm}
-\begin{figure}[h]
+\begin{figure}[t]
     \begin{tabular}{c}
     \begin{lstlisting}[language=Rust_boxed]
 enum DiffElem {
     Similarity(String), 
     Difference(String, String)
 }
-
 type Diff = Vec<DiffElem>
-
 // rust-like psuedocode, not valid rust
 // ast1 and 2 are the two ASTs, and expr1 and 2 are the indices
 // of the terms we are considering for our diff. 
@@ -25,11 +22,9 @@ fn diff(ast1, ast2, expr1, expr2) -> Diff {
                 diff += Difference(node1.value, node2.value)
             }
         }
-
         case (Pair {first1, second1}, Pair {first2, second2}) {
             // As both are pairs, their opening brackets, 
             // commas, and closing brackets are in common.
-
             // We get the diff of the first and second
             // element to find the diff of the whole pair 
             diff += Similarity("(")
@@ -38,14 +33,12 @@ fn diff(ast1, ast2, expr1, expr2) -> Diff {
             diff += diff(ast1, ast2, second1, second2)
             diff += Similarity(")")
         }
-
         ...
     }
-    
     return diff;
 }
     \end{lstlisting}
     \end{tabular}
-    \caption{rust-like psuedocode listing for the type of the output of the AST::diff function, as well as a small section of the algorithm. There is also (not shown) a wrapper around the Diff type, to allow for conversion into JavaScript (see \ref{bg:wasm}), as well as the some logic for combining diffs.}
+    \caption{rust-like psuedocode listing for the type of the output of the diff function, as well as a small section of the algorithm. There is also (not shown) a wrapper around the Diff type, to allow for conversion into JavaScript (see \ref{bg:wasm}), as well as the some logic for combining diffs.}
     \label{fig:diff_list}
 \end{figure}
