@@ -1,12 +1,26 @@
 \chapter{Phase 2 --- Types and Pattern Matching}
-In this phase, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated client-led approach. 
+In this phase, I moved away from the autoethnographic (\ref{sec:c1_autoethnography}) approach, where most of my requirements came from within, to an externally motivated approach where my requirements came from my client. This phase was mostly focused on adding more features to \ac{SFL}, including a polymorphic type system and pattern matching. 
 
 % \sam{dont bother changing this for this project, this is just advice for future: this section would read much better if for each proposed change you did: motivation for change, details of change, implementation of change, eval of change. Each per change. It reduces what the reader has to remember and stops you need to repeat yourself so much}
 
-At the end of this phase, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the phase, 
+% At the end of this phase, I held a focus group (\ref{ref:afg}) to help me evaluate the progress of the project. Because this was the plan from the beginning of the phase, 
 
 \section{Requirements Analysis}
-The requirements for this phase were motivated by my client meeting (\ref{eval:c1_client}). I wanted to tackle the most technical aspects in this phase to give me the maximum time to complete them, as this was still early in the project lifecycle. 
+The requirements for this phase were motivated by my client meeting~(\ref{eval:c1_client}). 
+The client's central idea for what they wanted to use the tool was to demonstrate methods on lists, such as `map' and `foldr/l'. Lists in functional programming languages are commonly defined recursively, using \verb|Cons x xs| to represent constructing a list from an element \verb|x| and the rest of the list \verb|xs|. \verb|Nil| represents an empty list. This recursive construction of lists comes from Lisp \cite{mccarthy1960recursivelisp}. Similarly, in Haskell, lists are defined as follows:
+\begin{lstlisting}[language=SFL]
+data [a] = [] | a : [a]
+\end{lstlisting}
+This definition of lists is as example of a polymorphic data type. It also implicitly defines two polymorphic constructors, \verb|[]| (Nil) which has type $\forall a. [a]$, and \verb|:| (Cons) which has a type $\forall a. a \fto [a] \fto [a]$. 
+
+In order to support recursively defined Lists like this in \ac{SFL}, we could either have `Nil' and `Cons' built in, or we could allow them to be defined in the language. Providing a mechanism for users to define their own types in the language, including lists, would be the best option as this would allow maximum clarity and transparency into how the language works. 
+
+
+
+% Allowing them to be defined in the language would be best for clarity, and it would also allow users 
+
+
+% I wanted to tackle the most technical aspects in this phase to give me the maximum time to complete them, as this was still early in the project lifecycle. 
 
 
 \section{Design}
@@ -48,7 +62,7 @@ First-order polymorphic type constructors would be useful to have in \ac{SFL}, w
 In Haskell, we can create algebraic types using the \sflinline{data} keyword (see \ref{bg:haskell_udt}). Replicating this syntax for \ac{SFL}'s user defined data types is desirable because it would allow people already familiar with Haskell to use the system, as well as viva versa. 
 
 As an example, the SFL (and Haskell) data declaration:
-\begin{lstlisting}[language=SFL_unboxed_noprelude]
+\begin{lstlisting}[language=SFL_noprelude]
 data Either a b = Left a | Right b
 \end{lstlisting}
 % \sam{breaking sentences up with code or pictures is a huge formatting bug bear for me. I won't comment on this again, and it can stay if you don't have time, but if you do have time it will add a more polished and professional feel. The change needed would be something along the lines of. "As an example, we seek to support the following data declaration, exactly copying Haskell's syntax: ~code~ This declaration creates ..."}
@@ -56,7 +70,7 @@ data Either a b = Left a | Right b
  \ \verb|Either| uniquely identifies this type, this must be enforced by the parser. It also creates two data constructors: \verb|Left| which has the type $\forall a\;b. a \fto Either[a,b]$, and \verb|Right| which has the type $\forall a\;b. b \fto Either[a,b]$. 
 
 Type aliases allow us to make code more readable and expressive. For instance, if we were to define playing cards like this:
-\begin{lstlisting}[language=SFL_unboxed]
+\begin{lstlisting}[language=SFL]
 data Suit = Hearts | Clubs | Spades | Diamonds
 data Rank = Num Int | Jack | Queen | King | Ace
 type Card = (Suit, Rank)
@@ -64,7 +78,7 @@ type Card = (Suit, Rank)
 
 \noindent having the type alias \sflinline{Card} for \sflinline{(Suit, Rank)} allows us to very easily, and more readably, create functions on Cards, as well as values with that type. 
 
-To summarize, we will implement type aliases and algebraic data types to work similarly to Haskell with similar syntax. % \sam{type aliases feel out of the blue}
+To summarize, we will implement type aliases and algebraic data types that work similarly to Haskell with similar syntax. % \sam{type aliases feel out of the blue}
 
 \subsubsection{Match}
 \label{c2_design_match}
@@ -75,10 +89,10 @@ Pattern matching is an elegant form of branching used in many functional languag
 \begin{lstlisting}[language=SFL]
 fac :: Int -> Int
 fac 0 = 1
-fac n = n * factorial (n - 1)
+fac n = n * fac (n - 1)
 \end{lstlisting}
 
-Here, the definition of the `fac' function is different depending on if is it applied to $0$ or to any other $Int$. If it is applied to an $Int$ other than 0, n is substituted for this value in the expression.  See \ref{bg:haskell_pattern_match} for more information about Haskell pattern matching. 
+\noindent Here, the definition of the `fac' function is different depending on if is it applied to $0$ or to any other $Int$. If it is applied to an $Int$ other than 0, n is substituted for this value in the expression.  See \ref{bg:haskell_pattern_match} for more information about Haskell pattern matching. 
 
 \paragraph{Syntax}
 Pattern matching at the top level like this would be difficult to implement, as it would require significantly changing how abstractions are represented. It would be simpler to create a new syntax structure: a match expression. This could look like:
@@ -160,7 +174,7 @@ Parsing pairs is trivial:
 Pairs themselves can never be redexes, so getting a list of all redex-contraction pairs in a `Pair' is trivial: we concatenate the list of \verb|RCPairs| in the left and right expression.
 
 \subsection{Pattern Matching}
-We add `Match' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. A match node has many children. The first node represents the expression being matched over, then each case followed by its corresponding definition.
+We add `Match' as an option to our enum `\verb|ASTNodeType|' \ref{fig:ast_lst}. The first node represents the expression being matched over, then each case followed by its corresponding definition.
  
 \subsubsection{Parsing Match Statements}
 An example of using a match statement follows:
@@ -249,28 +263,53 @@ Below is a short summary of how pattern matching is done for different structure
         \item Another application: Match the functions and match the arguments. If either Refutes then Refute, and if either is Unknown then return Unknown. Otherwise, Succeed, and concatenate the two lists of bindings
     \end{itemize} 
 
-    \item A literal: trivial, the algorithm is just a string match. It is listed inline in \ref{fig:pattern_list_top_level} for completeness's sake. 
+    \item A literal: If the expression is a literal, we perform a string match to figure out if this is a similarity or a difference. 
 \end{itemize}
 
-The algorithm for matching an expression against a single pattern, and getting either `Success, Refute, or Unknown' is listed in pseudocode: \ref{fig:pattern_list_top_level}. The algorithm for getting a redex-contraction pair from a match statement is also listed \ref{fig:all_pattern_list_iterate}. If we succeed in pattern matching, the result should be the appropriate case with all  the bindings substituted. 
+\noindent The algorithm for matching an expression against a single pattern, and getting either `Success, Refute, or Unknown' is listed in pseudocode~\ref{fig:pattern_list_top_level}. The algorithm for getting a redex-contraction pair from a match statement is also listed \ref{fig:all_pattern_list_iterate}, but to summarise:
+
+\begin{itemize} 
+    \item If we succeed in pattern matching, the result should be the appropriate case with all the bindings substituted. 
+    \item If we have not yet succeeded or refuted all patterns, we look for a redex-contraction pair in the expression being matched. 
+    \item If we have refuted all patterns, we fail to get a redex-contraction pair 
+\end{itemize}
 
 
 \subsection{Types}
 Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system) quite easily using Enums. Rust's Enums are an example of an algebraic data type themselves, and are very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
+The type $\alltype{a\;b} (a \arr b) \arr IntAlias \arr List\,a \arr List\,b$ would be represented in this implementation (ignoring the \verb|Box|s) as:    
+\begin{lstlisting}[language=Rust_boxed]
+Forall("a", 
+  Forall("b", 
+    Function(
+      Function(
+        TypeVariable("a"), 
+        TypeVariable("b")
+      ),
+      Alias("IntAlias", Int64)
+      Function(
+        Union("List", [TypeVariable("a")]), 
+        Union("List", [TypeVariable("b")])
+      )
+    )
+  )
+)
+\end{lstlisting}
+
 
 \begin{figure}[ht]
     % \centering
     % \begin{tabular}{c}
     % \hline
     \begin{lstlisting}[language=Rust_boxed]
-pub enum Primitive {
+pub enum PrimitiveType {
     Int64,
     Bool,
 }
 
 pub enum Type {
     Unit,
-    Primitive(Primitive),
+    Primitive(PrimitiveType),
     Function(Box<Type>, Box<Type>),
     TypeVariable(String),
     Forall(String, Box<Type>),
@@ -287,18 +326,18 @@ pub enum Type {
     \label{fig:type_lst}
 \end{figure}
 
-We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size: the size of a pointer in the target architecture. 
+% We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size: the size of a pointer in the target architecture. 
 
-We also define Existential, as an implementation detail needed for the type checker. 
-
-Aliases are defined here with their name, and the type they are an alias for. Aliases could simply be implemented by replacing all occurrences of the string on the left with the string on the right, but defining them here allows us to use their names to generate type errors making them easier to understand. 
+Aliases are defined here with their name, and the type they are an alias for. Aliases could simply be implemented by replacing all occurrences of the alias with the type, but defining them here allows us to use their names to generate type errors making them easier to understand. We also define existential as an implementation detail for the typechecker. 
 
 \subsubsection{Methods on Types}
 Below are a selection of the more important or interesting methods implemented on Types.
 
-\paragraph{Substitution of type variables} We may wish to set a type variable to another type. For instance, if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
+\paragraph{Substitution of type variables} If we have a function of type $\alltype{a\;b} a \arr b \arr a$, and we apply it to a term with type $Int$, to figure out the type of the application we would substitute all of the $a$s in the type with $Int$, and remove the $\forall a$, leaving us with $\alltype{b} Int \arr b \arr Int$. 
 
-\paragraph{To String} We will frequently wish to display types as strings for debugging purposes. 
+%We  if given the type expression \(T \; U\) where \(T\) and \(U\) are types, and we know that one of the constructors of \(T\) is of generic type \(\forall a.a \rightarrow T \; a\), the type of the constructor for this type should be \(U \rightarrow T \; U\). We have `instantiated' the type variable \(a\) to be \(U\) by substituting \(a\) with \(U\) throughout the expression, and removing the \(\forall a\). This is required for the type checker. 
+
+\paragraph{To String} We will frequently wish to display types as strings for debugging purposes. This is done recursively
 
 \subsection{Parsing Types}
 In the proof of concept system, the parser simply returns an AST. In order to parse a program with user defined types, type assignments, and pattern matching, the parser should return:
