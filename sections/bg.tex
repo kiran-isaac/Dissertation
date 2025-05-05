@@ -6,7 +6,7 @@
 \newcommand{\lcalc}{$\lambda$-calculus}
 \newcommand{\lCalc}{$\lambda$-Calculus}
 \newcommand{\fto}{\rightarrow}
-The lambda calculus (\lcalc) was first described by Alonzo Church in 1936~\cite{church1936unsolvable}. It is a universal model of computation, meaning we can compute any computable function using it~\cite{Turing_1937}. Understanding the \lcalc\ is essential for understanding the principles behind functional languages and in particular how they evaluate expressions.
+The lambda calculus (\lcalc) was first described by Alonzo Church in 1936~\cite{church1936unsolvable}. It is a universal model of computation, meaning we can compute any computable function using it~\cite{Turing_1937}. Understanding the \lcalc\ is essential for understanding the principles behind functional languages, in particular how they evaluate expressions.
 
 The set of all lambda terms is $\Lambda$. Lambda calculus is built from three syntax structures:
 \begin{itemize}
@@ -50,20 +50,23 @@ FV(\lambda x. M)   \quad && = \quad && &FV(M)-\{x\}         \\
 \noindent`The sole means by which terms `compute' is the application of functions to arguments (which themselves are functions). Each step in the computation consists of rewriting an application whose left-hand component is an abstraction, by substituting the right-hand component for the bound variable in the abstraction's body' \cite{pierce2002types} 
 \end{quotation}
 
-\noindent The \lcalc\ is evaluated by $\beta$-reduction. This is where an abstraction is applied to a value. The result of applying an abstraction to a term is the body of the abstraction, with the all free instances of the abstracted variable substituted with the term the abstraction was applied to. Below is the formal definition of substitution within a term~\cite{barendregt2013lambda}. 
+\noindent 
+% The \lcalc\ is evaluated by $\beta$-reduction of terms that are applications, where the function is an abstraction. 
+% Consider . We can `compute' by substituting all of the $x$s in the abstraction with $y$. This is known as $\beta$-reduction. The result of $\beta$-reduction is the body of the abstraction, with the all free instances of the abstracted variable substituted with the term the abstraction was applied to. 
+If we have an application of an abstraction to a term $(\lam{x} M)\;N$, we can $\beta$-reduce this term by substituting all of the free instances of $x$ in $M$ with $N$. For instance, the term $(\lam{x} f\;x)\; y$, where we have an abstraction $(\lam{x} f\;x)$ applied to a term $y$, $\beta$-reduces to $f\;y$. Below is the formal definition of substitution within a term~\cite{barendregt2013lambda}. 
 \noindent\begin{alignat*}{3}
 &x[x:=N]                        \quad && \equiv \quad && N                       \\
 &y[x:=N] \text{ where } y \ne x \quad && \equiv \quad && y                       \\
 &(M_1 M_2)[x:=N]                \quad && \equiv \quad && (M_1[x:=N]) (M_2[x:=N]) \\
 &(\lambda y.M)[x:=N]            \quad && \equiv \quad && \lambda y.(M[x:=N])     
 \end{alignat*}  
-\noindent The definition of $\beta$-reduction \cite{barendregt2013lambda}:
+\noindent The formal definition of $\beta$-reduction \cite{barendregt2013lambda}:
 \begin{alignat*}{3}
 &x                 \quad && \BetaReduce \quad &&        x           \\
 &\lambda x.M       \quad && \BetaReduce \quad &&        \lambda x.M \\
 &(\lambda x.M) N   \quad && \BetaReduce \quad &&        M[x:=N]
 \end{alignat*}
-A term is said to be in \textbf{normal form} if it cannot be $\beta$-reduced. A term that can be beta reduced can be said to be a \textbf{redex}: a reducible expression. The term resulting from the redex is a \textbf{contraction}.
+A term is said to be in \textbf{normal form} if it cannot be $\beta$-reduced. A term that can be $\beta$-reduced can be said to be a \textbf{redex}: a reducible expression. The term resulting from reducing the redex is a \textbf{contraction}.
 
 \subsection{Reduction, Evaluation Strategies and Values}
 \label{bg:eval_strategies}
@@ -75,18 +78,18 @@ The closed term
 \[id\,\underline{(id\,(\lam{z} id\,z))}\]
 \[id\,(id\,(\lam{z} \underline{id\,z}))\]
 
-\noindent Most languages use the \textbf{call-by-value} evaluation strategy, where `only the outermost redexes are reduced and a redex is reduced only when its right-hand side has already been reduced to a value \ldots\ where the only values are \lambda expressions'~\cite{pierce2002types}. This reduction strategy is also known as `strict'. In this strategy, we would reduce by the following sequence:
+\noindent Most languages use the \textbf{call-by-value} evaluation strategy, where `only the outermost redexes are reduced and a redex is reduced only when its right-hand side has already been reduced to a value \ldots\ where the only values are $\lambda$-abstractions'~\cite{pierce2002types}. This reduction strategy is also known as `strict'. In this strategy, we would reduce by the following sequence:
 \begin{alignat*}{2}
-id\,\underline{(id\,(\lam{z} id z))}  && \;\;\arr\\ 
-\underline{id\,(\lam{z} id z)}        && \;\;\arr\\ 
-\lam{z} id z                          && \;\;\\ 
+id\,\underline{(id\,(\lam{z} id\, z))}  && \;\;\arr\\ 
+\underline{id\,(\lam{z} id\, z)}        && \;\;\arr\\ 
+\lam{z} id z                            && \;\;\\ 
 \end{alignat*}
 
 \noindent Using the \textbf{call-by-name} strategy, `The leftmost outermost redex is always reduced first \ldots\ and [we allow] no reductions inside abstractions' \cite{pierce2002types}. Only abstractions are valid values. Our reduction sequence would look like this:
 \begin{alignat*}{2}
-\underline{id\,(id\,(\lam{z} id z))}  && \;\;\arr\\ 
-\underline{id\,(\lam{z} id z)}        && \;\;\arr\\ 
-\lam{z} id z                          && \;\;\\ 
+\underline{id\,(id\,(\lam{z} id\, z))}  && \;\;\arr\\ 
+\underline{id\,(\lam{z} id\, z)}        && \;\;\arr\\ 
+\lam{z} id\, z                          && \;\;\\ 
 \end{alignat*}
 \noindent \textbf{Call-by-need} is similar to call by name but with sharing. This means we `overwrite all occurrences of an argument with the value the first time it is evaluated' \cite{pierce2002types}. Only abstractions are valid values once again. This is an optimization of call-by-name that is known as lazy evaluation. It is used by many functional languages including Haskell, and is of particular importance to SFL explorer. In this case, our reduction order would be the same as \textbf{call-by-name}. 
 
@@ -94,9 +97,7 @@ id\,\underline{(id\,(\lam{z} id z))}  && \;\;\arr\\
 % \sam{this section is very dry. why do we want to learn about lambda calc? well we are writing an evaluator, so to understand what that means we need to understand syntax and evaluation, so lets looks at the lambda calc as a small example. It makes the intro of lambda calc more active and motivated, rather than a bunch of dry definitions, instead its a small example of what we will do later, that is background cos its pre-defined and not implemented we are just exploring the ideas we will implement}
 
 \subsection{Types}
-If we were to extend our \lcalc\ with a new sort of term, an integer literal (something commonly done, especially when building up to discussing practical functional languages) \[\dots, -2, -1, 0, 1, 2, \dots\] we could say that these values are members of a set of values $Int$. 
-
-In this extended version of the lambda calculus, the set of valid values becomes:
+If we were to extend our \lcalc\ with a new sort of term, an integer literal \((\dots, -2, -1, 0, 1, 2, \dots)\), something commonly done, especially when building up to discussing practical functional languages, we could say that these values are members of a set of values $Int$. In this extended version of the lambda calculus, the set of valid values becomes:
 \[Values ::= \lambda x. M \mid \dots \mid -2\mid -1\mid 0\mid 1\mid 2\mid \dots \]
 
 \noindent It would be useful for us to be able to assert that a term eventually evaluates to one of these $Int$s. The \lcalc\ terms that evaluate to a value in the set of $Int$s can all be said to have `type' $Int$. More generally: 
@@ -104,7 +105,7 @@ In this extended version of the lambda calculus, the set of valid values becomes
 `Saying that `a term $t$ has type $T$' (or `$t$ belongs to $T$' or `$t$ is an element of $T$') means that $t$ `obviously' evaluates to a value of the appropriate form - where by `obviously' we mean that we can see this statically, without doing any evaluation of $t$' \cite{pierce2002types}
 \end{quote}
 
-\noindent For instance, the term \((\lam{x} 1)\, 2\) has type $Int$, as it evaluates to a value in the set of valid $Int$ values. 
+\noindent For instance, the term \((\lam{x} 1)\, 2\) has type $Int$, as it evaluates to a value in the set of valid $Int$ values: $1$. 
 
 % \sam{i havent read further of lambda calc, cos i think my above advise applies here too. 1. you are burdened with too much knowledge so you keep jumping into the middle of an explanation 2. it is unclear why we are learning about types 3. remember lambda calc is a whole 3rd year course, and you've seen how long stevens notes are, we cannot replicate that so we need to highlight to the user what is important to understand about the lambda calc for just this project}
 
@@ -113,6 +114,8 @@ We want to be able to express the types of functions. The term \(\lambda x. x\) 
 
 A more complex term \(\lambda x\;y.x\) can be said to have type \(T \fto (U \fto T)\); If we give it a term $M$ of type $T$, it would return the function \(\lambda y.M\) which takes whatever is given to it (represented by $U$) and returns $M$ which has type $T$. 
 
+By convention, the arrow operator $\arr$ is right associative, so we can rewrite \(T \fto (U \fto T)\) as \(T \fto U \fto T\) without unnecessary parentheses. 
+
 % \subsubsection{Judgements}
 % \todo{To make typechecking bit easier}
 
@@ -120,17 +123,16 @@ A more complex term \(\lambda x\;y.x\) can be said to have type \(T \fto (U \fto
 
 \subsection{Typechecking: Well typed programs do not go wrong}
 The \lcalc\ that we have discussed so far is untyped. This means that an abstraction can be applied to any other term without restriction. This lack of restriction may result in terms that can no longer be reduced, but are not valid values. The evaluation of an \lcalc\ expression is said to have `gone wrong' if it gets to a normal form that is not a valid value.
-
 Let us consider the expression and its reduction
 \[
 (\lambda x. x\;x) \;1 \BetaReduce 1\;1
 \]
-\noindent The reduction is not a valid value, however it cannot be further reduced. We have \textit{gone wrong}.
+\noindent The contraction $1\;1$ is not a valid value, however it cannot be further reduced; we have \textit{gone wrong}.
 
 We will now attempt to derive the type of the parameter $x$, in order to show that it is untypeable.
-As $x$ here is applied to itself, it must be some kind of function that takes a term $x$ of with type $T$, and returns a term of type $U$. This means that $T = T \fto U$ which is absurd, as it is left recursive. This means that this is `untypeable'. Indeed, it is clearly never possible to type an expression where a term is applied to itself. If this was a real programming language, when it got to the normal form \(1\;1\), we would have to have some form of runtime error. In this case, only permitting typeable terms would have prevented us from \textit{going wrong}, as this term would not have been permitted. 
+As $x$ here is applied to itself, it must be some kind of function that takes a term $x$ of with type $T$, and returns a term of type $U$. This means that $T = T \fto U$ which is absurd, as it is left recursive. This means that this is `untypeable'. Indeed, it is clearly never possible to type an expression where a term is applied to itself. If this was a real programming language, when it got to the normal form \(1\;1\), we would have to have some form of runtime error. 
 
-In general, \textbf{well typed programs do not go wrong} \cite{MILNER1978348}. Therefore, if we are able to exclude all terms in our functional language that are untypeable, we will be able to guarantee that it does not go wrong, and thus prevent these runtime errors. The system that looks at a program statically to decide whether it is well typed is called the \textbf{typechecker}. Types can often also be derived without them needing to be manually specified. This is called \textbf{type inference}.
+In this case, only permitting typeable terms would have prevented us from \textit{going wrong}, as this term would not have been permitted. In fact, this is true in general: \textbf{well typed programs do not go wrong} \cite{MILNER1978348}. Therefore, if we are able to exclude all terms in our functional language that are untypeable, we will be able to guarantee that it does not go wrong, and thus prevent these runtime errors. The system that looks at a program statically to decide whether it is well typed is called the \textbf{typechecker}. Types can often also be derived without them needing to be manually specified. This is called \textbf{type inference}.
 
 \section{Haskell: A Functional Programming Language}
 Functional programming languages are programming languages where `computation is carried out entirely through the evaluation of expressions' \cite{hudak1989conceptionfunctionalprogranning}. Functional programming languages are based on the lambda calculus. In this section, we will discuss a prolific example of a functional langauge: Haskell. 
@@ -140,12 +142,12 @@ Haskell is a very prominent functional programming language that is widely taugh
 \subsection{Declarations}
 Haskell, along with most other languages, provides the facility to name functions and other terms for reference elsewhere in the program. These can be typed, but the types can almost always be inferred. 
 
-Some examples of these declarations, all typed for clarity, are below. For instance, the top level declaration
+Some examples of these declarations, all typed for clarity, are below. For instance, the top level declaration means that $x$ is equal to $5$. 
 \begin{lstlisting}[language=SFL]
 x :: Int
 x = 5
 \end{lstlisting}
-means that $x$ is equal to $5$. We can also name lambda functions:
+We can also name lambda functions:
 \begin{lstlisting}[language=SFL]
 add :: Int -> Int -> Int
 add = \x y -> x + y
@@ -156,13 +158,20 @@ add :: Int -> Int -> Int
 add x y = x + y
 \end{lstlisting}
 \subsection{Polymorphic functions}
-In Haskell, functions can be written that operate on values of various types. 
+In Haskell, functions can be written that operate on terms of various types:
 
 \begin{lstlisting}[language=SFL]
 id :: a -> a
 id x = x
 \end{lstlisting}
-\noindent Here, we define the function \sflinline{id} which simply returns its argument. `a' in the type signature represents any type, and can be substituted for any type. The two `a's in the type signature must represent the same type however, mandating that the argument to \sflinline{id} and its return value must be the same type.  
+\noindent Here, we define the function \sflinline{id} which simply returns its argument. $a$ in the type signature represents any type, and can be substituted for any type. The two $a$s in the type signature must represent the same type however, mandating that the argument to \sflinline{id} and its return value must be the same type. The type signature $a \arr a$ is infact shorthand for the universally quantified type $\alltype{a} a \arr a$. 
+
+Another example of a Haskell polymorphic function is listed below:
+\begin{lstlisting}[language=SFL]
+const :: a -> b -> a
+const x y = x
+\end{lstlisting}
+\noindent In the above example, the type signature has two $a$s which must be the same type. This type signature is shorthand for $\alltype{a\, b} a \arr b \arr a$. 
 
 \subsection{User Defined Algebraic Data Types}
 \label{bg:haskell_udt}
@@ -170,7 +179,7 @@ Many languages, including Haskell, have Algebraic Data Types allowing us to `Com
 
 Haskell allows users to define their own algebraic data types using the \lstinline[language=SFL]|data| keyword. For instance, booleans can be defined:
 
-\begin{lstlisting}[language=SFL]
+\begin{lstlisting}[language=SFL_noprelude]
 data Bool = True | False
 \end{lstlisting} 
 
@@ -187,19 +196,20 @@ An example of a product type is the tuple \((Int, Bool)\): the set of all possib
 \subsection{Polymorphic Type Constructors}
 Haskell includes polymorphic types. These are `types that are universally quantified in some way over all types'~\cite{hudak1992gentle}. One example is the type constructor $Maybe$, implicitly created by the following data declaration.
 
-\begin{lstlisting}[language=SFL]
+\begin{lstlisting}[language=SFL_noprelude]
 data Maybe a = Just a | Nothing
 \end{lstlisting} 
 
-This creates a \textit{type constructor} called \(Maybe\), as well as $Just$ and $Nothing$ which are data constructors. $Maybe$ represents a constructor that takes a type, and returns a concrete type (a type that is not a type constructor). Type constructors are also types. This is first-order polymorphism, as opposed to higher-order polymorphism where a type can be an `abstraction over type constructors'. \cite{yallop2014lightweightpoly}. 
-
+\noindent This creates a \textit{type constructor} called \(Maybe\), as well as $Just$ and $Nothing$ which are data constructors. $Maybe$ represents a constructor that takes a type, and returns a concrete type (a type that is not a type constructor). Type constructors are also types. 
 The `Type of a Type' is its \emph{kind} \cite{pierce2002types}. For example, the type constructor $Maybe$ has the kind $* \fto *$. This notation looks similar to how functions over values are defined, reflecting the fact that $Maybe$ behaves like a function, but at the type level rather than the value level. If we were to apply the constructor \(Maybe\) to the concrete type \(Int\), the resulting type would be the concrete type \(Maybe \;Int\). 
 
-\begin{lstlisting}[language=SFL]
+\begin{lstlisting}[language=SFL_noprelude]
 data Either a b = Left a | Right b
 \end{lstlisting} 
 
-Here, $Either$ is a type constructor with the kind $* \fto * \fto *$, meaning it takes two concrete types and returns a concrete type. 
+\noindent Here, $Either$ is a type constructor with the kind $* \fto * \fto *$, meaning it takes two concrete types and returns a concrete type. 
+
+These are examples of first-order polymorphism, as opposed to higher-order polymorphism where a type can be an `abstraction over type constructors'. \cite{yallop2014lightweightpoly}. Haskell also supports higher-order polymorphism, but since \ac{SFL} does not, there is no need to discuss it here.
 
 \subsection{Pattern Matching}
 \label{bg:haskell_pattern_match}
@@ -211,7 +221,7 @@ isZero 0 = true
 isZero _ = false
 \end{lstlisting}
 
-\noindent The underscore `\verb|_|' represents a wildcard pattern that matches anything. In this case, it matches any $Int$ that is not $0$. We can match more complicated expressions, and assign variables throughout the pattern.
+\noindent The underscore `\sflinline{_}' represents a wildcard pattern that matches anything. In this case, it matches any $Int$ that is not $0$. We can match more complicated expressions, and assign variables throughout the pattern.
 
 \begin{lstlisting}[language=SFL]
 data SomeValues a = One a | Two a a | Three a a a | Four a a a a
@@ -237,7 +247,7 @@ This project is written in rust, to take advantage of rusts unique mix of speed,
     \item When the owner goes out of scope, the value will be dropped.
 \end{itemize}   
 
-If a value is owned in one scope, but another scope needs to read/write it, we may use a reference to the value. The rules of references \cite{rust_book}:
+\noindent If a value is owned in one scope, but another scope needs to read/write it, we may use a reference to the value. The rules of references \cite{rust_book}:
 \begin{itemize}
     \item At any given time, you can have either one mutable reference or any number of immutable references. 
     \item References must always be valid.
@@ -256,20 +266,21 @@ These rules ensure that immutable references are to things that don't change, an
 % \end{itemize}
 
 
-\section{Web Assembly} \label{bg:wasm}\label{bg:wasm-pack}
+\section{Web Assembly} \label{bg:wasm}\label{bg:wasm-pack}\label{bg:wasm-bindgen}
 
 This project runs entirely within the browser, despite being written in Rust. This is due to the fact that it compiles to web assembly. Automated tools exist for the generation of JavaScript bindings around Rust functions/types, but this process places certain restrictions around functions arguments and return types. 
 
-We will discuss this here to allow us to refer to these restrictions, and also to explain the process of compiling and using Rust code in a modern web browser. 
+% We will discuss this here to allow us to refer to these restrictions, and also to explain the process of compiling and using Rust code in a modern web browser. 
 
-Web Assembly 2.0 is a 32 bit target~\cite{WebAssemblyCoreSpecification2}. This means we only have 4GB of addressable memory. The Rust compiler is based on LLVM, which provides a web-assembly compilation target. The Rust compiler has a toolchain around this compilation target, that allows for easy compilation to web-assembly. However, this only creates a binary blob, which requires more work to make interoperable with our JavaScript front end. We must do two things to achieve interoperability:
+\ac{WASM} 2.0 is a 32 bit target~\cite{WebAssemblyCoreSpecification2}. This means we only have 4GB of addressable memory. The Rust compiler is based on LLVM, which provides a \ac{WASM} compilation target. The Rust compiler has a toolchain around this compilation target, that allows for easy compilation to \ac{WASM}. However, this only creates a binary \ac{WASM} blob, which requires more work to make interoperable with our JavaScript front end. We must do two things to achieve interoperability:
 \begin{itemize}
-    \item Incorporate it into our build system so it can be served with it.
-    \item Load the WASM package in a way that allows for us to call the functions.
+    \item Incorporate it into our build system so that it can be served along with the frontend.
+    \item Load the \ac{WASM} binary in a way that allows for us to call the functions from the frontend.
 \end{itemize}
-Producing an NPM package with some JavaScript functions that call the WebAssembly functions would achieve both of these goals. However, if we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the WASM functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 
+Producing a package with some JavaScript functions that call the WebAssembly functions would achieve both of these goals. If we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the \ac{WASM} functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 
 
-Fortunately, the rust crate \verb|wasm-bindgen|~\cite{wasm_bindgen_guide} provides macros that generate a whole NPM package, including TS bindings, automatically. This package can then be added as a dependency to an NPM app that provides a website, and the functions within it can be called using the JavaScript wrapper functions. 
+Fortunately, the rust crate \textbf{wasm-bindgen}~\cite{wasm_bindgen_guide} provides macros that JavaScript and TypeScript bindings automatically. \textbf{wasm-pack}~\cite{wasm_pack_guide} is a rust based command line tool that turns a rust project into a package that can be included from the frontend containing a \ac{WASM} binary blob, and the wrapper around it generated by \textbf{wasm-bindgen}. This package can then be added as a dependency to the frontend, and the functions within it can be called using the JavaScript wrapper functions. 
+
 \section{Existing systems}
 % https://dl.acm.org/doi/pdf/10.1145/1480828.1480845
 % lit review  in previous diss: https://research.ou.nl/ws/portalfiles/portal/31271878/Nicasi_K_IM9906_AF_SE_scriptie_PURE.pdf
