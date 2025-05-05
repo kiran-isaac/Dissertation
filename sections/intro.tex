@@ -5,10 +5,13 @@ SFL-explorer takes the form of a functional language called \ac{SFL}, packaged w
 
 % a tool to demonstrate how functional programming languages are evaluated, and help build intuitive understanding of how functional programming languages work. 
 
-The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL-explorer and apply it to these languages. \ref{tab:fac_2_table_input} is an example program in the language, to find the factorial of 2. The relevant prelude functions are included for clarity.
+\ac{SFL} is a minimal language designed with clarity for beginners in mind. It includes many standard functional programming features, including polymorphism, pattern matching and user definable algebraic data types. This language is type checked, using an algorithm based on Dunfield and Krishnaswami's bidirectional type checking algorithm~\cite{completebidir}, modified to include \ac{SFL}'s extended type system. 
+
+The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL-explorer and apply it to these languages. Figure \ref{tab:fac_2_table_input} is an example program in the language, to find the factorial of 2. The relevant prelude functions are included for clarity.
 
 \begin{figure}[h]
 \begin{lstlisting}[language=SFL]
+// Defined in the prelude, redefined here for clarity
 if :: Bool -> a -> a -> a
 if cond then_branch else_branch = match cond {
   | true -> then_branch
@@ -28,7 +31,7 @@ main = fac 2
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.9\linewidth]{images/intro_fac_2.png}
+  \includegraphics[width=0.95\linewidth]{images/intro_fac_2.png}
   \caption{A screenshot of SFL explorer during evaluation of the program in Figure~\ref{tab:fac_2_table_input}. On screen, we see the prompt listed in step 5 of table~\ref{tab:fac_2_table}}
   \label{intro_fac_2_screenshot}
 \end{figure}

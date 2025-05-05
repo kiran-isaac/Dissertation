@@ -1,4 +1,5 @@
 \definecolor{commentgray}{rgb}{0.5,0.5,0.5}
+\definecolor{number}{rgb}{0, 0, 0}
 
 \lstdefinelanguage{Rust}{
   morekeywords={
@@ -44,6 +45,17 @@
   showstringspaces=false,
   breaklines=true,
   keepspaces=true,
+  literate=
+  *{0}{{{\color{number}0}}}{1}
+   {1}{{{\color{number}1}}}{1}
+   {2}{{{\color{number}2}}}{1}
+   {3}{{{\color{number}3}}}{1}
+   {4}{{{\color{number}4}}}{1}
+   {5}{{{\color{number}5}}}{1}
+   {6}{{{\color{number}6}}}{1}
+   {7}{{{\color{number}7}}}{1}
+   {8}{{{\color{number}8}}}{1}
+   {9}{{{\color{number}9}}}{1}
 }
 
 
@@ -75,7 +87,18 @@
   comment=[l]//,
   keepspaces=true,
   morecomment=[s]{/*}{*/},
-  commentstyle=\color{commentgray}
+  commentstyle=\color{commentgray},
+  literate=
+  *{0}{{{\color{number}0}}}{1}
+   {1}{{{\color{number}1}}}{1}
+   {2}{{{\color{number}2}}}{1}
+   {3}{{{\color{number}3}}}{1}
+   {4}{{{\color{number}4}}}{1}
+   {5}{{{\color{number}5}}}{1}
+   {6}{{{\color{number}6}}}{1}
+   {7}{{{\color{number}7}}}{1}
+   {8}{{{\color{number}8}}}{1}
+   {9}{{{\color{number}9}}}{1}
 }
 
 \input{macros/Krishnaswami_Dunfield_macros}
@@ -84,12 +107,12 @@
 \lstdefinelanguage{SFL}{
       sensitive = true,
       keywords={},
-      otherkeywords={<=, >=, ::, =, *, +, -, ->, \$},
+      otherkeywords={<=, >=, ::, =, *, +, -, ->, ., \$},
       keywords = [2]{
             if, map, foldr, filter, repeat, length, take, range, infiniteFrom, sum, Cons, Nil, Just, Nothing, Left, Right
       },
       keywords = [3]{
-        Int, Bool, List, Maybe, Either
+        Int, Bool, List, Maybe, Either,
       },
       keywords = [4]{
         match, data, type, _,
@@ -108,7 +131,18 @@
       comment=[l]//,
       keepspaces=true,
       morecomment=[s]{/*}{*/},
-      commentstyle=\color{commentgray}
+      commentstyle=\color{commentgray},
+      literate=
+      *{0}{{{\color{number}0}}}{1}
+       {1}{{{\color{number}1}}}{1}
+       {2}{{{\color{number}2}}}{1}
+       {3}{{{\color{number}3}}}{1}
+       {4}{{{\color{number}4}}}{1}
+       {5}{{{\color{number}5}}}{1}
+       {6}{{{\color{number}6}}}{1}
+       {7}{{{\color{number}7}}}{1}
+       {8}{{{\color{number}8}}}{1}
+       {9}{{{\color{number}9}}}{1}
 } %
 
 \lstdefinelanguage{SFL_noprelude}{
@@ -137,7 +171,18 @@
       comment=[l]//,
       keepspaces=true,
       morecomment=[s]{/*}{*/},
-      commentstyle=\color{commentgray}
+      commentstyle=\color{commentgray},
+      literate=
+      *{0}{{{\color{number}0}}}{1}
+       {1}{{{\color{number}1}}}{1}
+       {2}{{{\color{number}2}}}{1}
+       {3}{{{\color{number}3}}}{1}
+       {4}{{{\color{number}4}}}{1}
+       {5}{{{\color{number}5}}}{1}
+       {6}{{{\color{number}6}}}{1}
+       {7}{{{\color{number}7}}}{1}
+       {8}{{{\color{number}8}}}{1}
+       {9}{{{\color{number}9}}}{1}
 } %
 
 \lstdefinelanguage{SFL_ite}{
@@ -167,7 +212,18 @@
       comment=[l]//,
       keepspaces=true,
       morecomment=[s]{/*}{*/},
-      commentstyle=\color{commentgray}
+      commentstyle=\color{commentgray},
+      literate=
+      *{0}{{{\color{number}0}}}{1}
+       {1}{{{\color{number}1}}}{1}
+       {2}{{{\color{number}2}}}{1}
+       {3}{{{\color{number}3}}}{1}
+       {4}{{{\color{number}4}}}{1}
+       {5}{{{\color{number}5}}}{1}
+       {6}{{{\color{number}6}}}{1}
+       {7}{{{\color{number}7}}}{1}
+       {8}{{{\color{number}8}}}{1}
+       {9}{{{\color{number}9}}}{1}
 } %
 
 
@@ -198,7 +254,18 @@
       comment=[l]//,
       keepspaces=true,
       morecomment=[s]{/*}{*/},   
-      commentstyle=\color{commentgray}   
+      commentstyle=\color{commentgray}   ,
+      literate=
+      *{0}{{{\color{number}0}}}{1}
+       {1}{{{\color{number}1}}}{1}
+       {2}{{{\color{number}2}}}{1}
+       {3}{{{\color{number}3}}}{1}
+       {4}{{{\color{number}4}}}{1}
+       {5}{{{\color{number}5}}}{1}
+       {6}{{{\color{number}6}}}{1}
+       {7}{{{\color{number}7}}}{1}
+       {8}{{{\color{number}8}}}{1}
+       {9}{{{\color{number}9}}}{1}
       % commentstyle=\color{purple}\ttfamily,
 } %
 
@@ -229,7 +296,18 @@
       comment=[l]//,
       keepspaces=true,
       morecomment=[s]{/*}{*/},   
-      commentstyle=\color{commentgray}   
+      commentstyle=\color{commentgray},
+      literate=
+      *{0}{{{\color{number}0}}}{1}
+       {1}{{{\color{number}1}}}{1}
+       {2}{{{\color{number}2}}}{1}
+       {3}{{{\color{number}3}}}{1}
+       {4}{{{\color{number}4}}}{1}
+       {5}{{{\color{number}5}}}{1}
+       {6}{{{\color{number}6}}}{1}
+       {7}{{{\color{number}7}}}{1}
+       {8}{{{\color{number}8}}}{1}
+       {9}{{{\color{number}9}}}{1}   
       % commentstyle=\color{purple}\ttfamily,
 } %
 
@@ -260,7 +338,18 @@
       comment=[l]//,
       keepspaces=true,
       morecomment=[s]{/*}{*/},   
-      commentstyle=\color{commentgray}   
+      commentstyle=\color{commentgray},
+      literate=
+      *{0}{{{\color{number}0}}}{1}
+       {1}{{{\color{number}1}}}{1}
+       {2}{{{\color{number}2}}}{1}
+       {3}{{{\color{number}3}}}{1}
+       {4}{{{\color{number}4}}}{1}
+       {5}{{{\color{number}5}}}{1}
+       {6}{{{\color{number}6}}}{1}
+       {7}{{{\color{number}7}}}{1}
+       {8}{{{\color{number}8}}}{1}
+       {9}{{{\color{number}9}}}{1}   
       % commentstyle=\color{purple}\ttfamily,
 } %
 
@@ -291,7 +380,18 @@
       comment=[l]//,
       keepspaces=true,
       morecomment=[s]{/*}{*/},   
-      commentstyle=\color{commentgray}   
+      commentstyle=\color{commentgray},
+      literate=
+      *{0}{{{\color{number}0}}}{1}
+       {1}{{{\color{number}1}}}{1}
+       {2}{{{\color{number}2}}}{1}
+       {3}{{{\color{number}3}}}{1}
+       {4}{{{\color{number}4}}}{1}
+       {5}{{{\color{number}5}}}{1}
+       {6}{{{\color{number}6}}}{1}
+       {7}{{{\color{number}7}}}{1}
+       {8}{{{\color{number}8}}}{1}
+       {9}{{{\color{number}9}}}{1}   
       % commentstyle=\color{purple}\ttfamily,
 } %
 
