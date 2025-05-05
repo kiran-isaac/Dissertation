@@ -1,18 +1,18 @@
 \chapter*{Abstract}
-Students often find functional programming languages more difficult to learn than imperative languages, and they may struggle to gain an intuitive understanding of how functional languages are evaluated. I have created a tool SFL Explorer, available at \href{https://functional.kiransturt.co.uk}{https://functional.kiransturt.co.uk}, which aims to help build intuitive understanding of how functional programming languages work. The primary use case this project has been designed and tested for is for use as a demonstration tool in lectures, particularly in the University of Bristol's own combined imperative and functional programming unit \hyperref[COMS10016]{COMS10016}. My client, Samantha Frohlich, a lecturer on this unit plans to integrate this system into the unit in future. 
+Students often find functional programming languages more difficult to learn than imperative languages, and they may struggle to gain an intuitive understanding of how functional languages are evaluated. I have created a tool SFL Explorer, available at \href{https://functional.kiransturt.co.uk}{https://functional.kiransturt.co.uk}, which aims to help build intuitive understanding of how functional programming languages work. The primary use case this project has been designed and tested for is for use as a demonstration tool in lectures, particularly in the University of Bristol's own combined `Imperative and Functional Programming' unit \hyperref[COMS10016]{COMS10016}. This was sucessful, as my client, Samantha Frohlich, a lecturer on this unit, plans to integrate this system into the unit in future. 
 
-The system includes my own functional programming language: SFL (Simple Functional Language). SFL is a very minimal language, but it includes many standard functional programming features, including polymorphism, pattern matching and user definable algebraic data types. This language is type checked, using a modified version of Dunfield and Krishnaswami's bidirectional type checking algorithm \cite{completebidir}, modified to include SFL's extended type system. 
+The system includes my own functional programming language: SFL (Simple Functional Language). SFL is a minimal language designed for clarity for beginners. It includes many standard functional programming features, including polymorphism, pattern matching and user definable algebraic data types. This language is type checked, using an algorithm based on Dunfield and Krishnaswami's bidirectional type checking algorithm~\cite{completebidir}, modified to include SFL's extended type system. 
 
-All functionality for the language was written in Rust, compiled to Web Assembly, and included into a React app that acts as the frontend. This functionality is therefore available entirely client side, requiring no client-server interaction. The app is a Progressive Web App (PWA) and is able to be installed and used offline. 
+All functionality for the language is written in Rust. The Rust functionality is compiled to Web Assembly, and included into a React app that acts as the frontend. This functionality is therefore available entirely client side, requiring no client-server interaction. The app is a Progressive Web App (PWA) and is able to be installed and used offline. 
 
-As the system is designed to be a teaching tool, I have done user testing in the form of 3 focus groups at various points throughout the project who are at various stages in the process of learning functional languages. Their feedback ensured that the project stayed on track and remained as useful as possible to potential users of a wide variety of skill levels. 
+As the system is designed to be a teaching tool, I have done user testing in the form of 3 focus groups at various points throughout the project, with students who are at various stages in the journey of learning functional languages. Their feedback ensured that the project stayed on track and remained as useful as possible to potential users with a wide variety of skill levels. 
 
 % -----------------------------------------------------------------------------
 
-\chapter*{Dedication and Acknowledgements}
-My supervisors, Jess Foster and Sarah Connolly, have been unwaveringly helpful, supportive and kind throughout this project, as well as my university journey as a whole. I would like to thank them for all of their help, without which this would not have been possible. 
+% \chapter*{Dedication and Acknowledgements}
+% My supervisors, Jess Foster and Sarah Connolly, have been unwaveringly helpful, supportive and kind throughout this project, as well as my university journey as a whole. I would like to thank them for all of their help, without which this would not have been possible. 
 
-I would like to thank Samantha Frohlich for being a really great client, whose enthusiasm for what I was creating really inspired me to do my best work. Likewise, I would also like to thank Dr. Steven Ramsey for being a fantastic lecturer in programming languages; this project would not have been anywhere near as good without the knowledge and inspiration I gained from his lectures. 
+% I would like to thank Samantha Frohlich for being a really great client, whose enthusiasm for what I was creating really inspired me to do my best work. Likewise, I would also like to thank Dr. Steven Ramsey for being a fantastic lecturer in programming languages; this project would not have been anywhere near as good without the knowledge and inspiration I gained from his lectures. 
 
 \makedecl
 \makeaidecl
@@ -29,14 +29,12 @@ This project is covered by the blanket ethics application 6683 as determined by 
 \chapter*{Supporting Technologies}
 \label{chap:supporting_tech}
 
-\begin{quote}
 \noindent
 \begin{itemize}
 \item I used \href{https://react.dev/}{React} to develop the website for this project.
 \item The bindings for the web assembly interface to the library for the language were generated by using macros from the \href{https://github.com/rustwasm/wasm-pack}{wasm-pack} rust crate.
 \item I used GitHub Copilot to assist with generating unit tests.
 \end{itemize}
-\end{quote}
 
 % -----------------------------------------------------------------------------
 

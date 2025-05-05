@@ -3,6 +3,9 @@ Dedication
 formatting:
     - 4: fix listings breaking sentances
     - ✔ 5:serach for all verbatims and convert to listings 
+
+Intro:
+    - 4: Fill gap
 BG:
     - 4: Cite lcalc conventions
     - 2: Cite haskell using lazy

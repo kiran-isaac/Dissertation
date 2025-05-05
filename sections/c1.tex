@@ -1,6 +1,30 @@
 \chapter{Phase 1 --- Proof of Concept}
 The goal of Phase 1, which spanned approximately the first month of my project, was to arrive at a proof of concept. This phase started at the beginning of the project with a discussion my supervisor, and the identification of my client. I proceeded by analysing the project requirements using autoethnographic methods, designing the system, and implementing the proof of concept. I then evaluated the merits, drawbacks, and next steps for the project by discussing the proof of concept system with my client. 
 
+\section{Development Lifecycle}
+\begin{figure}[t]
+  \centering
+  \fbox{\includegraphics[width=0.98\linewidth]{images/spiral1-5.png}}
+  \caption{A spiral representation of the project lifecycle, showing the 4 iterations, and the work done in each part of each phase. }\label{fig:spiral}
+\end{figure}
+
+The project followed a development lifecycle inspired by Agile principles~\cite{agilemanifesto2001}, structured into four iterative phases. 
+Each phase was further subdivided into four phases: \textbf{Requirements Gathering}, \textbf{Design and Research}, \textbf{Implementation} and \textbf{Evaluation}. Figure \ref{fig:spiral} shows the development lifecycle in a spiral shape to show its cyclical nature. 
+
+Each phase built upon the last, integrating evaluation and feedback to continuously and rapidly refine the features and the UI/UX of the system. This iterative methodology helped manage complexity and uncertainty. Getting frequent feedback from focus groups and other sources throughout the project ensured that the project stayed on course. 
+
+The desired outcome of this project was an effective learning/teaching tool for functional languages. As such, user testing was vital for ensuring that the system was usable and intuitive, and therefore effective. The two groups of stakeholders that I identified for this project are:
+\begin{itemize}
+  \item Those involved in teaching functional languages, as part of a university course or otherwise. They could such a tool to demonstrates functional languages to facilitate intuitive explanations in lectures.
+  \item Those involved in learning functional languages. These could be students of a university course, or anyone interested in the topic. They could use such a tool to experiment with functional languages. 
+\end{itemize}
+
+\noindent At the beginning of the project, I identified a client Samantha Frohlich, a lecture in functional programming, to represent the group of stakeholders who teach functional programming. At the end of phase 1, I presented my client with a proof of concept of the system, and used her feedback to inform the design direction for the system~\ref{eval:c1_client}. 
+
+I also conducted user testing throughout the project with people representing the second group of stakeholders: students learning functional programming. There were 3 focus groups with 12 students in total, all with varying levels of experience with functional programming. In one of these focus groups~\ref{ref:afg}, I discussed \ac{SFL} with students who have a lot of experience with functional programming, to get their feedback on the language itself. In the other two focus groups~\ref{eval:IFG}~\ref{eval:BFG}, I employed an expert in functional programming to give a lecture on functional programming to a group of students. These students, as well as the lecturer himself, were then interviewed on how understandable the lecture was, how much the tool helped, and what could be improved/added to the tool to make the system better. 
+
+At the end of the project, I met with my client once more, and we discussed how useful the finished product would be for teaching functional programming~(see~\ref{c4:client}). She concluded that it would be very useful, and she plans to integrate it into the first year functional programming course~\hyperref[COMS10016]{COMS10016} in following years. 
+
 \section{Requirements Analysis}
 \subsection{Autoethnography}
 \label{sec:c1_autoethnography}
@@ -422,7 +446,7 @@ Until this point, development was done in one rust package. This package would b
 
 The \ac{WASM} library provided functions that could be called from the JavaScript module. Rather than passing the \ac{AST} between the \ac{WASM} library and the JavaScript module, the \ac{AST} was stored at a known memory address, and retrieved during subsequent calls to \textbf{libsfl\_wasm} functions. 
 
-\section{Proof of Concept Client Meeting: Evaluation and \newline Next Steps}
+\section{Proof of Concept Client Meeting: Evaluation and Next Steps}
 \label{eval:c1_client}
 At the end of the phase, I presented the proof of concept project to my client, who was very positive about the project and its potential. The discussion was informal, a friendly conversation rather than a structured interview, to allow the direction of questioning to change depending on the client's answers. The meeting started with me giving my client a demo of the proof of concept, using the system to evaluate the following program:
 \begin{lstlisting}[language=SFL]
