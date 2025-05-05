@@ -436,7 +436,7 @@ Until this point, development was done in one rust package. This package would b
 \begin{itemize}
     \item \textbf{libsfl}: All of the language functionality, as this is common to both interfaces
     \item \textbf{sflcli}: All of the original CLI functionality without the language functionality.  
-    \item \textbf{libsfl\_wasm}: a package set up for use with wasm-pack (\ref{bg:wasm-pack}). It provides a wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by wasm-bindgen~\ref{bg:wasm-bindgen}. \textbf{wasm-pack} would compile this to a package containing:
+    \item \textbf{libsfl\_wasm}: A package set up for use with \textbf{wasm-pack} (\ref{bg:wasm-pack}). It provides a wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by \textbf{wasm-bindgen}~(\ref{bg:wasm-bindgen}). \textbf{wasm-pack} would compile this to a package containing:
     \begin{itemize}
         \item The \ac{WASM} binary blob of the compiled rust code.
         \item A JavaScript file that would load the blob into the browsers' memory, and that provides methods that can call the appropriate the methods in the blob.
@@ -445,7 +445,7 @@ Until this point, development was done in one rust package. This package would b
     \item The frontend that imports the package that results from compiling \textbf{libsfl\_wasm}.
 \end{itemize}
 
-The \ac{WASM} library provided functions that could be called from the frontend. Rather than passing the \ac{AST} between the \ac{WASM} library and the frontend, the \ac{AST} was stored at a memory address known to the \textbf{libsfl\_wasm}, and retrieved during subsequent calls to \textbf{libsfl\_wasm} functions. 
+\noindent The \ac{WASM} library provided functions that could be called from the frontend. Rather than passing the \ac{AST} between the \ac{WASM} library and the frontend, the \ac{AST} was stored at a memory address known to the \textbf{libsfl\_wasm}, and retrieved during subsequent calls to \textbf{libsfl\_wasm} functions. 
 
 \section{Proof of Concept Client Meeting: Evaluation and Next Steps}
 \label{eval:c1_client}
@@ -458,8 +458,7 @@ main = fac 5
 \noindent Below is a summary of my client's thoughts about various aspects of the proof of concept system and areas that could be iterated on.
 
 \subsection{Usefulness as a Teaching Tool}
-Below are some notes on what the client thought about the effectiveness of the project as a teaching tool, and how it could be improved in future iterations.
-The project is already very useful as a teaching tool to demonstrate:
+My client thought that the project was already very useful as a teaching tool to demonstrate:
 \begin{itemize}
     \item Evaluation order, and the importance of laziness.
     \item Currying.
@@ -467,21 +466,21 @@ The project is already very useful as a teaching tool to demonstrate:
     \item The \lcalc.
 \end{itemize}
 
-\noindent On top of this my client wanted to be able to use the system to demonstrate $List$s and common $List$ functions such as `map' and `fold'. These do not have to by polymorphic, they could be just defined over $Int$s or some other type. These also do not need to be user-definable, they can be built in. However, supporting polymorphic user defineable data types would be very useful and much clearer. 
+\noindent On top of this, my client wanted to be able to use the system to demonstrate $List$s and common $List$ functions such as `map' and `fold'. These do not have to by polymorphic, they could be just defined over $Int$s or some other type. These also do not need to be user-definable, they can be built in. However, supporting polymorphic user defineable data types would be very useful and much clearer. 
 
 \subsection{The Existing Language}
 \paragraph{Positives:}
 \begin{itemize}
-    \item The language looked similar to Haskell. Particularly, the \verb|if _ then _ else| syntax, and the function assignment shorthand syntax (\verb|fac n = ...| rather than \verb|fac = \n. ...|, even though these are identical)
+    \item The language looked similar to Haskell. Particularly, the \verb|if _ then _ else| syntax, and the function assignment shorthand syntax (\verb|fac n = ...| rather than \verb|fac = \n. ...|, even though these are semantically identical)
     \item The language is minimal and clear
     \item The factorial function was quite elegant, and it would be understandable to people who did not know Haskell.  
 \end{itemize}
 
 \paragraph{Negatives:}
-My client had no specific complaints about the language as it currently stands, however we agreed was lacking many important features. The most difficult things to teach are concepts involving more complex data types. 
+My client had no specific complaints about the language as it currently stands, however we agreed it could be extended, as students often struggle with concepts involving more complex data types
 
 \paragraph{Requested Features:}
-Below are the specific features my client asked for in order for the system to be able to demonstrate the things she wants to use the system to demonstrate:
+Below are the specific features my client asked for in order for the system to be able to demonstrate the things that she thought would be most useful for the project to demonstrate:
 \begin{itemize}
     \item Recursive Types
     \item Polymorphism
@@ -498,16 +497,16 @@ Below are the specific features my client asked for in order for the system to b
 
 \paragraph{Negatives}
 \begin{itemize}
-    \item It is unstable. This is bad in a teaching tool, as it would waste a lot of time if it constantly broke in the lecture. 
-    \item `laziest' as an option is confusing, as it was unclear if it was referring to one of the other on screen options, or if it was referencing a `hidden' option
+    \item It crashed during my demonstration. This is bad in a teaching tool, as it would waste a lot of time if it crashed in the lecture. 
+    \item `Laziest' as an option is confusing, as it was unclear if it was referring to one of the other on screen options, or if it was referencing a `hidden' option.
     \item The vertical bar separating redex from contraction on the progress buttons was not obvious enough. On top of this, the bar was not centred, so it was hard to look through all the redexes at once as they were not aligned with each other. 
 \end{itemize}
 
 \paragraph{Requested Features}
 \begin{itemize}
-    \item Syntax highlighting, to make the language easier to read   
+    \item Syntax highlighting, to make the language easier to read.
     \item A history of what the expression has been is vital to demonstrate step by step evaluation. I identified this as an important feature at the beginning of the phase (see \ref{building_intuition}), but I had not finished it by the client meeting. It was implemented in the next phase (see \ref{c2_poc_ui_impl}). 
-    \item Sample Programs
+    \item Add some sample programs. 
 \end{itemize}
 
 \subsection{Conclusion}
