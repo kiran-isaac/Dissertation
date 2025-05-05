@@ -10,14 +10,14 @@ BG:
     - 4: Cite lcalc conventions
     - 2: Cite haskell using lazy
     - ✔ (stripped references) 5: Vite + react frontend, or strip references. 
-    - 5: WASM and frontend BG (must be done, there are references to it)
+    - ✔ 5: WASM and frontend BG (must be done, there are references to it)
     - 1: Other noteable mentions: HEE and WinHIPE
 
 C1:
     - 2: cite more things for stepwise evaluation
-    - 4: Finish the "the explorer" subsection. 
-    - 4: make the definitions of SFL's basic syntax better
-    - 2: Discuss builtins including if, +, >=
+    - ✔ 4: Finish the "the explorer" subsection. 
+    - ✔ 4: make the definitions of SFL's basic syntax better
+    - ✔ 2: Discuss builtins including if, +, >=
 
 C2: 
     - 5: Redex finding system should be updated to talk about how free choice mode shows both  substitution and substitution and abstraction, otherwise it contradicts (c1, making progress):

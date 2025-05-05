@@ -1,5 +1,5 @@
 \chapter{Phase 1 --- Proof of Concept}
-This project was undertaken in 4 phases (see~\ref{c1:lifecycle}). In this section we will discuss the lifecycle of the project as a whole, before going into detail about phase 1 specifically, which spanned approximately the first month of my project. The goal of phase 1 was to arrive at a proof of concept. This phase started at the beginning of the project with a discussion my supervisor, and the identification of my client. I proceeded by analysing the project requirements using autoethnographic methods, designing the system, and implementing the proof of concept. I then evaluated the merits, drawbacks, and next steps for the project by discussing the proof of concept system with my client. 
+This project was undertaken in 4 phases (see~\ref{c1:lifecycle}). In this section we will discuss the lifecycle of the project as a whole, before going into detail about phase 1 specifically, which spanned approximately the first month of my project. The goal of phase 1 was to arrive at a proof of concept. This phase started at the beginning of the project with a discussion my supervisor, and the identification of my client. I proceeded by analysing the project requirements using autoethnographic methods, designing the system, and implementing the proof of concept. I then evaluated the merits and drawbacks of the proof of concept system by discussing it with my client. We also discussed next steps. 
 
 \section{Development Lifecycle}
 \label{c1:lifecycle}
@@ -33,7 +33,7 @@ At the end of the project, I met with my client once more, and we discussed how 
 `Autoethnography is an ethnographic method in which the fieldworker's experience is investigated together with the experience of other observed social actors'~\cite{autoethnography}
 \end{quote}
 
-\noindent In this phase, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell as a teaching assistant for \hyperref[COMS10016]{COMS10016} for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then quickly implement a proof of concept of this solution. 
+\noindent In this phase, I took an autoethnographic approach to requirements analysis and to design. As the `fieldworker', I drew on my own experience being involved in teaching Haskell as a teaching assistant on \hyperref[COMS10016]{COMS10016} for the last two academic years. This experience was very valuable to this project, and it allowed me take the initial brief from my supervisor and effectively design a solution, and then quickly implement a proof of concept of this solution. 
 
 \subsection{The Brief}
 This project was proposed by my supervisor, Jess Foster. In our initial meeting, we discussed how she wanted a tool that would help build intuition for how functional languages are evaluated, that she could use to supplement her explanation of otherwise difficult to intuit functional language concepts. We also discussed the benefits of the tool being accessible to students to use themselves during labs or at home. Jess helped me to identify an appropriate client: Samantha Frohlich. Jess and Samantha are both lecturers on \hyperref[COMS10016]{COMS10016}. It was necessary to identify a client other than Jess, as her existing role as my supervisor/primary marker could limit guidance she would be able to give me as my client. 
@@ -96,7 +96,7 @@ The website (the explorer) should include a code editor for people to enter prog
 \subsection{Language Design}
 In this section, I will discuss the design of iteration 1 of the design of \ac{SFL}: the proof of concept. In order to produce a minimal language design for the proof of concept, I started with considering the \lcalc, and adding the bare minimum set of extra features on top of it. This helps to meet design goal 1, as a minimal set of features helps a language to be easy to understand. This process also helps us to meet design goal 2, as functional programming languages are fundamentally based on the \lcalc.
 
-Lambda calculus is the basis of modern functional programming languages. As discussed in the background~\ref{bg:lcalc}, lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance, the following two listings are semantically identical:
+Lambda calculus is the basis of modern functional programming languages. As discussed in the background~\ref{bg:lcalc}, lambda calculus consists of 3 structures: identifiers, application, and abstraction. One common extra structure that functional languages implement is an assignment. This is where we label an identifier with a certain meaning, such that all references to the assignment henceforth are identical to a reference to the meaning assigned. For instance, the following two listings are semantically identical (we use `\verb|\|' interchangably with \(\lambda\) as it is the closest character available on most keyboards):
 \begin{lstlisting}[language=SFL]
 f = (\x.x)
 main = f y
@@ -105,7 +105,7 @@ main = f y
 \begin{lstlisting}[language=SFL]
 main = (\x.x) y
 \end{lstlisting}
-Note the use of `\verb|\|' instead of \(\lambda\) as it is the closest character available on most keyboards. A program is then defined as a set of assignments, and we pick one specific label name to mark the `entry-point' expression in the program. Haskell, as well as many other languages, uses `main' to represent a programs' entry point, so we may use main. 
+A program is then defined as a set of assignments, and we pick one specific label name to mark the `entry-point' expression in the program. Haskell, as well as many other languages, uses `main' to represent a programs' entry point, so we may use main. 
 
 Most programming languages, including functional ones, at least support integers. Booleans are also often supported to represent the results of integer comparison. Without literal values, programs would have to use complicated encodings (such as church numerals) to represent these values, making programs look more complicated.  We must also add a way to represent values, such as integers and booleans, to our language. In order to do computations with these integers, we also need some functions to be inbuilt on them that perform integer operations such as addition, subtraction, comparisons, etc. 
 These two features massively shorten and simplify programming in this language. Definition~\ref{sfl_basic_syntax} shows the basic syntax of \ac{SFL}. Expression syntax is the same as \lcalc, but with our literal values and operators. A module is a set of assignments, and each assignments is a labelled expression.
@@ -123,6 +123,7 @@ These two features massively shorten and simplify programming in this language. 
 \end{syntax}
 
 \subsection{Reduction and Progress} 
+\label{c1:reduction_and_progress}
 The `entry point' expression of an \ac{SFL} program is the one labled `main'. In order to make progress in \lcalc, we $\beta$-reduce valid redexes within the term. However, in \ac{SFL}, we also have assignments, where a term can be given a label. For instance, in the following \ac{SFL} program, if the only way of making progress was $\beta$-reduction we would not get anywhere:
 
 \begin{lstlisting}[language=SFL]
@@ -130,7 +131,7 @@ f = (\x. x + 1)
 main = f 10
 \end{lstlisting}
 
-\noindent Clearly, we also need to be able to subtitute lables as a form of progress. Therefore, there are two forms of progress: $\beta$-reduction and substitution. In this dissertation, we shall broaden the term `redex' to include both. We will later further broaden this definition when discussing pattern matching~\ref{c2_design_match_progress}. 
+\noindent Clearly, we also need to be able to subtitute lables as a form of progress. Therefore, there are two forms of progress: $\beta$-reduction and substitution. In this dissertation, we shall broaden the term `redex' to include both. We will later further broaden this definition when discussing pattern matching~(\ref{c2_design_match_progress}). 
 
 \section{Implementation}
 \subsection{The Abstract Syntax Tree}
@@ -171,17 +172,15 @@ Initially, the approach taken when implementing this tree structure was to have 
 
 Rather than this solution, which would have a non-constant node lookup time, a secondary structure can be used to store the tree nodes with constant time lookup, and then each node can store a value enabling constant time lookup of its children within this structure. In the implementation, these types were labelled as \ac{AST} and ASTNode, where \ac{AST} was an array of ASTNodes, and each ASTNode stored their children's indices in this array. The position in the array of an ASTNode will be referred to as its index.
 
-See \ref{fig:ast_lst} for the code listing for the \ac{AST} definition. In this implementation, \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The \ac{AST} stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. 
-
-The node indices in the \verb|children| vector represent different things depending on what kind of node it is. 
+See \ref{fig:ast_lst} for the code listing for the \ac{AST} definition. In this implementation, \verb|Vec| was used for the array, as it is growable, resizeable, and facilitates constant-time lookup of its elements. The \ac{AST} stores and owns all of the nodes, as well as storing the index of the root node rather than requiring it to be at a specific index. The node indices in the \verb|children| vector represent different things depending on what kind of node it is.
 \begin{itemize}
-    \item If it is an abstraction, the first node represents the variable (or pair of variables) abstracted over, and the second node represents the expression.
+    \item If it is an abstraction, the first node represents the variable abstracted over, and the second node represents the expression.
     \item If it is an application, the first node is the function, and the second is the argument.
     \item If it is a module, then each of the children is an assignment.
     \item If it is an assignment, then the first child is the variable being assigned to, and the second is the expression.
 \end{itemize}
 
-\verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
+\noindent \verb|Literal| and \verb|Identifier| nodes store the tokens that defined them, so the strings can be accessed. These types can either be specified in the source program, or inferred later. Nodes also store their positions (line and column) in the source program, which can be used for error messages. 
 
 \begin{figure}[t]
     % \centering
@@ -270,7 +269,7 @@ struct ASTNode<'a> {
 \subsection{Methods on the AST}
 Below are a selection of the more important or interesting methods implemented on the \ac{AST} and its nodes. 
 
-\paragraph{Adding new nodes} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so the tree will add them to the end, and return their index. These methods are needed extensively for the parser.
+\paragraph{Inserting a New Node} We will frequently want to add new nodes to the tree. Where they are inserted is not important, so they will be inserted at the end, and then their new index will be returned. The methods for inserting each type of node are needed extensively for the parser.
 
 \paragraph{Getting children of nodes} As the interpretation of the \verb|children| array for each node changes depending on what type of node it is, a series of getters are implemented, such as `\verb|get_func|' to get the function of an application. These methods are needed extensively for the type checker, and the redex finding system. 
 
@@ -281,7 +280,7 @@ Below are a selection of the more important or interesting methods implemented o
     \item Replace all references to the abstraction with references to the abstractions expression. 
 \end{itemize}
 
-Note that this orphans the node for the abstraction, and the node for the abstraction variable \verb|x|. This is hard to rectify as deleting any nodes will shift the whole list, which would invalidate indies of nodes, which will break many of the references. This is rectified by cloning the AST, as described below.
+\noindent Note that this process orphans the node for the abstraction, and the node for the abstraction variable \verb|x|, as it replaces all references to the abstraction. This is hard to rectify as deleting any nodes will shift the whole list, which would invalidate indies of nodes, which will break many of the references. This is rectified by cloning the AST, as described below.
 
 \paragraph{Clone} \label{c1_paragraph_clone} The AST, or just a subsection of the \ac{AST} from a given node, can be cloned by starting from the desired new root, and cloning each nodes children recursively. The new indices of each node may not be the same, as they may be moved in the list, but they will all be in the same place relative to each other. This also removes orphaned nodes, as they will never be cloned as they have no parents. 
 
@@ -296,7 +295,7 @@ We must also take into account whether a binary infix operator was used to gener
 
 
 \subsection{The Parser}
-The parser needs to consume a program, and return the AST. It can also disqualify some invalid programs while generating the tree, rather than having to traverse it after generation to catch these issues. For instance, we must the following assignments:
+The parser needs to consume a program, and return the \ac{AST}. It can also disqualify some invalid programs while generating the tree, rather than having to traverse it after generation to catch these issues. For instance, we must disqualify the following assignments by failing with a parser error:
 \begin{itemize}
     \item \verb|x = (\x. e)| where e is a valid expression, as x is ambiguous during the expression e. This would be disqualified when attempting to parse the abstraction as x is already bound.  
     \item \verb|x = y| where y is undefined.
@@ -306,11 +305,11 @@ The parser needs to consume a program, and return the AST. It can also disqualif
 
 \subsubsection{Lexical Analysis}
 Lexical analysis is the process splitting a program into its constituent tokens (Lexemes). For instance, the program \verb|main = (\x.x) 1| is the following stream of tokens: \[[Id: main, Assignment, LeftParen, Backslash, Id: x, Dot, Id: x, RightParen, Literal: 1]\]
-See \ref{appx:tokens} for the full code listing of the definition of the tokens output by the lexical analysis, including syntax that was added in phase 2 that we have not discussed yet.
+See \ref{appx:tokens} for the full code listing of the definition of the tokens output by the lexical analysis, including syntax that was added in future iterations of the language that we have not discussed yet.
 
 The lexer loads the entire string into memory at once. This is not typically best practice, as this can lead to problems with lexing large files. The approach discussed in \cite{dragon_book} which I normally take when writing lexers relies on a system of two buffers only holding individual pages of the file from disk. However, this system will not be loading files from disk; the program string is already in memory as it comes from the UI. 
 
-The lexer provides a \verb|next_token| function that returns the next token, and advances the pointer to the start of the string. The lexer keeps track of line and column information, which is stored in the token to then be stored in the AST. 
+The lexer provides a \verb|next_token| function that returns the next token, and advances the pointer to the start of the string. The lexer keeps track of line and column information, which is stored in the token to then be stored in the \ac{AST}. 
 
 \subsubsection{Expression Parsing}
 Expressions are parsed using recursive descent parsing. Some of the techniques used for this part of the parser were inspired by the discussion of top down parsing in \cite{dragon_book}. 
@@ -319,21 +318,20 @@ At the top level, the expression parsing method is \verb|parse_expression|. A va
 \begin{itemize}
     \item If the next token is an open bracket, we consume the token and then parse an expression. We then expect a closing bracket. We set \verb|left| to the application of the current value of \verb|left| to the expression.
     \item If the next token is a dollar sign, we consume the token and then parse an expression. We do not expect a closing bracket, and we error if we receive one.  We set \verb|left| to the application of the current value of \verb|left| to the expression, marked with a flag saying that the application was generated by a dollar sign (see \ref{paragraph:to_string} for how this is used).
-    \item If the next token is a token denoting the start of a primary expression, such as:
+    \item If the next token is a token denoting the start of a primary expression, we parse a primary, and set \verb|left| to the application of the current value of \verb|left| to our primary. Examples of such tokens are:
     \begin{itemize}
         \item A backslash, indicating the start of an abstraction.
         \item An identifier, indicating a variable.
         \item A literal.
     \end{itemize}
-    We parse a primary, and set \verb|left| to the application of the current value of \verb|left| to our primary.
-    \item If the next token is a token indicating the end of an expression, such as:
+
+    \item If the next token is a token indicating the end of an expression, we return \verb|left|:
     \begin{itemize}
-        \item A closing bracket
-        \item EOF
-        \item A newline
-        \item A double colon, indicating a type assignment follows
+        \item A closing bracket (only if we have an unclosed open bracket).
+        \item EOF.
+        \item A newline.
+        \item A double colon, indicating a type assignment follows.
     \end{itemize}
-    We return \verb|left|. 
 \end{itemize}
 
 \paragraph{Primary Parsing}
@@ -382,17 +380,19 @@ Abstractions (in the simple case) are parsed by:
     \item Constructing an abstraction node from the variable and the expression.
 \end{itemize}
 
-\noindent Abstractions have a few complicating elements of syntax sugar.
+\noindent However, abstractions have a few complicating elements of syntax sugar.
 
 \subparagraph{Abstractions May be Assignments}
 The assignment \verb|f x = x| is implicitly \verb|f = \x. x|. This is solved by parsing an argument to \verb|parse_abstraction| representing whether this is an assignment. If it is an assignment, we expect the assignment operator `\verb|=|' as our separator between arguments and term rather than the dot. As previously mentioned in~\ref{paragraph:to_string}, in order to output the string in a format that is as close as possible to the input, we set a flag in the \verb|ASTSyntaxInfo|: \verb|assign_abst_syntax| to all abstraction nodes defined like this. 
 
 \subparagraph{Abstractions May Have Multiple Variables}
-The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the abstraction-assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|', and then producing a series of nested abstractions over these variables in order. 
+The abstraction \verb|\x y. x| is syntax sugar for \newline\noindent\verb|\x. (\y. x)|. Additionally, with the abstraction-assignment syntax, \verb|f x y = x| is syntax sugar for \newline\noindent\verb|f = \x. (\y. x)|. This can be accounted for by continually parsing variables until we encounter `\verb|.|' or the assignment operator `\verb|=|', and then producing a series of nested abstractions over these variables in order. The abstractions nested in another abstraction that should be displayed as one abstraction have a `nest' flag set in the \verb|ASTSyntaxInfo|.
 
 \subsection{Making Progress}
 \label{c1_design_reduction_progress}
-Functional programs progress via reduction. \lcalc\ expressions can reduce when we have an abstraction applied to a term. This is much the same in \ac{SFL}, the difference being we can also apply labels representing abstractions to terms. In the following listing, expressions labelled as `\sflinline{main1}' and `\sflinline{main2}' both reduce to \sflinline{5}. 
+Functional programs progress via reduction. \lcalc\ expressions can reduce when we have an abstraction applied to a term. This is much the same in \ac{SFL}, the difference being we can also label terms. As discussed in~\ref{c1:reduction_and_progress}, we have two types of progress: $\beta$-reduction and substitution.
+
+In the following listing, expressions labelled as `\sflinline{main1}' and `\sflinline{main2}' both reduce to \sflinline{5}. 
 \begin{lstlisting}[language=SFL]
 f x = 5
 
@@ -409,16 +409,16 @@ type RCPair = (usize, AST)
 \noindent To do the substitution, we combine the two \ac{AST}s by concatenating their two lists of nodes, and replace all references to the original node to the root of the replacement \ac{AST}. This orphans the original node, as there is no references to it. Rather than simply deleting it, which would cause the list to shift and therefore invalidating the indices, we can clone the tree (see~\ref{c1_paragraph_clone}). 
 
 \subsubsection{Finding Redex-Contraction Pairs in a Term}
-\paragraph{Is the Term $T$ a Redex?}
-The core of the redex finding algorithm is being able to identify whether a term $T$ with \ac{AST} index $P$ is a redex, and get its contraction. This is achieved by proceeding case wise on the shape of $T$.
+\paragraph{Is the Term $M$ a Redex?}
+The core of the redex finding algorithm is being able to identify whether a term $M$ with \ac{AST} index $P$ is a redex, and get its contraction. This is achieved by proceeding case wise on the shape of $M$.
 \begin{itemize}
     \item $T = (\backslash x. M)\, N$: We construct an \verb|RCPair| where the left size is $P$, and the right side is the body of the abstraction $M$ with all instances of $x$ replaced with $N$. 
-    \item $T = f$: We construct an \verb|RCPair| where the left size is $P$ and the right-hand side is the value associated with the identifier \verb|f| cloned into a new \ac{AST}. 
-    \item Any other shape, $T$ is not a redex. 
+    \item $T = f$: We construct an \verb|RCPair| where the left size is $P$ and the right-hand side is the term associated with the identifier \verb|f| cloned into a new \ac{AST}. 
+    \item Any other shape, $M$ is not a redex. 
 \end{itemize}
 
-\paragraph{Getting a List of Redexes in the Term $T$}
-We first check if $T$ is a valid redex, and if so add it to our list. If $T$ is an application we extend this list with the lists of \verb|RCPair|s in the function and argument of the application. 
+\paragraph{Getting a List of Redexes in the Term $M$}
+We first check if $M$ is a valid redex, and if so add it to our list. If $M$ is an application we extend this list with the lists of \verb|RCPair|s in the function and argument of the application. 
 
 \subsection{Web UI \ac{MVP}}
 As part of this section, I also developed the MVP for the Web UI. \ref{fig:screenshot_phase_1_end} shows the web UI after this stage of the project. 
@@ -436,16 +436,16 @@ Until this point, development was done in one rust package. This package would b
 \begin{itemize}
     \item \textbf{libsfl}: All of the language functionality, as this is common to both interfaces
     \item \textbf{sflcli}: All of the original CLI functionality without the language functionality.  
-    \item \textbf{libsfl\_wasm}: a package set up for use with wasm-pack (\ref{bg:wasm-pack}). It provides a wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by wasm-bindgen\ref{bg:wasm-bindgen}. wasm-pack would compile this to an \ac{NPM} package containing:
+    \item \textbf{libsfl\_wasm}: a package set up for use with wasm-pack (\ref{bg:wasm-pack}). It provides a wrapper around \textbf{libsfl}, with wrapper functions returning data structures supported by wasm-bindgen~\ref{bg:wasm-bindgen}. \textbf{wasm-pack} would compile this to a package containing:
     \begin{itemize}
-        \item The WASM binary blob of the compiled rust code.
+        \item The \ac{WASM} binary blob of the compiled rust code.
         \item A JavaScript file that would load the blob into the browsers' memory, and that provides methods that can call the appropriate the methods in the blob.
         \item A TypeScript file providing the types of all of the packages exported functions. 
     \end{itemize}
     \item The frontend that imports the package that results from compiling \textbf{libsfl\_wasm}.
 \end{itemize}
 
-The \ac{WASM} library provided functions that could be called from the JavaScript module. Rather than passing the \ac{AST} between the \ac{WASM} library and the JavaScript module, the \ac{AST} was stored at a known memory address, and retrieved during subsequent calls to \textbf{libsfl\_wasm} functions. 
+The \ac{WASM} library provided functions that could be called from the frontend. Rather than passing the \ac{AST} between the \ac{WASM} library and the frontend, the \ac{AST} was stored at a memory address known to the \textbf{libsfl\_wasm}, and retrieved during subsequent calls to \textbf{libsfl\_wasm} functions. 
 
 \section{Proof of Concept Client Meeting: Evaluation and Next Steps}
 \label{eval:c1_client}
