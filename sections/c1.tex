@@ -309,7 +309,14 @@ See \ref{appx:tokens} for the full code listing of the definition of the tokens 
 
 The lexer loads the entire string into memory at once. This is not typically best practice, as this can lead to problems with lexing large files. The approach discussed in \cite{dragon_book} which I normally take when writing lexers relies on a system of two buffers only holding individual pages of the file from disk. However, this system will not be loading files from disk; the program string is already in memory as it comes from the UI. 
 
-The lexer provides a \verb|next_token| function that returns the next token, and advances the pointer to the start of the string. The lexer keeps track of line and column information, which is stored in the token to then be stored in the \ac{AST}. 
+The lexer provides a \textbf{next\_token} function that returns the next token, and advances the pointer to the start of the string. The lexer keeps track of line and column information, which is stored in the token to then be stored in the \ac{AST}.
+
+The parser stores a queue of tokens. There are three key operations that the parser uses to operate on the queue of tokens. Before all of these operations, if the queue is empty, a token is added to it from calling \textbf{next\_token} on the lexer.
+\begin{itemize}
+    \item \textbf{Advance:} Pop the token from head position.
+    \item \textbf{Consume:} Pop the token from head position and return it.
+    \item \textbf{Expect($t$):} Assert that the token at head position has tokentype $t$, and then advance. 
+\end{itemize}
 
 \subsubsection{Expression Parsing}
 Expressions are parsed using recursive descent parsing. Some of the techniques used for this part of the parser were inspired by the discussion of top down parsing in \cite{dragon_book}. 

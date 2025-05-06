@@ -277,7 +277,7 @@ Below is a short summary of how pattern matching is done for different structure
 
 \subsection{Types}
 Rust allows us to represent our types (see \ref{fig:tc_types} for the definition of the type system) quite easily using Enums. Rust's Enums are an example of an algebraic data type themselves, and are very useful for defining our own algebraic data type system. See \ref{fig:type_lst} for the listing. 
-The type $\alltype{a\;b} (a \arr b) \arr IntAlias \arr List\,a \arr List\,b$ would be represented in this implementation (ignoring the \verb|Box|s) as:    
+The type `$\alltype{a\;b} (a \arr b) \arr IntAlias \arr List\,a \arr List\,b$' where $IntAlias$ is defined by `\sflinline{type IntAlias = Int}' would be represented in this implementation (ignoring the `\verb|Box|'s) as:    
 \begin{lstlisting}[language=Rust_boxed]
 Forall("a", 
   Forall("b", 
@@ -286,7 +286,7 @@ Forall("a",
         TypeVariable("a"), 
         TypeVariable("b")
       ),
-      Alias("IntAlias", Int64)
+      Alias("IntAlias", Int)
       Function(
         Union("List", [TypeVariable("a")]), 
         Union("List", [TypeVariable("b")])
@@ -303,7 +303,7 @@ Forall("a",
     % \hline
     \begin{lstlisting}[language=Rust_boxed]
 pub enum PrimitiveType {
-    Int64,
+    Int,
     Bool,
 }
 
@@ -328,7 +328,7 @@ pub enum Type {
 
 % We must use \verb|Box<Type>|, which represents a pointer to a heap allocated object, otherwise it would be impossible to calculate the size of \verb|Type|, as it could be infinitely large with it containing another \verb|Type| recursively. \verb|Box<Type>| however has known size: the size of a pointer in the target architecture. 
 
-Aliases are defined here with their name, and the type they are an alias for. Aliases could simply be implemented by replacing all occurrences of the alias with the type, but defining them here allows us to use their names to generate type errors making them easier to understand. We also define existential as an implementation detail for the typechecker. 
+\noindent Aliases are defined here with their name, and the type they are an alias for. Aliases could simply be implemented by replacing all occurrences of the alias with the type, but defining them here allows us to use their names to generate type errors making them easier to understand. We also define existential as an implementation detail for the typechecker. 
 
 \subsubsection{Methods on Types}
 Below are a selection of the more important or interesting methods implemented on Types.
@@ -343,8 +343,8 @@ Below are a selection of the more important or interesting methods implemented o
 In the proof of concept system, the parser simply returns an AST. In order to parse a program with user defined types, type assignments, and pattern matching, the parser should return:
 \begin{itemize}
     \item The AST.
-    \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as \verb|HashMap<String, Type>|. 
-    \item The `Type Table': All type constructors and concrete types defined, stored with their arities. This is implemented as: \verb|HashMap<String, usize>|.
+    \item The `Label Table': The types of all labels defined, including both those defined explicitly (assignments) or implicitly (constructors). This is implemented as `\verb|HashMap<String, Type>|'. 
+    \item The `Type Table': All type constructors and type aliases defined, stored as a `\verb|HashMap<String, Type>|'. Aliases are stored with their name, and the type they are an alias for. Type constructors defined by data declarations are stored with all of their variables in nested foralls. For instance, parsing the data declaration (ignoring the data constructors), `\sflinline{data Either arg1 arg2 = ...}' would add to our type table the type the entry: $Either : \alltype{a\;b} Either\;a\;b$
 \end{itemize}
 For instance, from the program:
 \begin{lstlisting}[language=SFL_noprelude]
@@ -382,9 +382,15 @@ Module:
 \end{itemize}
 
 \subsubsection{Parsing Type Expressions}
-The parser needs to be able to parse type assignments (\verb|x :: Int|) and type declarations (\sflinline{type}, or \sflinline{data}). Parsing both of these things require the ability to parse type expressions. Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow: `\verb|->|', and our primaries are anything that does not contain arrows. The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. 
+The parser needs to be able to parse type assignments (\verb|x :: Int|) and type declarations (\sflinline{type}, or \sflinline{data}). Parsing both of these things require the ability to parse type expressions, such as `\sflinline{Int}' and `\sflinline{a -> a}'. Type expressions can be parsed using recursive descent parsing. Our connective for our parsing is arrow `\verb|->|', and our primaries are anything that does not contain arrow (except in parenthesized expressions). The structure of the type expression parser is similar to that of the expression parser. We first parse a primary, and then we terminate or parse our connective. 
 
-% \paragraph{Parsing Type Expression Primaries}
+\paragraph{Parsing Type Expression Primaries}
+To parse a type expression primary, we consume a token $T$ and progress differently based on what this token was:
+\begin{itemize}
+    \item If $T$ is an open bracket, we parse a type expression, then expect a closing bracket. 
+    \item If $T$ is an uppercase identifier, it must be a type constructor. We check the current state of the \verb|type_table| to see if it exists. If it does, we return it by converting it into a `union' type with the correct number of arguments. 
+\end{itemize}
+
 % There are 
 
 % \todo{Convert to prose}
@@ -419,20 +425,20 @@ The parser needs to be able to parse type assignments (\verb|x :: Int|) and type
 \subsubsection{Parsing Type Alias Definitions} 
 We may wish to add another name that a type can be known by. For instance, we may wish to define `\verb|String|' as a list of characters, so that we may reference it easier. A type alias declaration consists of:
 \begin{itemize}
-    \item The `\verb|type|' keyword
-    \item The name of the alias
-    \item The assignment operator ($=$)
-    \item The type expression
+    \item The `\verb|type|' keyword.
+    \item The name of the alias.
+    \item The assignment operator ($=$).
+    \item The type expression.
 \end{itemize}
 The function that produces type aliases returns a `\verb|Type::Alias(String, Box<Type>)|'. The reason we do not want to simply rename all references to the alias name to the type in question is that this would make type errors more obscure, and harder for users to understand the error with reference to the original program.
 
 \subsubsection{Parsing Data Declaration} 
 We want to be able to define and parse \verb|data| declarations~\ref{c2:design_data_types}. A \verb|data| deceleration consists of: 
 \begin{itemize}
-    \item The \sflinline{data} keyword
-    \item The name of the type (uppercase ID)
-    \item A list of type variables
-    \item The assignment operator (=)
+    \item The \sflinline{data} keyword.
+    \item The name of the type (uppercase ID) .
+    \item A list of type variables. We continually expect a lowercase identifier token until we reach the assignment operator `\verb|=|'. The lowercase identifiers (type variables) declared are passed to the functions that parse constructors so that we can enforce that all of the type variables used in the constructor parsing are `in scope'. We also do this to make sure that the variables are correct. 
+    \item The assignment operator (=).
     \item A set of constructors separated by \(\mid\). Constructor definitions consist of the following. 
         \begin{itemize}
             \item The name of the constructor
@@ -440,24 +446,24 @@ We want to be able to define and parse \verb|data| declarations~\ref{c2:design_d
         \end{itemize}
 \end{itemize}
 
-An example definition is: `\verb!data Either a b = Left a | Right b!'. The information that should be extracted from here is:
+\noindent An example definition is: `\sflinline{data Either a b = Left a | Right b}'. The information that should be extracted from here is:
 \begin{itemize}
-    \item `\verb|Either|' is a type constructor with a kind of \(*\rightarrow* \rightarrow *\). As we have no higher kinded types, this can simply be stored as a number representing the arity of the type constructor. In this case, the arity is 2.
+    \item `\verb|Either|' is a type constructor with a kind of \(*\rightarrow* \rightarrow *\). We store this as $\alltype{a\;b} Either\;a\;b$.
     \item The constructors and their types are:
     \begin{itemize}
         \item `\verb|Left|': \(\forall a\;b.a\rightarrow Either\;a\;b\)
         \item `\verb|Nil|': \(\forall a\;b.b\rightarrow Either\;a\;b\)
     \end{itemize}
 \end{itemize}
-We must store the type name and its arity in the `Type Table', and all constructors in the `Label Table'. 
+
+\noindent 
 \paragraph{Parsing Data Constructors}
-In order to parse the type constructor definition, we continually expect a lowercase identifier token until we reach the assignment operator `\verb|=|'. The lowercase identifiers declared are passed to the functions that parse constructors so that we can enforce that all of the type variables used in the constructor parsing are `in scope'. We also do this to make sure that the variables are correct. 
 
 Parsing constructors is not complex, as we have already implemented the mechanism for parsing type expressions. We simply keep parsing expressions until either the constructor separator ($\mid$) or a newline is reached. When parsing the type expression, we expect only valid concrete types in the Type Table, or valid in scope type variables from the type constructor definition. We then produce a type from the types of the arguments in order, with all of the type variables declared lifted to the start of the type into a series of nested `\verb|Type::Forall|'s. 
 \begin{lstlisting}[language=SFL]
 data EGType a b c = EGCnstr1 a Int b | EGCnstr2 Bool c | EGCnstr3 b c a
 \end{lstlisting}
-\noindent For instance, the above data declaration results in constructors:
+\noindent For instance, the above data declaration creates constructors:
 \begin{itemize}
     \item \verb|EGCnstr1|: \(\alltype{a\,b\,c} a \arr Int \arr b \arr EGType\;a\;b\;c\).
     \item \verb|EGCnstr2|: \(\alltype{a\,b\,c} Bool \arr c \arr EGType\;a\;b\;c\).
@@ -482,7 +488,7 @@ data EGType a b c = EGCnstr1 a Int b | EGCnstr2 Bool c | EGCnstr3 b c a
     {Under input context $\Gamma$, applying a function of type $A$ to $e$ synthesizes type $C$, \\ with output context $\Delta$} \\
     \end{minipage}
     \noindent\rule{\textwidth}{0.4pt}
-    \caption{Checking and Synthesis judgements the typechecking algorithm attempts to derive. These are from Dunfield and Krishnaswami~\cite{completebidir}, and are not modified in my extension of their algorithm.}
+    \caption{From~\cite{completebidir}: Checking and Synthesis judgements the typechecking algorithm attempts to derive. }
     \label{fig:bidir_judgement_types}
 \end{figure*}
 
@@ -509,7 +515,44 @@ The conclusions derived in this way are called \textit{typing judgements}. A typ
     \label{fig:eg_infer_rule}
 \end{figure}
 
-Figure~\ref{fig:eg_infer_rule} shows an example inferrence rule, one of the ones that I added to the algorithm. It allows us to derive that a pair $(e_1, e_2)$ checks against type $(A, B)$ under context $\Gamma$ with output context $\Delta$ ($\chkjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}$) if $e_1$ checks against $A$ under context $\Gamma$ with output context $\Theta$ ($\chkjudg{\Gamma}{e_1}{A}{\Theta}$) and if $e_2$ checks against $B$ under context $\Theta$ with output context $\Delta$ ($\chkjudg{\Theta}{e_2}{B}{\Delta}$).
+\pagebreak
+\paragraph{\textbf{Pair}$\chk$, an Example Inference Rule} Figure~\ref{fig:eg_infer_rule} shows an example inference rule which I added to the algorithm, \MyTCRule{\Paircheckrulename}. It allows us to derive that a pair $(e_1, e_2)$ checks against type $(A, B)$ under context $\Gamma$ with output context $\Delta$ (${\chkjudg{\Gamma}{(e_1, e_2)}{(A, B)}{\Delta}}$) if $e_1$ checks against $A$ under context $\Gamma$ with output context $\Theta$ (${\chkjudg{\Gamma}{e_1}{A}{\Theta}}$) and if $e_2$ checks against $B$ under context $\Theta$ with output context $\Delta$ (${\chkjudg{\Theta}{e_2}{B}{\Delta}}$).
+
+\paragraph{Well Formed Types} 
+\label{c2:types_well_formed}
+Figure~\ref{fig:algorithmic-wf} shows the algorithm for deriving that under context $\Gamma$, type $A$ is well-formed. It just checks that our context $\Gamma$ \textit{knows about} and existential type variables in $A$. For instance, under context $\Gamma = (\ahat, \bhat = Int)$, type $\ahat \arr \bhat$ is well-formed, but $\ahat \arr \chat$ is not. 
+
+\begin{figure}
+\judgbox{\judgetp{\Gamma}{A}}{Under context $\Gamma$, type $A$ is well-formed}
+\begin{mathpar}
+    \Infer{\UvarWF}
+          { }
+          { \judgetp{\Gamma[\alpha]}{\alpha} }
+    \and
+    \Infer{\UnitWF}
+          { }
+          { \judgetp{\Gamma}{\unitty} }
+    \and
+    \Infer{\ArrowWF}
+          { \judgetp{\Gamma}{A} \\ \judgetp{\Gamma}{B} }
+          { \judgetp{\Gamma}{A \arr B} }
+    \and
+    \Infer{\ForallWF}
+          { \judgetp{\Gamma, \alpha}{A} }
+          { \judgetp{\Gamma}{\alltype{\alpha}{A}} }
+    % \vspace{-1.3ex}
+    % \\
+    \Infer{\EvarWF}
+          { }
+          { \judgetp{\Gamma[\ahat]}{\ahat} }
+     ~~~~
+    \Infer{\SolvedEvarWF}
+          { }
+          { \judgetp{\Gamma[\hypeq{\ahat}{\tau}]}{\ahat} }
+\end{mathpar}
+\caption{From~\cite{completebidir}: Well-formedness of types and contexts in the algorithmic system. }
+\FLabel{fig:algorithmic-wf}
+\end{figure}
 
 \paragraph{Hole notation}
 Below is a paragraph from the original paper \cite{completebidir} explaining `hole notation' in contexts, which is used throughout the algorithm descriptions in \ref{fig:alg-typing}, \ref{fig:alg-subtyping} and \ref{fig:instantiation}. 
@@ -554,9 +597,33 @@ Figure~\ref{fig:alg-typing} shows the main algorithm for checking and synthesizi
     % \sam{this is better, but match each sentence to the symbols you are describing, I've inlined an example}
 \end{itemize}
 
-Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm.
+\noindent Note that the checking rules $\MyTCRule{\Intcheckrulename}$, $\MyTCRule{\Boolcheckrulename}$, $\MyTCRule{\Paircheckrulename}$ are not actually necessary, as they could be caught by the $\Sub$ rule. They are included as they remove the unnecessary steps that using the $\Sub$ rule in this manner creates, speeding up/simplifying the algorithm. For instance, we can derive \chkjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma} in two ways:
 
-\subsubsection{Algorithmic Subtyping} Figure \ref{fig:alg-subtyping} shows the algorithm for how we verify that a type is a subtype of another type. For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. I have added the following rules:
+\begin{mathpar}
+\Infer{\MyTCRule{\Intsynthrulename}}
+    { }
+    {\chkjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma}}
+\and 
+\Infer{\Sub}
+{\Infer{\MyTCRule{\Intsynthrulename}}
+{ }
+{\synjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma}}
+  \\
+\Infer{\MyTCRule{\Intsubrulename}}
+    { }
+    {\subjudg{\Gamma}{\Inttype}{\Inttype}{\Gamma}}
+}
+{\chkjudg{\Gamma}{Int Literal}{\Inttype}{\Gamma} }
+
+\end{mathpar}
+
+\subsubsection{Algorithmic Subtyping}
+\begin{quotation}
+\noindent `We say $S$ is a subtype of $T$, written as $S \subtype T$, to mean that any term of type $S$ can safely be used in a context where a term of type $T$ is expected'~\cite{pierce2002types}.
+\end{quotation}
+Figure \ref{fig:alg-subtyping} shows the inference rules used to construct a derivation that a type is a subtype of another type in \ac{SFL}. 
+% For instance, our typechecking rule $\Sub$ synthesizes the type, and the uses the algorithmic subtyping rules to check that the synthesized type is a subtype of the expected type. 
+I have added the following rules:
 \begin{itemize}
     \item $Int \subtype Int$ and $Bool \subtype Bool$ trivially. 
     \item $(A_1, B_1) \subtype (A_2, B_2)$ if $A_1 \subtype A_2$ and $B_1 \subtype B_2$.
@@ -658,15 +725,15 @@ T_{Cons} = {Int \fto List\;Int \fto List\;Int}\\
 
 \begin{enumerate}
     \item To check $Cons\;1\;Nil$ against $List\;Int$ [2], we first synthesize the expression type, and check the synthesized type is as subtype of $List\;Int$ [10].
-    \item To synthesize the type of the expression $Cons\;1\;Nil$ (implicitly $((Cons\;1)\;Nil)$) we synthesize the type of the left hand side of the application $Cons\;1$ to be $List\;Int\arr List\;Int$ [7] and then we synthesize the type of $Nil$ under the application of that type, which gives us $List\;Int$.
+    \item To synthesize the type of the expression $Cons\;1\;Nil$ (implicitly $(Cons\;1)\;Nil$) we synthesize the type of the left-hand side of the application $Cons\;1$ to be $List\;Int\arr List\;Int$ [3] and then we synthesize the type of $Nil$ under the application of that type [7], which gives us $List\;Int$.
     \item To synthesize the type of $Cons\;1$, we synthesize the type of the left-hand side of the application $Cons$ to be $T_{Cons}: Int\arr List\;Int\arr List\;Int$ [4], and then synthesize the type of $1$ under the application of that type, which gives us $List\;Int\arr List\;Int$ [5].
     \item We synthesize the type of $Cons$ to be $T_{Cons}$ from the context.
-    \item We synthesize the type of $1$ under the application of $T_{Cons}$, by first checking the type of $1$ against the type $Int$ which is the left-hand side of the applied type[6]. This allows us to synthesize the right-hand side of the applied type: $List\;Int\arr List\;Int$. 
+    \item We synthesize the type of $1$ under the application of $T_{Cons}$, by first checking the type of $1$ against the type $Int$ which is the left-hand side of the applied type [6]. This allows us to synthesize the right-hand side of the applied type: $List\;Int\arr List\;Int$. 
     \item 1 checks against the type $Int$, as it is an Int literal.
-    \item To synthesize the type of $Nil$ under the application of $List\;Int\arr List\;Int$, we check $Nil$ against the type $List\;Int$ which is the left-hand side of the applied type[8]. This allows us to synthesize the right-hand side of the applied type: $List\;Int$
-    \item To check $Nil$ against the type $List\;Int$, we first synthesize the type of $Nil$ resulting in $T_{Nil} :List\;Int$[9]. We then check that this is a subtype of $List\;Int$[10].
+    \item To synthesize the type of $Nil$ under the application of $List\;Int\arr List\;Int$, we check $Nil$ against the type $List\;Int$ which is the left-hand side of the applied type [8]. This allows us to synthesize the right-hand side of the applied type: $List\;Int$
+    \item To check $Nil$ against the type $List\;Int$, we first synthesize the type of $Nil$ resulting in $T_{Nil} :List\;Int$ [9]. We then check that this is a subtype of $List\;Int$ [10].
     \item We synthesize the type of $Nil$ to be $T_{Nil}$ from the context.
-    \item We apply the \MyTCRule{\Unionsubrulename} rule to check that $List\;Int$ is a subtype (non-strict) of $List\;Int$. The first check is that the names are the same, as the names uniquely identify these types. We then iterate over the list of the arguments to the type constructor. The name of the context increments to reflect this iteration, but the context is unchanged during this check. There is only one type in the list
+    \item We apply the \MyTCRule{\Unionsubrulename} rule to check that $List\;Int$ is a subtype of $List\;Int$. The first check is that the names are the same, as the names uniquely identify these types. We then iterate over the list of the arguments to the type constructor. The name of the context increments to reflect this iteration, but the context is unchanged during this check. There is only one type in the list
 \end{enumerate}
 
 \paragraph{Synthesizing Example}
@@ -773,29 +840,37 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
     \item To check $\textit{Just x}$ against $\bhat$, we synthesize $\textit{Just x} \syn \textit{Maybe}\;\chat$ [3]. After applying $\Gamma_3$ as a substitution to $\textit{Maybe}\;\chat$ yielding $\textit{Maybe}\;\ahat$, we check this type against $\bhat$ [11], yielding $\Gamma_4$. 
     \item To synthesize the type of $\textit{Just x}$, we synthesize $\textit{Just} \syn T_{Just}$ [4], and synthesize the type of the application of type $T_{Just}$ to $\textit{x}$.
     \item From the context: $\textit{Just} \syn T_{Just}$.
-    \item To synthesize the type of applying $\forall \alpha. \alpha \arr \textit{Maybe}\,\alpha$ to $\textit{x}$, we unwrap the forall by substituting all of the $\alpha$s for a fresh existential type variable $\chat$. We then synthesisze the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$.
-    \item To synthesisze the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$, we check $x$ against the first part of the arrow type $\chat$ [7]. We then yield the second part of the arrow type $\textit{Maybe}\,\chat$. 
+    \item To synthesize the type of applying $\forall \alpha. \alpha \arr \textit{Maybe}\,\alpha$ to $\textit{x}$, we unwrap the forall by substituting all of the $\alpha$s for a fresh existential type variable $\chat$. We then synthesize the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$.
+    \item To synthesize the type of the application of $\chat \arr \textit{Maybe}\,\chat$ to $x$, we check $x$ against the first part of the arrow type $\chat$ [7]. We then yield the second part of the arrow type $\textit{Maybe}\,\chat$. 
     \item To check $x$ against $\chat$, we synthesize $x \syn \ahat$ [8], and then check that $\ahat \subtype \chat$ [9].
     \item From the context: $\textit{x} \syn \ahat$.
     \item We use the \SubInstL\ rule to derive $\ahat \subtype \chat$. We could have equally used \SubInstR\ as both rules are for deriving a subtyping judgement where one side is an existential, but here both are existentials. To do this, we check that $\chat$ has no free instances of $\ahat$, and we instantiate $\ahat$ such that $\ahat \subtype \chat$ [10].
     \item We instantiate $\ahat$ in our context $\Gamma_2$ to be a subtype of $\chat$ by setting $\chat$ to $\ahat$ in our context, yielding $\Gamma_3$.
     \item To check that $\textit{Maybe}\,a \subtype \bhat$, we check that $\textit{Maybe}\,a$ has no free instances of $\bhat$, and we instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$ [12].
-    \item To instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$, we use the rule \InstRSolve\ to `solve' type $\bhat$ to be $\textit{Maybe}\,a$. This only requires that $\textit{Maybe}\,a$ is well formed under the context, which means that the context `knows about' all of the existential type variables. % (see \ref{fig:well_formed}).
+    \item To instantiate $\bhat$ such that $\textit{Maybe}\,a \subtype \bhat$, we use the rule \InstRSolve\ to `solve' type $\bhat$ to be $\textit{Maybe}\,a$. This only requires that $\textit{Maybe}\,a$ is well-formed under the context~\ref{c2:types_well_formed}. % (see \ref{fig:well_formed}).
 \end{enumerate}
 
 \subsection{Multi Step Reduction and Lazy Mode}
-As it currently stands, the system gives users the option to select any possible redex to make progress. However, whilst demonstrating this project to my client, I found that these steps were often too small, and sometimes one larger step would have been easier. I found that having to apply a nested abstraction to concurrent terms particularly tedious. The expression \sflinline{f 1 2 3} where \verb|f = (\x y z. x)| would have the reduction sequence listed in~\ref{c2:multi_step_reduction}. 
-\begin{figure} %to avoid splitting 
+% \begin{figure}[h!] %to avoid splitting 
+%     \begin{itemize}
+%         \item \sflinline{f 1 2 3} \arr\ \verb|(\x y z. x) 1 2 3|
+%         \item \verb|(\x y z. 1) 1 2 3| \arr\ \verb|(\y z. 1) 2 3|
+%         \item \verb|(\y z. 1) 2 3| \arr\ \verb|(\z. 1) 3|
+%         \item \verb|(\z. 1) 3| \arr\ \sflinline{1}
+%     \end{itemize}
+%     \caption{An example overly verbose reduction sequence that would be better expressed as one step.}
+%     \label{c2:multi_step_reduction}
+% \end{figure}
+\noindent As it currently stands, the system gives users the option to select any possible redex to make progress. However, whilst demonstrating this project to my client, I found that these steps were often too small, and sometimes one larger step would have been easier. I found that having to apply a nested abstraction to concurrent terms particularly tedious. The expression \sflinline{f 1 2 3} where \verb|f = (\x y z. x)| would have the reduction sequence listed below:
+
 \begin{itemize}
     \item \sflinline{f 1 2 3} \arr\ \verb|(\x y z. x) 1 2 3|
     \item \verb|(\x y z. 1) 1 2 3| \arr\ \verb|(\y z. 1) 2 3|
     \item \verb|(\y z. 1) 2 3| \arr\ \verb|(\z. 1) 3|
     \item \verb|(\z. 1) 3| \arr\ \sflinline{1}
 \end{itemize}
-\caption{An example overly verbose reduction sequence that would be better expressed as one step.}
-\label{c2:multi_step_reduction}
-\end{figure}
-\noindent Many users of the system, particularly more advanced users, would not need to see each nested step of this application. These can all be grouped into one step, where we substitute label f and perform all three reductions simultaneously. 
+
+\noindent Many users of the system, particularly more advanced users, would not need to see each nested step of this application. These can all be grouped into one step, where we substitute label f and perform all three reductions simultaneously. However, the original granular steps should still be presented to the user as well for beginners. 
 
 % \todo{Algorithm if time, and reformat reduction}
 

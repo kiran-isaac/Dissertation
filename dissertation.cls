@@ -78,7 +78,7 @@
 \RequirePackage{}
 
 \RequirePackage{titlesec}
-\titleformat*{\subsubsection}{\large\bfseries}
+% \titleformat*{\subsubsection}{\large\bfseries}
 
 % =============================================================================
 
