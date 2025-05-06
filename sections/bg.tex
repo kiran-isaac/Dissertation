@@ -22,7 +22,7 @@ The set of all lambda terms is $\Lambda$. Lambda calculus is built from three sy
 &M \in \Lambda, x\in V   \quad && \implies \quad && (\lambda x. M) \in \Lambda  
 \end{alignat*}
 
-\noindent We shall also use the following fairly standard conventions:
+\noindent We shall also use the following fairly standard conventions:~\cite{barendregt2013lambda}
 
 \begin{enumerate}
     \item Application is left associative. The term $M_1\,M_2\,M_3$ means $(M_1\,M_2)\,M_3$ and not $M_1\,(M_2\,M_3)$
@@ -91,7 +91,7 @@ id\,\underline{(id\,(\lam{z} id\, z))}  && \;\;\arr\\
 \underline{id\,(\lam{z} id\, z)}        && \;\;\arr\\ 
 \lam{z} id\, z                          && \;\;\\ 
 \end{alignat*}
-\noindent \textbf{Call-by-need} is similar to call by name but with sharing. This means we `overwrite all occurrences of an argument with the value the first time it is evaluated' \cite{pierce2002types}. Only abstractions are valid values once again. This is an optimization of call-by-name that is known as lazy evaluation. It is used by many functional languages including Haskell, and is of particular importance to SFL explorer. In this case, our reduction order would be the same as \textbf{call-by-name}. 
+\noindent \textbf{Call-by-need} is similar to call by name but with sharing. This means we `overwrite all occurrences of an argument with the value the first time it is evaluated' \cite{pierce2002types}. Only abstractions are valid values once again. This is an optimization of call-by-name that is known as lazy evaluation. It is used by many functional languages including Haskell, and is of particular importance to SFL Explorer . In this case, our reduction order would be the same as \textbf{call-by-name}. 
 
 % \sam{these are all standard, so you should cite where they come from and explain them. Spend more time on reduction, because that will be key later}
 % \sam{this section is very dry. why do we want to learn about lambda calc? well we are writing an evaluator, so to understand what that means we need to understand syntax and evaluation, so lets looks at the lambda calc as a small example. It makes the intro of lambda calc more active and motivated, rather than a bunch of dry definitions, instead its a small example of what we will do later, that is background cos its pre-defined and not implemented we are just exploring the ideas we will implement}
@@ -123,7 +123,7 @@ By convention, the arrow operator $\arr$ is right associative, so we can rewrite
 
 \subsection{Typechecking: Well typed programs do not go wrong}
 The \lcalc\ that we have discussed so far is untyped. This means that an abstraction can be applied to any other term without restriction. This lack of restriction may result in terms that can no longer be reduced, but are not valid values. The evaluation of an \lcalc\ expression is said to have `gone wrong' if it gets to a normal form that is not a valid value.
-Let us consider the expression and its reduction
+Let us consider the expression and its reduction:
 \[
 (\lambda x. x\;x) \;1 \BetaReduce 1\;1
 \]
@@ -179,19 +179,18 @@ Many languages, including Haskell, have Algebraic Data Types allowing us to `Com
 
 Haskell allows users to define their own algebraic data types using the \lstinline[language=SFL]|data| keyword. For instance, booleans can be defined:
 
-\begin{lstlisting}[language=SFL_noprelude]
+\begin{lstlisting}[language=SFL_noprelude_nobool]
 data Bool = True | False
 \end{lstlisting} 
 
 \noindent This data definition creates a type $Bool$ with two data constructors, \verb|True| and \verb|False|. These data constructors are zero-ary. We can also have data constructors that have arguments. 
 
-An example of a union type in Haskell is the tagged union:
+An example of a union type in Haskell is the tagged union below, which is isomorphic to the type \(Int \cup (Int \times Int)\):
 \begin{lstlisting}[language=SFL]
 data Shape = Circle Int | Rectangle Int Int
 \end{lstlisting} 
-\noindent which is isomorphic to the type \(Int \cup (Int \times Int)\). 
 
-An example of a product type is the tuple \((Int, Bool)\): the set of all possible values of this type is isomorphic to the Cartesian product of the set of all values of \(Int\) and the set of all values of $Bool$. Most languages have product types, which often take the form of structs or tuples. 
+\noindent An example of a product type is the tuple \((Int, Bool)\): the set of all possible values of this type is isomorphic to the Cartesian product of the set of all values of \(Int\) and the set of all values of $Bool$. Most languages have product types, which often take the form of structs or tuples. 
 
 \subsection{Polymorphic Type Constructors}
 Haskell includes polymorphic types. These are `types that are universally quantified in some way over all types'~\cite{hudak1992gentle}. One example is the type constructor $Maybe$, implicitly created by the following data declaration.
@@ -253,7 +252,7 @@ This project is written in rust, to take advantage of rusts unique mix of speed,
     \item References must always be valid.
 \end{itemize}
 
-These rules ensure that immutable references are to things that don't change, and all references are always to things that exist.
+\noindent These rules ensure that immutable references are to things that don't change, and all references are always to things that exist.
 
 % \section{Frontend Technologies}
 % \label{bg:frontend}
@@ -279,7 +278,7 @@ This project runs entirely within the browser, despite being written in Rust. Th
 \end{itemize}
 Producing a package with some JavaScript functions that call the WebAssembly functions would achieve both of these goals. If we wish to use TypeScript, we must create a separate type definition file that contains the types of all of the JavaScript wrapper functions around the \ac{WASM} functions. This would be difficult to maintain manually as we would have to update it every time we made a change to the public interface of our rust library. 
 
-Fortunately, the rust crate \textbf{wasm-bindgen}~\cite{wasm_bindgen_guide} provides macros that JavaScript and TypeScript bindings automatically. \textbf{wasm-pack}~\cite{wasm_pack_guide} is a rust based command line tool that turns a rust project into a package that can be included from the frontend containing a \ac{WASM} binary blob, and the wrapper around it generated by \textbf{wasm-bindgen}. This package can then be added as a dependency to the frontend, and the functions within it can be called using the JavaScript wrapper functions. 
+Fortunately, the rust crate \textbf{wasm-bindgen}~\cite{wasm_bindgen_guide} provides macros that generate the JavaScript and TypeScript bindings automatically. \textbf{wasm-pack}~\cite{wasm_pack_guide} is a rust based command line tool that turns a rust project into a package that can be included from the frontend containing a \ac{WASM} binary blob, and JavaScript and TypeScript files required to load and execute functions in the binary. This package can then be added as a dependency to the frontend. 
 
 \section{Existing systems}
 % https://dl.acm.org/doi/pdf/10.1145/1480828.1480845
@@ -362,7 +361,7 @@ _f True (_f False _nil)
 
 \noindent When running Duet~\cite{duet_hackage} on the program shown \ref{bg:duet_foldr}, we get a large block of text as output that shows the reduction or this program. This all happens at once, and we do not get the chance to pick reduction order. It is also quite hard to tell what is going on, as it is dumped as one block of text. The author, Chris Done, also hosts a website where one can try it out without installing it~\cite{duet_delta}. The website does not provide much in the way of a UI, it is a text box input and a text box output for running Duet programs.
 
-The main strong point of this project is the language. It is a solid subset of Haskell that includes many similar features to SFL. For this project, I did not draw direct inspiration from Duet or Duet Delta. This was because even though I liked the subset of Haskell selected for Duet, I wanted to attempt to design a clearer language, and potentially break away from being a Haskell subset. Furthermore, Duet and Duet Delta focus on the language, not the UX/UI, whereas I wanted SFL explorer to be strong in both regards. 
+The main strong point of this project is the language. It is a solid subset of Haskell that includes many similar features to SFL. For this project, I did not draw direct inspiration from Duet or Duet Delta. This was because even though I liked the subset of Haskell selected for Duet, I wanted to attempt to design a clearer language, and potentially break away from being a strict Haskell subset. Furthermore, Duet and Duet Delta focus on the language, not the UX/UI, whereas I wanted SFL Explorer to be strong in both regards. 
 
 \subsection{$\lambda$-Lessons}
 \newcommand{\llessons}{$\lambda$-Lessons}
@@ -398,7 +397,7 @@ My particular favorite features of \llessons's UI are:
     \label{bg:llessons_gets_confused}
 \end{figure}
 
-\noindent The UX/UI is the definite strong point of \llessons\ (see \ref{bg:llessons_ui}).  However, there are a few things that I would identify as weaknesses that make it not useful for what SFL explorer is useful for.
+\noindent The UX/UI is the definite strong point of \llessons\ (see \ref{bg:llessons_ui}).  However, there are a few things that I would identify as weaknesses that make it not useful for what SFL Explorer  is useful for.
 
 \begin{itemize}
     \item The language is not typechecked. There are type assignments, but upon testing and inspection of the source code \cite{lambdalessonsgithub}, type assignments are ignored. They say on the website that the language is `dynamically typed'~\cite{lambdalessons}, but it is not. 

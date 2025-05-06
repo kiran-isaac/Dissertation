@@ -1,5 +1,5 @@
 {"rule":"BOTH_AS_WELL_AS","sentence":"^\\QThe interface must be understandable, for both \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q `experts' (lecturers, advanced users) as well as people who have never seen a functional language before.\\E$"}
-{"rule":"EN_COMPOUNDS","sentence":"^\\QSFL-explorer takes the form of a functional language (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q), packaged with two interfaces that allows users to observe the process of evaluation of a term as a series of step by step or multi-step reductions, and control the order that sub-terms are evaluated.\\E$"}
+{"rule":"EN_COMPOUNDS","sentence":"^\\QSFL Explorer  takes the form of a functional language (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q), packaged with two interfaces that allows users to observe the process of evaluation of a term as a series of step by step or multi-step reductions, and control the order that sub-terms are evaluated.\\E$"}
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qbreak\\E$"}
 {"rule":"WHITESPACE_RULE","sentence":"^\\Qbreak\\E$"}
 {"rule":"KIND_OF_A","sentence":"^\\QThe `Type of a Type' is its kind \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}

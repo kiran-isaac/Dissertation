@@ -14,7 +14,7 @@
             "name": "xelatex_quick",
             "command": "xelatex",
             "args": [
-                // "-synctex=1",
+                "-synctex=1",
                 "-interaction=nonstopmode",
                 "-file-line-error",
                 "-no-pdf",

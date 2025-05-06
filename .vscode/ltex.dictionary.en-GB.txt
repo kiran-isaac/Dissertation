@@ -5,7 +5,7 @@ REFHERE
 Testathon
 Likert
 datatypes
-SFL-explorer
+SFL Explorer 
 TODO
 Vite
 WASM
@@ -31,3 +31,5 @@ WinHIPE
 SFL
 existentials
 typeclasses
+Dunfield
+Krishnaswami

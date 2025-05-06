@@ -1,13 +1,13 @@
 \chapter{Introduction}
 \label{chap:context}
-In this dissertation I present SFL-explorer, a tool that aims to make learning and teaching functional programming languages easier, by building intuitive understanding of how they work. It is an open source web based tool, available for download and offline use. A build of SFL explorer is submitted in the auxiliary materials, and it is also available at \href{https://functional.kiransturt.co.uk}{https://functional.kiransturt.co.uk}. 
-SFL-explorer takes the form of a functional language called \ac{SFL}, packaged with a web based interface that allows users to observe the process of evaluating a term as a series of step by step reductions, and control the order that sub-terms are evaluated. 
+In this dissertation I present SFL Explorer , a tool that aims to make learning and teaching functional programming languages easier, by building intuitive understanding of how they work. It is an open source web based tool, available for download and offline use. A build of SFL Explorer  is submitted in the auxiliary materials, and it is also available at \href{https://functional.kiransturt.co.uk}{https://functional.kiransturt.co.uk}. 
+SFL Explorer  takes the form of a functional language called \ac{SFL}, packaged with a web based interface that allows users to observe the process of evaluating a term as a series of step by step reductions, and control the order that sub-terms are evaluated. 
 
 % a tool to demonstrate how functional programming languages are evaluated, and help build intuitive understanding of how functional programming languages work. 
 
 \ac{SFL} is a minimal language designed with clarity for beginners in mind. It includes many standard functional programming features, including polymorphism, pattern matching and user definable algebraic data types. This language is type checked, using an algorithm based on Dunfield and Krishnaswami's bidirectional type checking algorithm~\cite{completebidir}, modified to include \ac{SFL}'s extended type system. 
 
-The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL-explorer and apply it to these languages. Figure \ref{tab:fac_2_table_input} is an example program in the language, to find the factorial of 2. The relevant prelude functions are included for clarity.
+The language itself is not meant to be the main interest for the users of this system. It is designed to be fairly generic, with syntax and semantics similar to popular functional languages, so that users can take their understanding from using SFL Explorer  and apply it to these languages. Figure \ref{tab:fac_2_table_input} is an example program in the language, to find the factorial of 2. The relevant prelude functions are included for clarity.
 
 \begin{figure}[h]
 \begin{lstlisting}[language=SFL]
@@ -32,13 +32,11 @@ main = fac 2
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.95\linewidth]{images/intro_fac_2.png}
-  \caption{A screenshot of SFL explorer during evaluation of the program in Figure~\ref{tab:fac_2_table_input}. On screen, we see the prompt listed in step 5 of table~\ref{tab:fac_2_table}}
+  \caption{A screenshot of SFL Explorer  during evaluation of the program in Figure~\ref{tab:fac_2_table_input}. On screen, we see the prompt listed in step 5 of table~\ref{tab:fac_2_table}}
   \label{intro_fac_2_screenshot}
 \end{figure}
 
 \noindent Figure \ref{tab:fac_2_table} is a table showing the evaluation of this function in lazy mode by the system. The `Prompt' column shows what the user is presented with as a button to make progress. The first prompt entry at row $0$ is empty, as it represents the starting program state. The user is provided with messages telling them what the next step that they can make is. Additionally, there is a `free choice' mode where users are presented with the options for progress, and they can choose which one is taken. 
-
-
 
 % This table is generated dynamically as the user progresses through the given program.  
 
