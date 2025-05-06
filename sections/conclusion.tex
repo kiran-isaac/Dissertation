@@ -1,10 +1,22 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 \section{Summary}
-The aims of this project were to create a system to help to build an intuitive understanding of functional programming languages work. This was achieved over four iterative phases:
+The goal of this project was to create a system to help to build an intuitive understanding of functional programming languages work. I identified two groups of stakeholders for this goal:
+
+\begin{itemize}
+    \item Those involved in teaching functional languages, as part of a university course or otherwise. They could such a tool to demonstrates functional languages to facilitate intuitive explanations in lectures.
+    \item Those involved in learning functional languages. These could be students of a university course, or anyone interested in the topic. They could use such a tool to experiment with functional languages. 
+\end{itemize}
+
+\noindent I created SFL Explorer, which includes a functional programming language \ac{SFL} with a simple but effective set of features, and a UI that allows users to interact with the evaluation of the program in real time, building intuition for how functional languages work. I tested this project with 27 different students and 2 lecturers in functional programming to represent my two groups of stakeholders. This was done throughout the project to ensure that the development of SFL explorer evolved in a way that met the goals for each group of stakeholders. 
+
+Below is a summary of the four phases of the project, and what was achieved in each. 
 \paragraph{Phase 1 --- Proof of Concept} I performed requirements analysis based on discussions with my supervisor and using autoethnographic methods. These requirements came together to create the idea for SFL Explorer, and then went on to inform the design of the language \ac{SFL} and the Explorer (the website). The language was very minimal, based on \lcalc~with only a few minor additions. This was then implemented, along with a proof of concept iteration of the website. The proof of concept was presented to my client, Samantha Frohlich, a lecturer on~\hyperref[COMS10016]{COMS10016}, who was positive about the project, and gave good feedback about future iterations of the system, particularly on the language. 
-\paragraph{Phase 2 --- Types and Pattern Matching} This phase was mostly about extending the language, adding the features requested by my client. This included a type system, polymorphism, user definable algebraic data types, recursive data types, and pattern matching. I also implemented a typechecker that supports the type system based on Dunfield and Krishnaswami's bidirectional algorithmic type system~\cite{completebidir}. I then held a focus group with functional programming experts where we discussed the language, and what could be done to make the UI/UX better. 
-\paragraph{Phase 3 --- Improving the UI/UX} 
+\paragraph{Phase 2 --- Types and Pattern Matching} This phase was mostly about extending the language, adding the features requested by my client. This included a type system, polymorphism, user definable algebraic data types, recursive data types, and pattern matching. I also successfully implemented a typechecker that supports the \ac{SFL} type system based on Dunfield and Krishnaswami's bidirectional type checking algorithm~\cite{completebidir}. I then held a focus group with functional programming experts where we discussed the language, and what could be done to make the UI/UX better. 
+\paragraph{Phase 3 --- Improving the UI/UX} In this phase, I overhauled the UI/UX, and added features to make it easier to use, including syntax highlighting, difference between steps, and reductions messages. I held a focus group with some students who had just been through a university functional programming course, but found it difficult. In this focus group, students were taught functional programming using SFL explorer in a lecturer setting, and then interviewed about what they found useful/not so useful about SFL explorer. These students really liked the system, but there were also definitely things that could be improved, some of which were worked on in the final phase, and some are listed as future work. 
+
+\paragraph{Phase 4 --- Further UI/UX Iteration} This phase was mostly tweaks to the UI as suggested by previous focus groups, including syntax highlighting, and fixes to visual bugs. I also added untyped mode, and the ability to disable the prelude. This then concluded with the final focus group which followed the same split lecture/interview format as the last focus group, followed by a meeting with my client. 
+
 
 \section{Strengths}
 \subsection{The System is Useful for Teaching Functional Programming, and Will be Used for that Purpose}
@@ -35,7 +47,24 @@ Amos Holland used SFL explorer to explain key concepts to the intermediate \ref{
 Here, I have only listed a few `limitations'. This is not to say that there is nothing else that could be added to the project, far from it (see~\ref{conc:future_work}). These are the only things that I have identified as problems with the existing system as opposed to extensions that could be made to it. 
 
 \subsection{Related Redexes are Confusing in Free Choice Mode}
-In free choice mode 
+In free choice mode some redexes may include other redexes. Consider the following \ac{SFL} program:
+
+\begin{lstlisting}[language=SFL]
+main :: a -> Int 
+main = (\x y z. x + y) 1 2
+\end{lstlisting}
+
+\noindent If we evaluate this in free choice mode, we are presented with two options, the first of which includes the second:
+% \begin{alignat}{3}
+% \verb|(\x. \y. \z. x + y) 1 2| & $\smallblacktriangle*$ &  \verb|\z. 1 + 2| \\ 
+% \end{alignat}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{images/conc_add.png}
+\end{figure}
+
+\noindent The first option is two reductions, the first of which is the second one. This relationship is not clear. This was discussed in the advanced focus group~\ref{ref:afg}, but development of a fix for this was not prioritized. 
 
 \subsection{The Expressions Balloon During Evaluation}
 \label{conc:baboon}
