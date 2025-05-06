@@ -1,7 +1,10 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
-The aims of this project were to create a system to help to build an intuitive understanding of functional programming languages
-
+\section{Summary}
+The aims of this project were to create a system to help to build an intuitive understanding of functional programming languages work. This was achieved over four iterative phases:
+\paragraph{Phase 1 --- Proof of Concept} I performed requirements analysis based on discussions with my supervisor and using autoethnographic methods. These requirements came together to create the idea for SFL Explorer, and then went on to inform the design of the language \ac{SFL} and the Explorer (the website). The language was very minimal, based on \lcalc~with only a few minor additions. This was then implemented, along with a proof of concept iteration of the website. The proof of concept was presented to my client, Samantha Frohlich, a lecturer on~\hyperref[COMS10016]{COMS10016}, who was positive about the project, and gave good feedback about future iterations of the system, particularly on the language. 
+\paragraph{Phase 2 --- Types and Pattern Matching} This phase was mostly about extending the language, adding the features requested by my client. This included a type system, polymorphism, user definable algebraic data types, recursive data types, and pattern matching. I also implemented a typechecker that supports the type system based on Dunfield and Krishnaswami's bidirectional algorithmic type system~\cite{completebidir}. I then held a focus group with functional programming experts where we discussed the language, and what could be done to make the UI/UX better. 
+\paragraph{Phase 3 --- Improving the UI/UX} 
 
 \section{Strengths}
 \subsection{The System is Useful for Teaching Functional Programming, and Will be Used for that Purpose}
@@ -29,9 +32,14 @@ Amos Holland used SFL explorer to explain key concepts to the intermediate \ref{
 
 
 \section{Limitations}
+Here, I have only listed a few `limitations'. This is not to say that there is nothing else that could be added to the project, far from it (see~\ref{conc:future_work}). These are the only things that I have identified as problems with the existing system as opposed to extensions that could be made to it. 
+
+\subsection{Related Redexes are Confusing in Free Choice Mode}
+In free choice mode 
+
 \subsection{The Expressions Balloon During Evaluation}
 \label{conc:baboon}
-I believe that the languages lack of inbuilts is one of the languages best `features'. However, it is also a curse: as everything is defined with match expressions, the expression balloons vertically with match statements during evaluation. For instance, in the provided `square\_sum' example:
+I believe that the languages lack of inbuilts is one of the languages best `features'. However, it is also a curse. Because everything is defined with match expressions, the expression balloons vertically with match statements during evaluation. For instance, in the provided `square\_sum' example:
 
 % \begin{figure}[h]
 \begin{lstlisting}[language=SFL]
@@ -68,8 +76,8 @@ The outer one comes from `sum', the middle one comes from `map', and the inner o
 
 This situation could be improved by being able to select which functions we are interested in seeing the expansion of, and which ones we are not. See \ref{fw:function_checkboxes}
 
-\subsection{There is No Documentation}
-When designing the new UI (\ref{c2:next_ui}), I included buttons that would create help menus, and more information about the project, as well as instructions. However, these are time-consuming to write,  and I did not have time. 
+% \subsection{There is No Documentation}
+% When designing the new UI (\ref{c2:next_ui}), I included buttons that would create help menus, and more information about the project, as well as instructions. However, these are time-consuming to write,  and I did not have time. 
 
 \section{Future Work}
 \label{conc:future_work}
@@ -78,6 +86,8 @@ When designing the new UI (\ref{c2:next_ui}), I included buttons that would crea
 Users could have the option to pick the evaluation strategy. They can manually pick the evaluation strategy using free choice mode, but a mode that enforces strict evaluation for example would be useful to have. 
 \paragraph{Improve Free Choice Mode}
 Inspiration could be taken from the UI used by \llessons~\ref{bg:llessons_ui} where the expression to be evaluated could be selected by clicking on the input text itself. 
+\paragraph{Keyboard Controls} This was requested by Samantha, my client, in our final meeting~\ref{c4:client}. She requested keyboard controls to be able to step forward and backward using our chosen evaluation strategy. 
+\paragraph{Step to the End Button} This feature was requested by Amos during the intermediate focus group~\ref{eval:IFG}. A button would be provided to skip evaluation to the end of the program. This is not as trivial as it sounds, as the program may not terminate, and therefore crash the user's browser in trying to compute the final state. This problem could be avoided if we had keyboard controls, where holding in a certain button would repeatedly evaluate via the chosen reduction strategy. 
 \paragraph{Selective Skipping}
 \label{fw:function_checkboxes}
 We are not always interested in all the functions involved in our program. For instance, if a lecturer is attempting to demonstrate \verb|foldr| over a list, they may not be interested in the expansion of how \verb|range| works in order to generate their list they are going to fold over. They may want the evaluation of some things to be `skipped'. 

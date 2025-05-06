@@ -4,7 +4,7 @@
 \chapter{AI Usage}
 \label{appx:ai_prompt}
 
-I did not directly prompt any Large Language Models, to assist with the writing of my dissertation or implementation. However, as listed in the Supporting Technologies list, I used GitHub Copilot to help with writing some tests for the parser and type checker. I used it via the VS Code extension, which uses the context of your file, to provide advanced AI autocompletion.
+I did not directly prompt any Large Language Models to assist with the writing of my dissertation or implementation. However, as listed in the Supporting Technologies list, I used GitHub Copilot to help with writing some tests for the parser and type checker. I used it via the VS Code extension, which uses the context of your file, to provide advanced AI autocompletion.
 
 I also used AI to transcribe from the audio files of the focus groups (see \ref{appx:additional_mats} for the transcripts).
 
@@ -70,6 +70,8 @@ enum TokenType {
 struct Token {
     tt: TokenType,
     value: String,
+    line: usize,
+    col: usize
 }
 \end{lstlisting}
 

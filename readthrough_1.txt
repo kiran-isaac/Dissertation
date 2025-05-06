@@ -27,7 +27,8 @@ C2:
     - 2: Talk about unpacking pairs
     - 5: Finish introduction
     - 3: Motivate the design  
-    - 4: Write more for requirements analysis. 
+    - 3: Algorithm for multi step reduction
+    - ✔ 4: Write more for requirements analysis. 
     - 4: Motivate Type system at beginning of design
     - ✔ (removed) 4: Convert parsing primary bit to prose
 

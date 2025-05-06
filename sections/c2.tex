@@ -11,12 +11,12 @@ The client's central idea for what they wanted to use the tool was to demonstrat
 \begin{lstlisting}[language=SFL]
 data [a] = [] | a : [a]
 \end{lstlisting}
-This definition of lists is as example of a polymorphic data type. It also implicitly defines two polymorphic constructors, \verb|[]| (Nil) which has type $\forall a. [a]$, and \verb|:| (Cons) which has a type $\forall a. a \fto [a] \fto [a]$. 
+
+\noindent This definition of lists is as example of a polymorphic data type. It also implicitly defines two polymorphic constructors, \verb|[]| (Nil) which has type $\forall a. [a]$, and \verb|:| (Cons) which has a type $\forall a. a \fto [a] \fto [a]$. 
 
 In order to support recursively defined Lists like this in \ac{SFL}, we could either have `Nil' and `Cons' built in, or we could allow them to be defined in the language. Providing a mechanism for users to define their own types in the language, including lists, would be the best option as this would allow maximum clarity and transparency into how the language works. 
 
-
-
+If we support user defined data types, we also need to be able to differentiate between their different variants. Currently, branching is performed using the `if' built-in, which branches between two expressions based on a boolean condition. An elegant way of extending this to work on user defined data types is using pattern matching, see~\ref{bg:haskell_pattern_match} for more detail.
 % Allowing them to be defined in the language would be best for clarity, and it would also allow users 
 
 
@@ -595,7 +595,7 @@ Figure~\ref{fig:alg-typing} shows the algorithm for checking and synthesizing th
         \item A pair $(e_1, e_2)$ checks against type $(A, B)$ if $e_1$ checks against $A$ and $e_2$ checks against $B$ (see \ref{fig:eg_infer_rule}). 
         \item If $e_1$ synthesizes type $A$ and $e_2$ synthesizes type $B$ then $(e_1, e_2)$ synthesizes $(A, B)$
     \end{itemize}
-    \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$ (\synjudg{\Gamma}{e}{A}{\Delta}). We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression. 
+    \item The rule for synthesizing the type of a match expression. We synthesize the type of the expression being matched to a type $A$ (\synjudg{\Gamma}{e}{A}{\Delta}). We then check all the types of the patterns against type $A$. To get the output type, we add an existential type variable $\ahat$ to our context, and then check the type of all the output expressions against the type $\ahat$. We synthesize the type $\ahat$. The context is passed through all of these operations, and the final context contains all of the things `learnt' from typechecking the match expression. 
     % \sam{this is better, but match each sentence to the symbols you are describing, I've inlined an example}
 \end{itemize}
 
@@ -635,7 +635,7 @@ I have added the following rules:
 \begin{itemize}
     \item $Int \subtype Int$ and $Bool \subtype Bool$ trivially. 
     \item $(A_1, B_1) \subtype (A_2, B_2)$ if $A_1 \subtype A_2$ and $B_1 \subtype B_2$.
-    \item The union with name $N_1$ and arguments $A_1 \dots A_n$ is a subtype of a union with name $N_2$ and arguments $B_1 \dots B_n$, if the names are the same, as the names uniquely identify these types, as well as all the constituent types being subtypes of each other in order. The context is passed through all of these operations, and the final context contains all of the things `learned' from typechecking the match expression.
+    \item The union with name $N_1$ and arguments $A_1 \dots A_n$ is a subtype of a union with name $N_2$ and arguments $B_1 \dots B_n$, if the names are the same, as the names uniquely identify these types, as well as all the constituent types being subtypes of each other in order. The context is passed through all of these operations, and the final context contains all of the things `learnt' from typechecking the match expression.
 \end{itemize}
 
 \subsubsection{Context Instantiation} 
@@ -885,9 +885,9 @@ T_{Nothing} = \forall \alpha. \textit{Maybe}\,\alpha \\
 Users may not always want to choose reduction order themselves. The `Lazy' strategy \ref{bg:eval_strategies} is the one employed by Haskell and other functional languages, so it should be the one employed by \ac{SFL}. Conveniently, because of the way we are currently generating redexes, the list of redexes we generate already has the laziest option as the first element. This is because when generating redexes in an application, we calculate the redexes in the function before the redexes in the argument, which leads to a `leftmost first' list of redexes. 
 
 \subsection{The Prelude, and `if e then a else b'}
-Most programming languages come with functionality packaged that is included by default, and is written in the language. In Haskell, this is referred to as the Prelude. There is also the standard library which is more extensive and is not imported by default. 
+Most programming languages come with functionality packaged that is included by default, and is written in the language in question. In Haskell, this is referred to as the Prelude. There is also the standard library which is more extensive and is not imported by default. 
 
-As our language does not need extensive extra functionality, we do not need a whole standard library. However, a basic prelude with common functionality would be useful. \ref{appx:prelude} shows the SFL prelude. I included `if' in the prelude to show that it is based on a match statement, rather than being a mysterious inbuilt: 
+As our language does not need extensive extra functionality, we do not need a whole standard library. However, a basic prelude with common functionality would be useful. \ref{appx:prelude} shows the SFL prelude. I included `\sflinline{if}' in the prelude, rather than being an inbuilt like in previous iterations, to make it clearer: 
 
 \begin{lstlisting}[language=SFL]
 if :: Bool -> a -> a -> a
@@ -897,15 +897,16 @@ if cond then_branch else_branch = match cond {
 }    
 \end{lstlisting}
 
+% \noindent This definition of `\sflinline{if}' contributed to problem of expressions becoming overly large during 
+
 In order to make the language more like Haskell, I also added syntax sugar that allowed you to use it using the `\lstinline[language=SFL_ite]|if e then a else b|' syntax. The parser would ignore the `\lstinline[language=SFL_ite]|then|' and the `\lstinline[language=SFL_ite]|else|' keywords, and it would be equivalent to `\lstinline[language=SFL_ite]|(((if e)  a)  b)|' internally. However, this was unpopular with the advanced focus group, who said that this was confusing (see \ref{ref:afg_ite}). 
 
-The prelude is listed in the appendix: \ref{appx:prelude}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{images/phase-2-end2.png} 
     \captionsetup{justification=centering}
-    \caption{The product at the end of phase two during lazy evaluation of the `sum of squares' sample program, with the prelude dropdown extended}
+    \caption{The product at the end of phase two during lazy evaluation of the `sum of squares' sample program, with the prelude dropdown extended. }
     \label{fig:screenshot_c2_end}
 \end{figure}
 
@@ -915,23 +916,23 @@ The prelude is listed in the appendix: \ref{appx:prelude}.
 In this phase, I made some changes to the proof of concept web UI. See \ref{fig:screenshot_c2_end} and \ref{fig:screenshot_c2_end_free} for the desktop UIs, and \ref{fig:screenshot_phase2_mobile} for the mobile UI. 
 
 \paragraph{Lazy Mode}
-Added a separate `Lazy mode' which would only offer one button labelled `Progress Lazily'. The original functionality was included in `Free Choice' mode
+Added a separate `Lazy mode' which would only offer one button labelled `Progress Lazily'. The original functionality was included in `Free Choice' mode.
 
 \paragraph{History}
-The history of the main expression is listed. The top two rows shows the most recent change, in blue is the result of the most recent change, in red is what it used to be. This does not work using the diff algorithm discussed in Phase 3 (\ref{paragraph:diff}), it instead gets the string before and the string after, and locates them in the second most recent and most recent program state. This is not fully accurate, as a string match results in false positives. If we reduced \sflinline{1 + 1} to \sflinline{2} in the expression \sflinline{(\x. x + (1 + 1)) (1 + 1)}, it would highlight both \sflinline{(1 + 1)}s even though the one in the abstraction has not been reduced. 
+The history of the main expression is listed. The top two rows shows the most recent change, in blue is the result of the most recent change, in red is what it used to be. This does not work using the diff algorithm discussed in Phase 3 (\ref{paragraph:diff}), it instead gets the string before and the string after, and locates them in the second most recent and most recent program state. This is not fully accurate, as a string match results in false positives. If we reduced \sflinline{1 + 1} to \sflinline{2} in the expression \sflinline{(\x. x + (1 + 1)) (1 + 1)}, it would highlight both \sflinline{(1 + 1)}s even though the one in the abstraction would not be reduced. 
 
 \paragraph{Other}
 
 \begin{itemize}
     \item The prelude was offered as a dropdown.
     \item Some example programs can be loaded from a dropdown.  
-    \item The program is saved in the browsers `localStorage' as it is edited
-    \item A help menu was offered when the page was loaded, or when the `?' button in the top left corner was pressed: \ref{fig:screenshot_phase2_help}
+    \item The program is saved in the browsers `localStorage' as it is edited to allow it to persist between website visits. 
+    \item A help menu was offered when the page was loaded, or when the `?' button in the top left corner was pressed: \ref{fig:screenshot_phase2_help}.
 \end{itemize}
 
 \section{Testathon}
 \label{c2:testathon}
-The `Testathon' was an opportunity provided by the university for me and my fellow students doing dissertation projects to test our projects on each other, as well as other curious students in attendance. It was a valuable opportunity to test my system at the midpoint of the project. During the Testathon, I encouraged people to test the system on my laptop, as well as providing a QR code for them to be able to access it on their phone. I initially wanted to adopt a `think aloud' method for usability testing, which is `a method for studying mental process in which participants are asked to make spoken comment as they work on a task'~\cite{thinkaloud}
+The `Testathon' was an opportunity provided by the university for me and my fellow students doing dissertation projects to test our projects on each other, as well as other curious students in attendance. It was a valuable opportunity to test my system at the midpoint of the project. During the Testathon, I encouraged people to test the system on my laptop, as well as providing a QR code for them to be able to access it on their phone. I initially wanted to adopt a `think aloud' method for usability testing, which is `a method for studying mental process in which participants are asked to make spoken comment as they work on a task'~\cite{thinkaloud}.
 
 The plan was to implement this, and passively watch them interact with the system and not give them any extra instruction. However, I found that people required significant instruction. I attempted to delegate any instruction to the `help menu', but this did not solve the problem for the following reasons: people do not naturally want to read instructions, and my instructions were insufficient for people asked to interact with the system without any guidance to be able to effectively use it. Many people couldn't find the instructions, or were confused by the notation.
 
@@ -946,7 +947,7 @@ After I explained the system and participants engaged with the system, participa
     \item `Anything I can improve about the type system'
 \end{itemize}
 
-The answers to these questions were mostly complimentary, but some useful information was extracted:
+\noindent The answers to these questions were mostly complimentary, but some useful information could be extracted:
 \begin{itemize}
     \item Participants appreciated the decluttered and simple UI. 
     \item They noticed that certain UI elements overflowed their boundaries, and that the UI had visual glitches on Safari.
@@ -976,21 +977,21 @@ The answers to these questions were mostly complimentary, but some useful inform
     \item People do not want to read things. 
 \end{itemize}
 
-Certain visual glitches were also identified and fixed in phase 2. 
+\noindent The visual glitches were also identified and fixed in phase 3. 
 
 \section{The Advanced Focus Group: Evaluation and Next Steps}
 \label{ref:afg_figma}
 \label{ref:afg}
-The aims of this phase were to develop the language as well as some other more technical features of this project. This was my first of three focus groups, the most advanced of the three. As the UI/UX was not polished at this stage, I wanted to find people who would be able to discuss the parts that I had already implemented to a reasonable level of completion: the language. However, I also wanted to discuss future steps for the system as a whole. Because of this, I identified people who had learned functional languages as a part of a university course fairly recently and within memory, so they would have an insight into what is required for the system to be useful for use in this setting. 
+The aims of this phase were to develop the language as well as some other more technical features of this project. This was my first of three focus groups, the most advanced of the three. As the UI/UX was not polished at this stage, I wanted to find people who would be able to discuss the parts that I had already implemented to a reasonable level of completion: the language. However, I also wanted to discuss future steps for the system as a whole. Because of this, I identified people who had learnt functional languages as a part of a university course fairly recently and within memory, so they would have an insight into what is required for the system to be useful for use in this setting. 
 
 The transcript from this focus group is included in the Auxiliary Materials (see \ref{appx:additional_mats})
 
 \subsection{Selection and Format}
-For this focus group, I recruited four students in their fourth year of studies at the University of Bristol. I recruited outside of my immediate friendship group to try to prevent bias. They had all taken \hyperref[COMS10016]{the first-year FP unit} 3 years prior, and they had all taken units specializing in programming language theory since, including:
+For this focus group, I recruited four students in their fourth year of studies at the University of Bristol. I recruited outside of my immediate friendship group to try to prevent bias. They had all taken the first-year \ac{FP} unit \hyperref[COMS10016]{COMS10016} 3 years prior, and they had all taken units specializing in programming language theory since, including:
 
 \begin{itemize}
     \item The second year Programming Languages and Computation unit COMS20007, where they learnt to (among other things) `Understand the interplay between the design and implementation of programming languages' \cite{COMS20007_PLC}
-    \item The third year optional Types and Lambda Calculus unit COMS30040 where they learnt (among other things): \cite{COMS30040_TLC} 
+    \item The third year optional Types and Lambda Calculus unit COMS30040 where they learnt about (among other things): \cite{COMS30040_TLC} 
     \begin{itemize}
         \item `Type systems: types, judgements and rules'
         \item `Syntax and semantics of an untyped lambda calculus'
@@ -1002,8 +1003,8 @@ For this focus group, I recruited four students in their fourth year of studies 
     \end{itemize}
 \end{itemize}
 
-These people I selected for this focus group were the closest to `subject experts' that I could find while still being undergraduate students. 
-I started this focus group by briefly explaining. \ref{fig:screenshot_c2_end} shows how the system looked at this stage of the project. We also discussed the next UI iteration (see \ref{c2:next_ui}). 
+\noindent These people I selected for this focus group were the closest to `subject experts' that I could find while still being undergraduate students. 
+I started this focus group by briefly explaining the project. Figure~\ref{fig:screenshot_c2_end} shows how the system looked at this stage of the project. We also discussed the design of the next UI iteration (see~\ref{c2:next_ui}). 
 
 \subsection{Outcomes}
 The outcomes of the focus group are below, with timestamps to where the quotes can be found in the transcript: 
@@ -1012,49 +1013,51 @@ The outcomes of the focus group are below, with timestamps to where the quotes c
 \begin{itemize}
     \item They liked the explicit match statements, and did not want me to change to more Haskell-like pattern match syntax: 
     
-    `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [Participant 2, 24:11]
+    `Stick with the match expressions because it's very clear that matching has happened when you have the word match there' [Participant~2,~24:11]
     \item They liked that \sflinline{Cons} was a prefix constructor rather than infix: 
     
     `I think it's good that Cons is a prefix, like a normal constructor, and not a colon or
-    something like that' [Participant 4, 17:41]. 
+    something like that' [Participant~4,~17:41]. 
     \item Similarly, they liked the limited set of operators, and the fact that you cannot define your own: 
     
-    `I think if I was learning functional programming for the first time, I would really hope there aren't custom operators' [Participant 3, 15:56]
+    `I think if I was learning functional programming for the first time, I would really hope there aren't custom operators' [Participant~3,~15:56]
     
-    `If I'm trying to learn functional programming, I don't think it helps me to be able to define, like, things that have different precedents. I think that distracts from learning how programs are reduced' [Participant 4, 16:42]
+    `If I'm trying to learn functional programming, I don't think it helps me to be able to define, like, things that have different precedents. I think that distracts from learning how programs are reduced' [Participant~4,~16:42]
 \end{itemize}
 
 \paragraph{Negatives/Potential Improvements:}
 \label{ref:afg_ite} 
 Sentiment about the language was good, the only language specific issue was that they were confused about if-then-else syntax. They said it could be confusing to have the parser act differently for one specific function type. 
-
-`The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct' [Participant 2, 42.55]
+\begin{quotation}
+\noindent `The issue I was having is just the fact that there is a function in the prelude which has the same name as some syntactic sugar that is a parser construct'~[Participant~2,~42.55]
+    
+\end{quotation}
 
 \subsubsection{The Existing User Interface, and the System as a Whole}
 \paragraph{Positive}
 They really appreciated its utility for what it was designed for. Most of what we discussed was potential improvements rather than positives of the proof of concept system, however they seemed engaged and excited despite not being explicitly positive about it, beyond this one comment:
     
 \begin{quotation}
-\noindent `I think this is very good \ldots\ I wish I'd had this in the functional labs' [Participant 3, 1:00:09]
+\noindent `I think this is very good \ldots\ I wish I'd had this in the functional labs' [Participant~3,~1:00:09]
 \end{quotation} 
 
 \paragraph{Negatives/Potential Improvements:}
 \begin{itemize}
-    \item `Syntax highlighting would obviously help' [21:45]
+    \item `Syntax highlighting would obviously help' [Participant~1,~21:45]
     \item They were confused as to why, in free choice mode, some reduction options included each other: 
     
-    `The first one is a chain of reductions that contains the second one. I think it's fine to display that as long as you make it visually distinct that these two are related in that way and the other reductions are just independent' [12:57]
+    `The first one is a chain of reductions that contains the second one. I think it's fine to display that as long as you make it visually distinct that these two are related in that way and the other reductions are just independent' [Participant~4,~12:57]
 
     This could be implemented by having a dropdown where the highest level one shows all the ones below it. 
 
-    `You could put a number next to the reduction and say, you know, this is four steps. And then \ldots make a drop-down. Yeah. So if someone wants to see what steps are going on inside there, then they could see' [08:57]
+    `You could put a number next to the reduction and say, you know, this is four steps. And then \ldots make a drop-down. Yeah. So if someone wants to see what steps are going on inside there, then they could see' [Participant~4,~08:57]
     \item They wanted an indication of which direction evaluation was going: 
     
-    `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in' [28:12]. This was already in the new UI, which had not seen by this point in the transcript.
+    `Because the reduction steps generate bottom-up, it might be good to have some sort of indication about the direction things are going in' [Participant~3,~28:12]. This was already in the new UI, which had not seen by this point in the transcript.
 
     \item They wanted to be able to hover over an option and have it highlight what would change: 
     
-    `I think one thing that is not immediately clear is how the different reductions you see are related to the main program. If there was some way that like if you hovered over one, you could highlight the portion of the program that it corresponds to' [10:28]
+    `I think one thing that is not immediately clear is how the different reductions you see are related to the main program. If there was some way that like if you hovered over one, you could highlight the portion of the program that it corresponds to' [Participant~3,~10:28]
 \end{itemize}
 
 \subsubsection{The Next Iteration UI Design}
@@ -1064,10 +1067,12 @@ They really appreciated its utility for what it was designed for. Most of what w
     \item The new UI included indication of which direction evaluation was going, see above. 
     \item They liked the ability to revert progress: 
     
-    `Something I had not thought of, very good' [54:59]
+    `Something I had not thought of, very good' [Participant~3,~54:59]
     \item They liked the horizontal split: 
     
-    `It's easier to have everything on screen and it's more akin to what people may have experienced' `Its like compiler explorer'. [52:38] `I think immediately not having to scroll is a massive plus' [52:58]
+    `It's easier to have everything on screen, and it's more akin to what people may have experienced \ldots\ Its like compiler explorer'. [Participant~3,~52:37] 
+    
+    `I think immediately not having to scroll is a massive plus' [Participant~4,~52:58]
 \end{itemize}
 
 \paragraph{Negatives/Potential Improvements:}
@@ -1076,10 +1081,8 @@ No improvements were discussed for the next UI specifically, but most of the pot
 \section{Phase 2 Conclusion}
 Phase 2 resulted in a programming language which has syntax, semantics and a type system that are fit for purpose. I tested the project on 19 people in total - 15 in the Testathon and 4 in the advanced focus group. The language was very popular with the Testathon users as well as the Advanced Focus Group. There were no specific complaints about the language from either group. 
 
-The proof of concept UI had mixed feedback. During the Testathon~\ref{c2:testathon}, people cited its `cleanness' i.e. lack of overcomplicating buttons. However, people did not like having to scroll to refer to the original program, and the confusing nature of the way the history was generated bottom up with no indication of direction. 
+The proof of concept UI had mixed feedback. During the Testathon~\ref{c2:testathon}, users cited its `cleanness' i.e. lack of overcomplicating buttons, as a positive. However, users did not like having to scroll to refer to the original program, and the confusing nature of the way the history was generated bottom up with no indication of direction. 
 
 The advanced focus group also had a lot of feedback on how to improve the UI and language. The new UI as designed at the beginning of phase 2 \ref{c2:next_ui} was popular with the Advanced Focus Group. They had no specific thoughts on how to improve it, however they had many thoughts on features that could be added to the UI and the system as a whole in order to make reduction clearer. 
 
-By the end of the project, I implemented the new UI along with syntax highlighting, and many other clarifying features. 
-
-However, I unfortunately did not have time to work on grouping related reductions together or highlighting in source code when a progress option is hovered over what it would change, or improving the help menu. See the `future work' section \ref{conc:future_work} for more detail. 
+By the end of the project, I implemented the new UI along with syntax highlighting, and many other clarifying features. However, I unfortunately did not have time to work on grouping related reductions together or highlighting in source code when a progress option is hovered over what it would change, or improving the help menu. See the `future work' section \ref{conc:future_work} for more detail. 

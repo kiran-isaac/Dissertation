@@ -15,7 +15,7 @@ The prototype for the new UI also included the functionality to `undo progress',
 % \todo{there was no design here? the advanced focus group liked the protype a lot and did not have any }
 
 \section{Design and Implementation}
-Implementing the new UI mostly consisted of time-consuming React and CSS tweaks which are not worth mentioning here. However, there were some more challenging aspects that required some more interesting considerations and changes to be made. Screenshots of the result of implementing the new UI with these features is shown in \ref{screenshot:phase3_end_lazy}, with another example showing free choice evaluation in the appendix \ref{screenshot:phase3_end_free}. 
+Implementing the new UI mostly consisted of time-consuming React and CSS work which that is not worth mentioning here. However, there were some more challenging aspects that required some more interesting considerations and changes to be made. Screenshots of the result of implementing the new UI with these features is shown in \ref{screenshot:phase3_end_lazy}, with another example showing free choice evaluation in the appendix \ref{screenshot:phase3_end_free}. 
 
 
 \subsection{Diff}
@@ -31,19 +31,18 @@ Our frontend requires the ability to see what has changed between two program st
 
 \subsection{Reduction Messages}
 Rather than presenting the user with simply the before and after of the reduction, this design calls for presenting the user with a message describing what will happen. While generating the options for reduction (see \ref{c1_design_reduction_progress}), we can keep track of information relevant to how it was generated to inform the message displayed. For instance, if a reduction is generated from the application of a named function with name A to two arguments B, C, we can convert those arguments to strings and then broadcast the message `Applied function A to B and C'. 
-
 If B or C are large pieces of syntax, this may generate a very large unintelligible string. To solve this, we can modify our stringification algorithm to do certain things different to normal:
 \begin{itemize}
     \item Do not show the cases of a match statement, as the condition should be enough differentiate it
     \item We can truncate the output to a fixed length 
 \end{itemize}
 
-In past iterations, redex-contraction pairs were passed to the front end as two strings. We can make it three strings instead, where one of the strings is the reduction message which can be displayed before the reduction. The other two strings, the redex and contraction, can be displayed after the reduction in the history. 
+\noindent Before now, redex-contraction pairs are passed to the front end as two strings. We can make it three strings instead, where one of the strings is the reduction message which can be displayed before the reduction. The other two strings, the redex and contraction, can be displayed after the reduction in the history. 
 
 \subsection{Revert Progress Functionality}
-We may wish to undo progress. This was functionality designed into the new UI that the advanced focus group specifically mentioned liking. 
+% We may wish to undo progress. This was functionality designed into the new UI that the advanced focus group specifically mentioned liking. 
 
-Undoing progress requires that previous \ac{AST} states must be stored. Before now, the most recent \ac{AST} state was stored at a known memory address so any of the functions in the binary could know where to find it. This was done to avoid having to pass the \ac{AST} to the JavaScript module. If we wanted to store the history of all \ac{AST}s, one approach could be to store all the \ac{AST}s in a pre-allocated memory region in a stack, and then allow the JavaScript module to refer to each of the \ac{AST}s in the history by their stack index. However, pre-allocating enough memory for any potential program execution logs would be misguided, as it would cause accessibility problems for computers with less memory. Instead, we should employ dynamic allocation. 
+Undoing progress requires that previous \ac{AST} states be stored. Before now, the most recent \ac{AST} state was stored at a known memory address so any of the functions in the binary could know where to find it. This was done to avoid having to pass the \ac{AST} to the JavaScript module. If we wanted to store the history of all \ac{AST}s, one approach could be to store all the \ac{AST}s in a pre-allocated memory region in a stack, and then allow the JavaScript module to refer to each of the \ac{AST}s in the history by their stack index. However, pre-allocating enough memory for any potential program execution logs would be misguided, as it would cause accessibility problems for computers with less memory. Instead, we should employ dynamic allocation. 
 
 The issue with dynamic allocation of memory for the \ac{AST}s as they are added to our history is that we no longer know exactly where they will be located, meaning this information must be stored such that it will not be erased between calls to \ac{WASM} library functions. One method of doing this is passing a pointer to where in memory the \ac{AST} is located to the JavaScript module so that it can refer to it later, and use library functions on it. At first glance, this sounds like a bad idea, as when pointers are returned from a function for which wasm-bindgen (see~\ref{bg:wasm}) is used to make a JavaScript binding, the pointer is represented as a JavaScript $number$ type~\cite{wasm_bindgen_guide}, which is a double-precision IEEE-754 value~\cite{ecma262number}. Storing pointers as floating point values, and then attempting to dereference them, sounds like a recipe for memory mismanagement. However, this is safe because WebAssembly 2.0 has 32 (see~\ref{bg:wasm}), and thus has 32 bit pointers, and a double precision floating point number has a 52 bit~\cite{ieee754} mantissa meaning it can safely store the 32-bit memory location without issue. 
 
@@ -66,7 +65,7 @@ To act as a lecturer, I employed Amos Holland, a fourth year undergraduate stude
 For this focus, to evaluate SFL explorer as a teaching tool and get feedback, I selected first year undergraduate students who had just taken the functional programming unit. I looked for people who had not explored functional programming outside this unit, and who found the unit difficult, as these are representative of group of people the tool would be most useful for. 
 
 \subsection{Bugs}
-There were numerous bugs that Amos and I identified during the lecture phase of this focus group:
+There were several bugs that Amos and I identified during the lecture phase of this focus group:
 \begin{itemize}
     \item The editor would sometimes add tab spaces randomly.
     \item Sometimes, the site would refresh on its own.
@@ -75,7 +74,9 @@ There were numerous bugs that Amos and I identified during the lecture phase of 
 \noindent These were all fixed as part of phase 4.
 
 \subsection{Outcomes}
-Due to technical issues, I was only able to get a transcript of the interview portion of the intermediate focus group; I made the mistake of holding this focus group in a room where there was too much background noise to get a high quality recording during this part of the session. However, during the interview, I set up multiple microphones, and was able to combine the AI transcripts from each of them into one transcript. The transcript is in the auxiliary materials \ref{appx:additional_mats}. 
+Due to technical issues, I was only able to get a transcript of the interview portion of the intermediate focus group. 
+% I made the mistake of holding this focus group in a room where there was too much background noise to get a high quality recording during this part of the session. However, during the interview, I set up multiple microphones, and was able to combine the AI transcripts from each of them into one transcript. 
+The transcript is in the auxiliary materials \ref{appx:additional_mats}. 
 
 Below is the summary of outcomes from the discussion with this focus group, along with timestamped quotes where relevant. The first phase of this interview was conducted with Amos, followed by an interview with each participant in turn. 
 
@@ -100,7 +101,7 @@ like wrong if you do it yourself so this is like a good way to automate it' [Par
 \end{quotation}
 
 
-In the Advanced Focus Group outcomes section \ref{ref:afg}, I split the focus group's thoughts into positives and negatives. However, in this focus group opinions were more split between participants, as well as participants being more frequently in two minds, so I did not do this. Instead, I have grouped by topic rather than by positivity and negativity, so one bullet point may have both positive and negative thoughts towards the same issue. 
+\noindent In the Advanced Focus Group outcomes section \ref{ref:afg}, I split the focus group's thoughts into positives and negatives. However, in this focus group opinions were more split between participants, as well as participants being more frequently in two minds, so I did not do this. Instead, I have grouped by topic rather than by positivity and negativity, so one bullet point may have both positive and negative thoughts towards the same issue. 
 
 \subsubsection{The Language}
 Below is the summary of Amos's and the participants' thoughts about \ac{SFL}, along with timestamped quotes where appropriate.
@@ -120,9 +121,7 @@ Below is the summary of Amos's and the participants' thoughts about \ac{SFL}, al
     `If you were to take this, like, a step further, make it more advanced, I think the next step is type
     classes' [Amos, 00:04]
     
-    \item `I like the stuff we put in the prelude because we have like sort of basic functions' [Amos, 00:04]
-    
-    
+    \item `I like the stuff in the prelude because we have all the basic functions' [Amos, 00:04]
 \end{itemize}
 
 \paragraph{The Participants}\begin{itemize}
@@ -148,7 +147,7 @@ Below a more detailed summary of their thoughts about SFL Explorer as a whole, a
     \item Amos was generally happy with the UI for teaching.
     
     `As far as the design went, I think I was happy with it for teaching' [Amos, 00:04]
-    \item A `step to the end' options would be good, allowing the user to complete evaluation without having to click on the button many times.
+    \item A `step to the end' option would be good, allowing the user to complete evaluation without having to click on the button many times.
     
     `It would have been nice to have a button that says steps to the end, because there were some cases where I would have liked to just see if it evaluated correctly, but
     instead you had to click through a lot of times' [Amos, 00:04]
@@ -173,7 +172,7 @@ Below a more detailed summary of their thoughts about SFL Explorer as a whole, a
 
 
 \section{Phase 3 Conclusion}
-This phase resulted in a high quality UI that was much more polished than the previous iteration. The UI was generally popular with the focus group, and the language continued to be well liked. However, there were many ideas for improvements to be made, the clearest one being adding a light mode. 
+This phase resulted in a high quality UI that was much more polished than the previous iteration. The UI was generally popular with the focus group, and the language continued to be well liked. However, there were many ideas for improvements to be made, the most important one being adding a light mode. Some other features requested or suggested have been made note of in future work. 
 
 % The aims of this focus group were to use the system and attempt to recap functional programming concepts 
 
