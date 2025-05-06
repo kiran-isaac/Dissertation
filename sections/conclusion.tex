@@ -54,14 +54,14 @@ main :: a -> Int
 main = (\x y z. x + y) 1 2
 \end{lstlisting}
 
-\noindent If we evaluate this in free choice mode, we are presented with two options, the first of which includes the second:
+\noindent If we evaluate this in free choice mode, we are presented with two options:
 % \begin{alignat}{3}
 % \verb|(\x. \y. \z. x + y) 1 2| & $\smallblacktriangle*$ &  \verb|\z. 1 + 2| \\ 
 % \end{alignat}
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.75\linewidth]{images/conc_add.png}
+    \includegraphics[width=0.75\linewidth]{images/conc_add_3.png}
 \end{figure}
 
 \noindent The first option is two reductions, the first of which is the second one. This relationship is not clear. This was discussed in the advanced focus group~\ref{ref:afg}, but development of a fix for this was not prioritized. 
@@ -101,7 +101,7 @@ match (match (match (infiniteFrom 1) {
 \end{lstlisting}
 % \end{figure}
 
-The outer one comes from `sum', the middle one comes from `map', and the inner one comes from `range', all prelude functions. Unfortunately, this is hard to avoid, as pattern matching is a key concept in functional programming languages. Furthermore, a conclusion of the intermediate focus group was that the explicit match syntax, where it was obvious where/how pattern matching was occurring, made understanding pattern matching much easier. Indeed, they agreed that they would have liked to have SFL to learn about pattern matching rather than Haskell (see \ref{eval:IFG}). 
+\noindent The outer one comes from `sum', the middle one comes from `map', and the inner one comes from `range', all prelude functions. Unfortunately, this is hard to avoid, as pattern matching is a key concept in functional programming languages. Furthermore, a conclusion of the intermediate focus group was that the explicit match syntax, where it was obvious where/how pattern matching was occurring, made understanding pattern matching much easier. Indeed, they agreed that they would have liked to have SFL to learn about pattern matching rather than Haskell (see \ref{eval:IFG}). 
 
 This situation could be improved by being able to select which functions we are interested in seeing the expansion of, and which ones we are not. See \ref{fw:function_checkboxes}
 
